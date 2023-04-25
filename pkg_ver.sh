@@ -6,7 +6,7 @@
 VER_BINUTILS=2.40
 
 # note : gcc-pch.patch -- https://gcc.gnu.org/bugzilla/show_bug.cgi?id=14940
-VER_GCC=13.0.1
+VER_GCC=13-20230422
 #VER_GCC=10.3.0
 # gdb 11.1/11.2 build error, readline not found
 # VER_GDB=11.2
