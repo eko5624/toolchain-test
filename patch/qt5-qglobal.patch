@@ -1,0 +1,10 @@
+--- ./qtbase/src/corelib/global/qglobal.h.orign	2022-02-14 15:43:59.647220231 +0000
++++ ./qtbase/src/corelib/global/qglobal.h	2022-02-14 15:44:24.799471762 +0000
+@@ -45,6 +45,7 @@
+ #  include <type_traits>
+ #  include <cstddef>
+ #  include <utility>
++#  include <limits>
+ #endif
+ #ifndef __ASSEMBLER__
+ #  include <assert.h>

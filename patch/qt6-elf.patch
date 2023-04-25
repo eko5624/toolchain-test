@@ -1,0 +1,12 @@
+--- qelfparser_p.cpp.origin	2022-04-16 13:25:15.178644248 +0000
++++ qelfparser_p.cpp	2022-04-16 13:26:07.954169763 +0000
+@@ -409,7 +409,9 @@
+     case EM_NONE:       d << ", no machine"; break;
+     case EM_ARM:        d << ", ARM"; break;
+     case EM_AARCH64:    d << ", AArch64"; break;
++#ifdef EM_BLACKFIN
+     case EM_BLACKFIN:   d << ", Blackfin"; break;
++#endif
+     case EM_IA_64:      d << ", IA-64"; break;
+     case EM_MIPS:       d << ", MIPS"; break;
+     case EM_PPC:        d << ", PowerPC"; break;

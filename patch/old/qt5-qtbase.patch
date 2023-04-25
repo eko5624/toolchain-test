@@ -1,0 +1,12 @@
+--- ./qtbase/src/plugins/platforms/windows/qwin10helpers.cpp.origin     2017-05-12 23:20:47.957295797 +0800
++++ ./qtbase/src/plugins/platforms/windows/qwin10helpers.cpp    2017-05-12 23:21:45.441286222 +0800
+@@ -57,7 +57,7 @@
+ #endif
+ 
+ #ifdef HAS_UI_VIEW_SETTINGS_INTEROP
+-#  include <UIViewSettingsInterop.h>
++#  include <uiviewsettingsinterop.h>
+ #endif
+ 
+ #ifndef HAS_UI_VIEW_SETTINGS_INTEROP
+

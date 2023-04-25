@@ -1,0 +1,11 @@
+--- qttools/src/windeployqt/windeployqt.pro.origin	2020-09-13 20:26:22.410028972 +0800
++++ qttools/src/windeployqt/windeployqt.pro	2020-09-13 20:32:55.855371352 +0800
+@@ -2,7 +2,7 @@
+ QT_FOR_CONFIG += tools-private
+ requires(qtConfig(windeployqt))
+ 
+-option(host_build)
++# option(host_build)
+ QT = core-private
+ DEFINES += QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII QT_NO_FOREACH
+ 

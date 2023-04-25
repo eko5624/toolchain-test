@@ -1,0 +1,11 @@
+--- Makefile.origin	2014-10-01 21:11:23.340469096 +0800
++++ Makefile	2014-10-01 21:12:03.865046131 +0800
+@@ -139,7 +139,7 @@
+ 
+ include/private/apr_escape_test_char.h: tools/gen_test_char.exe
+ 	$(APR_MKDIR) include/private
+-	tools/gen_test_char.exe > $@
++	# tools/gen_test_char.exe > $@
+ 
+ LINK_PROG = $(LIBTOOL) $(LTFLAGS) --mode=link $(COMPILE) $(LT_LDFLAGS) \
+ 	    -no-fast-install $(ALL_LDFLAGS) -o $@

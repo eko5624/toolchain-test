@@ -1,0 +1,11 @@
+--- build/rules.mk.origin       2012-12-23 14:49:03.000000000 +0800
++++ build/rules.mk      2012-12-23 14:49:02.000000000 +0800
+@@ -56,6 +56,8 @@
+ EXTRA_LIBS=-lshell32 -ladvapi32 -lws2_32 -lrpcrt4 -lmswsock
+ EXTRA_INCLUDES=
+ 
++EXTRA_CPPFLAGS += -DAPU_DECLARE_EXPORT
++
+ # NOTEST_* are flags and libraries that can be added by the user without
+ # causing them to be used in configure tests (necessary for things like
+ # -Werror and other strict warnings that maintainers like to use).

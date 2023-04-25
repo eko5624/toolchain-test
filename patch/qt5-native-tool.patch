@@ -1,0 +1,70 @@
+--- qmake/qmake.pro.origin	2020-02-11 08:07:53.330922185 +0000
++++ qmake/qmake.pro	2020-02-11 08:28:12.278262265 +0000
+@@ -2,7 +2,7 @@
+ # with Qt Creator. The real build system is made up by the Makefile templates
+ # and the configures.
+ 
+-option(host_build)
++# option(host_build)
+ CONFIG += cmdline
+ CONFIG -= qt
+ 
+@@ -100,6 +100,9 @@
+     $$bp/src/corelib/global
+ 
+ VPATH += \
++	./library \
++    ../src/corelib/time \
++    ../src/corelib/text \
+     ../src/corelib/global \
+     ../src/corelib/tools \
+     ../src/corelib/kernel \
+@@ -109,6 +112,12 @@
+     ../src/corelib/serialization
+ 
+ SOURCES += \
++    qdebug.cpp \
++	qringbuffer.cpp \
++    qoperatingsystemversion.cpp \
++	qbytearraylist.cpp \
++	qrandom.cpp \
++	qendian.cpp \
+     qabstractfileengine.cpp \
+     qarraydata.cpp \
+     qbitarray.cpp \
+--- src/tools/moc/moc.pro.orig  2016-06-10 14:48:56.000000000 +0800
++++ src/tools/moc/moc.pro       2016-08-20 22:56:18.161789268 +0800
+@@ -1,4 +1,4 @@
+-option(host_build)
++# option(host_build)
+ CONFIG += force_bootstrap
+ 
+ DEFINES += \
+@@ -8,6 +8,11 @@
+     QT_NO_COMPRESS \
+     QT_NO_FOREACH
+ 
++VPATH += ../../corelib/tools
++
++INCLUDEPATH += ../../../include/QtCore/$$QT.core.VERSION/QtCore
++INCLUDEPATH += ../../../include/QtCore/$$QT.core.VERSION
++
+ include(moc.pri)
+ HEADERS += qdatetime_p.h
+ SOURCES += main.cpp
+--- src/tools/uic/uic.pro.origin        2013-12-08 22:42:12.000000000 +0800
++++ src/tools/uic/uic.pro       2013-12-08 22:42:29.000000000 +0800
+@@ -1,4 +1,4 @@
+-option(host_build)
++# option(host_build)
+ !force_bootstrap:if(!qtConfig(commandlineparser)|!qtConfig(textcodec)|!qtConfig(xmlstreamreader)|!qtConfig(xmlstreamwriter)): \
+     CONFIG += force_bootstrap
+ 
+--- src/tools/rcc/rcc.pro.origin        2013-12-08 22:45:02.000000000 +0800
++++ src/tools/rcc/rcc.pro       2013-12-08 22:45:09.000000000 +0800
+@@ -1,4 +1,4 @@
+-option(host_build)
++# option(host_build)
+ CONFIG += force_bootstrap
+ 
+ DEFINES += QT_RCC QT_NO_CAST_FROM_ASCII
