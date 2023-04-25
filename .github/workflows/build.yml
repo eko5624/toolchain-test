@@ -1,0 +1,138 @@
+name: build
+defaults:
+  run:
+    shell: bash
+on:
+  workflow_dispatch:
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux/archlinux:base-devel
+    steps:    
+      - name: Install Dependencies
+        run: |
+          sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+          sudo pacman -Syu --noconfirm
+          sudo pacman -S --noconfirm --needed git gyp cvs mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global pull.rebase true
+          git config --global rebase.autoStash true
+          git config --global fetch.prune true
+          git config --global --add safe.directory $PWD
+          
+      - uses: actions/checkout@main
+      - name: Checkout toolchain
+        uses: actions/checkout@main
+        with:
+          repository: shinchiro/mpv-winbuild-cmake
+          path: mpv-winbuild-cmake
+
+      - name: Loading build64 cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/mpv-winbuild-cmake/build64
+          key: build64-${{ github.run_id }}
+          restore-keys: |
+            build64
+     
+      - name: Loading repository cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/mpv-winbuild-cmake/src_packages
+          key: repository-${{ github.run_id }}
+          restore-keys: |
+            repository
+            
+      - name: Loading rust toolchain cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/mpv-winbuild-cmake/install_rustup
+          key: rust_toolchain-${{ github.run_id }}
+          restore-keys: |
+            rust_toolchain
+            
+      - name: Building mpv
+        run: |
+          cd mpv-winbuild-cmake
+          PWD=$(pwd)
+          cmake -DTARGET_ARCH=x86_64-w64-mingw32 -DALWAYS_REMOVE_BUILDFILES=ON -DSINGLE_SOURCE_LOCATION=$PWD/src_packages -DRUSTUP_LOCATION=$PWD/install_rustup -G Ninja -H$PWD -B$PWD/build64
+          ninja -C $PWD/build64 download || true
+          if [[ ! "$(ls -A $PWD/build64/install/bin)" ]]; then
+              ninja -C $PWD/build64 gcc
+          elif [[ ! "$(ls -A $PWD/install_rustup/.cargo/bin)" ]]; then
+              ninja -C $PWD/build64 rustup-fullclean
+              ninja -C $PWD/build64 rustup
+          fi
+          ninja -C $PWD/build64 update
+          ninja -C $PWD/build64 mpv
+          
+      - name: Get current time
+        run: |
+          echo "short_time=$(date "+%Y%m%d")" >> $GITHUB_ENV          
+
+      - name: Packaging mpv
+        run: |
+          mkdir release64
+          curl -OL https://github.com/eko5624/mpv-config/archive/refs/heads/main.zip
+          unzip main.zip
+          mv mpv-config-main/d3dcompiler_43.dll release64
+          mv mpv-config-main/portable_config release64
+          find mpv-winbuild-cmake/build64 -name "mpv.exe" -print0 | xargs -0 -I {} cp {} release64
+          7z a mpv-${{ env.short_time }}.7z release64/*
+          
+      - name: Collecting logs
+        if: ${{ always() }}
+        run: |
+          mkdir build64_logs
+          cp -fr $(find mpv-winbuild-cmake/build64 -type f -iname "*-*.log" -or -wholename "*/ffbuild/config.log") build64_logs || true
+          7z a logs.7z build64_logs
+      - name: upload logs
+        uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          name: build64_logs
+          path: logs.7z
+          
+      - name: Cleaning build directory
+        if: always()
+        run: |
+          rm -rf mpv-winbuild-cmake/build64/mpv*
+          
+      - name: Cleaning rust toolchain directory
+        if: ${{ always() }}
+        run: |
+          ninja -C mpv-winbuild-cmake/build64 cargo-clean
+          
+      - name: Saving build64 cache
+        uses: actions/cache/save@main
+        if: always()
+        with:
+          path: ${{ github.workspace }}/mpv-winbuild-cmake/build64
+          key: build64-${{ github.run_id }}
+
+      - name: Saving repository cache
+        uses: actions/cache/save@main
+        if: always()
+        with:
+          path: ${{ github.workspace }}/mpv-winbuild-cmake/src_packages
+          key: repository-${{ github.run_id }}
+
+      - name: Saving rust toolchain cache
+        uses: actions/cache/save@main
+        if: always()
+        with:
+          path: ${{ github.workspace }}/mpv-winbuild-cmake/install_rustup
+          key: rust_toolchain-${{ github.run_id }}
+    
+      - name: Release
+        continue-on-error: true
+        uses: softprops/action-gh-release@master
+        with:
+          tag_name: ${{ env.short_time }}
+          name: ${{ env.short_time }}
+          files: mpv*.7z
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
