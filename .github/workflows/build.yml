@@ -34,7 +34,11 @@ jobs:
           7z a m64-cross.7z cross/*
           7z a m64-build.7z build/*
           7z a m64-target.7z target/*
-          
+
+      - name: Get current time
+        run: |
+          echo "short_time=$(date "+%Y%m%d")" >> $GITHUB_ENV
+
       - name: Release
         continue-on-error: true
         uses: softprops/action-gh-release@master
