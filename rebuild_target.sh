@@ -263,8 +263,8 @@ cd ..
 date
 mkdir tg_pkg-config
 cd tg_pkg-config
-$M_SOURCE/pkg-config-$VER_PKGCONFIG/configure $BHT --prefix=$M_TARGET
-# patch -p0 < $M_ROOT/patch/make_path.patch
+$M_SOURCE/pkg-config-$VER_PKGCONFIG/configure $BHT --prefix=$M_TARGET \
+  --with-internal-glib
 make $MAKE_OPT || echo "(-) Build Error!"
 make install
 cd ..
