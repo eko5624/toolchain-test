@@ -31,7 +31,9 @@ jobs:
 
       - name: package
         run: |
-          7z m64.7z cross/*
+          7z a m64-cross.7z cross/*
+          7z a m64-build.7z build/*
+          7z a m64-target.7z target/*
           
       - name: Release
         continue-on-error: true
@@ -39,6 +41,6 @@ jobs:
         with:
           tag_name: ${{ env.short_time }}
           name: ${{ env.short_time }}
-          files: m64.7z
+          files: m64*.7z
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
