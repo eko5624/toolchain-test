@@ -11,6 +11,10 @@ MJOBS=$(grep -c processor /proc/cpuinfo)
 MACHINE_TYPE=x86_64
 MINGW_TRIPLE="x86_64-w64-mingw32"
 
+CFLAGS="-pipe -O2"
+
+export CFLAGS
+export CXXFLAGS=$CFLAGS
 export MINGW_TRIPLE
 
 export M_ROOT=$(pwd)
@@ -18,8 +22,6 @@ export M_SOURCE=$M_ROOT/source
 export M_BUILD=$M_ROOT/build
 export M_CROSS=$M_ROOT/cross
 export RUSTUP_LOCATION=$M_ROOT/RUSTUP_LOCATION
-
-export BHT="--target=$MINGW_TRIPLE"
 
 export PATH="$M_CROSS/bin:$RUSTUP_LOCATION/.cargo/bin:$PATH"
 export PKG_CONFIG="pkgconf --static"
@@ -44,7 +46,8 @@ echo "======================="
 
 mkdir bc_binutils
 cd bc_binutils
-$M_SOURCE/binutils-$VER_BINUTILS/configure $BHT \
+$M_SOURCE/binutils-$VER_BINUTILS/configure \
+  --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
   --with-sysroot=$M_CROSS \
   --disable-multilib \
