@@ -32,9 +32,6 @@ export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
 
 set -x
 
-# <1> clean
-date
-
 rm -rf $M_CROSS
 
 mkdir -p $M_BUILD
