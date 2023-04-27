@@ -43,6 +43,21 @@ xz -c -d gcc-13-20230422.tar.xz | tar xf -
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
 # <2> build
+echo "building mingw-w64-headers"
+echo "======================="
+
+cd mingw-w64/mingw-w64-headers 
+./configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_CROSS/$MINGW_TRIPLE \
+  --enable-sdk=all \
+  --enable-idl \
+  --with-default-msvcrt=msvcrt
+make -j$MJOBS || echo "(-) Build Error!"
+make install install-strip
+
+( cd $M_CROSS ; ln -s $MINGW_TRIPLE mingw ; cd $M_SOURCE )
+
 echo "building binutils"
 echo "======================="
 
@@ -65,22 +80,6 @@ cd ..
 cd $M_CROSS
 ln -s $(which pkg-config) bin/$MINGW_TRIPLE-pkg-config
 ln -s $(which pkg-config) bin/$MINGW_TRIPLE-pkgconf
-
-( cd $M_CROSS ; ln -s $MINGW_TRIPLE mingw ; cd $M_SOURCE )
-
-echo "building mingw-w64-headers"
-echo "======================="
-
-cd mingw-w64/mingw-w64-headers 
-./configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE \
-  --enable-sdk=all \
-  --enable-idl \
-  --with-default-msvcrt=msvcrt
-make -j$MJOBS || echo "(-) Build Error!"
-make install install-strip
-cd $M_SOURCE
 
 echo "building gcc"
 echo "======================="
