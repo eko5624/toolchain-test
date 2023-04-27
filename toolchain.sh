@@ -90,7 +90,7 @@ echo "======================="
 cd gcc-13-20230422
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54412
 curl -sL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
-patch -p2 < vmov-alignment.patch
+patch -p2 -i vmov-alignment.patch
 ./configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
