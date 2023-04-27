@@ -56,7 +56,9 @@ cd mingw-w64/mingw-w64-headers
 make -j$MJOBS || echo "(-) Build Error!"
 make install install-strip
 
-( cd $M_CROSS ; ln -s $MINGW_TRIPLE mingw ; cd $M_SOURCE )
+cd $M_CROSS 
+ln -s $MINGW_TRIPLE mingw
+cd $M_SOURCE
 
 echo "building binutils"
 echo "======================="
@@ -76,10 +78,11 @@ cd binutils-2.40
   --enable-threads
 make -j$MJOBS || echo "(-) Build Error!"
 make install-strip
-cd ..
+
 cd $M_CROSS
 ln -s $(which pkg-config) bin/$MINGW_TRIPLE-pkg-config
 ln -s $(which pkg-config) bin/$MINGW_TRIPLE-pkgconf
+cd $M_SOURCE
 
 echo "building gcc"
 echo "======================="
