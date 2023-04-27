@@ -25,11 +25,7 @@ VER_MPC=1.3.1
 VER_ISL=0.24
 
 VER_MINGW64=10.0.0
-# make 4.3 build error, fcntl conflict
-# VER_MAKE=4.3
-# VER_MAKE=4.2.1
 VER_MAKE=4.4
-VER_PKGCONFIG=0.29.2
 VER_YASM=1.3.0
 # nsam 2.16.01 faild, fatal error: asm/warnings.c: No such file or directory
 # VER_NASM=2.16.01
