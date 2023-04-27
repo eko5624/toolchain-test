@@ -14,8 +14,6 @@ elif [[ -f /proc/cpuinfo ]]; then
 MACHINE_TYPE=x86_64
 MINGW_TRIPLE="x86_64-w64-mingw32"
 
-export CFLAGS
-export MINGW_LIB
 export MINGW_TRIPLE
 
 export M_ROOT=$(pwd)
@@ -26,8 +24,7 @@ export RUSTUP_LOCATION=$M_ROOT/RUSTUP_LOCATION
 
 export BHT="--target=$MINGW_TRIPLE"
 
-export CXXFLAGS=$CFLAGS
-export PATH=$M_CROSS/bin:$RUSTUP_LOCATION//.cargo/bin:$PATH
+export PATH="$M_CROSS/bin:$RUSTUP_LOCATION//.cargo/bin:$PATH"
 export PKG_CONFIG="pkgconf --static"
 export PKG_CONFIG_LIBDIR="$M_CROSS/lib/pkgconfig"
 export RUSTUP_HOME="$RUSTUP_LOCATION/.rustup"
@@ -95,21 +92,21 @@ cd bc_gcc
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54412
 curl -sL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
 patch -d $M_SOURCE/gcc-$VER_GCC -p2 < vmov-alignment.patch
-$M_SOURCE/gcc-$VER_GCC/configure $BHT 
-  --prefix=$M_CROSS
-  --libdir=$M_CROSS/lib
-  --with-sysroot=$M_CROSS
-  --disable-multilib
-  --enable-languages=c,c++
-  --disable-nls
-  --disable-shared
-  --disable-win32-registry
-  --with-arch=$MACHINE_TYPE
-  --with-tune=generic
-  --enable-threads=posix
-  --without-included-gettext
-  --enable-lto
-  --enable-checking=release
+$M_SOURCE/gcc-$VER_GCC/configure $BHT \
+  --prefix=$M_CROSS \
+  --libdir=$M_CROSS/lib \
+  --with-sysroot=$M_CROSS \
+  --disable-multilib \
+  --enable-languages=c,c++ \
+  --disable-nls \
+  --disable-shared \
+  --disable-win32-registry \
+  --with-arch=$MACHINE_TYPE \
+  --with-tune=generic \
+  --enable-threads=posix \
+  --without-included-gettext \
+  --enable-lto \
+  --enable-checking=release \
   --disable-sjlj-exceptions
 make -j$MJOBS all-gcc || echo "(-) Build Error!"
 make install-strip-gcc
@@ -170,5 +167,3 @@ echo "======================="
 curl -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --target x86_64-pc-windows-gnu --no-modify-path --profile minimal
 rustup update
 cargo install cargo-c --profile=release-strip --features=vendored-openssl
-
-
