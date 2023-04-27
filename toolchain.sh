@@ -37,7 +37,7 @@ wget -c -O binutils-2.40.tar.bz2 http://ftp.gnu.org/gnu/binutils/binutils-2.40.t
 tar xjf binutils-2.40.tar.bz2
 
 # get gcc
-wget -c -O gcc-13-20230422.tar.xz https://mirrorservice.org/sites/sourceware.org/pub/gcc/snapshots/$VER_GCC/gcc-13-20230422.tar.xz
+wget -c -O gcc-13-20230422.tar.xz https://mirrorservice.org/sites/sourceware.org/pub/gcc/snapshots/13-20230422/gcc-13-20230422.tar.xz
 # tar xJf gcc-$VER_GCC.tar.xz
 xz -c -d gcc-13-20230422.tar.xz | tar xf -
 
