@@ -90,7 +90,8 @@ cd bc_gcc
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54412
 curl -sL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
 patch -d $M_SOURCE/gcc-$VER_GCC -p2 < vmov-alignment.patch
-$M_SOURCE/gcc-$VER_GCC/configure $BHT \
+$M_SOURCE/gcc-$VER_GCC/configure \
+  --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
   --libdir=$M_CROSS/lib \
   --with-sysroot=$M_CROSS \
@@ -151,7 +152,7 @@ echo "building widl"
 echo "======================="
 mkdir bc_mingw_widl
 cd bc_mingw_gendef
-$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-tools/widl/configure $BHT --prefix=$M_CROSS
+$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-tools/widl/configure --host=$MINGW_TRIPLE --prefix=$M_CROSS
 make -j$MJOBS || echo "(-) Build Error!"
 make install-strip
 cd ..
