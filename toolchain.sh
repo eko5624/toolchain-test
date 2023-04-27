@@ -2,8 +2,6 @@
 
 TOP_DIR=$(pwd)
 
-sh $TOP_DIR/update_source.sh
-
 # Speed up the process
 # Env Var NUMJOBS overrides automatic detection
 MJOBS=$(grep -c processor /proc/cpuinfo)
@@ -11,10 +9,6 @@ MJOBS=$(grep -c processor /proc/cpuinfo)
 MACHINE_TYPE=x86_64
 MINGW_TRIPLE="x86_64-w64-mingw32"
 
-CFLAGS="-pipe -O2"
-
-export CFLAGS
-export CXXFLAGS=$CFLAGS
 export MINGW_TRIPLE
 
 export M_ROOT=$(pwd)
@@ -33,8 +27,22 @@ set -x
 
 # <1> clean
 date
-
 rm -rf $M_CROSS
+
+mkdir -p $M_SOURCE
+cd $M_SOURCE
+
+# get binutils
+wget -c -O binutils-$VER_BINUTILS.tar.bz2 http://ftp.gnu.org/gnu/binutils/binutils-2.40.tar.bz2
+tar xjf binutils-2.40.tar.bz2
+
+# get gcc
+wget -c -O gcc-13-20230422.tar.xz https://mirrorservice.org/sites/sourceware.org/pub/gcc/snapshots/$VER_GCC/gcc-13-20230422.tar.xz
+# tar xJf gcc-$VER_GCC.tar.xz
+xz -c -d gcc-$VER_GCC.tar.xz | tar xf -
+
+# get mingw-w64
+git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
 mkdir -p $M_BUILD
 cd $M_BUILD
@@ -46,7 +54,7 @@ echo "======================="
 
 mkdir bc_binutils
 cd bc_binutils
-$M_SOURCE/binutils-$VER_BINUTILS/configure \
+$M_SOURCE/binutils-2.40/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
   --with-sysroot=$M_CROSS \
@@ -73,7 +81,7 @@ echo "======================="
 
 mkdir bc_mingw_headers
 cd bc_mingw_headers
-$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-headers/configure \
+$M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE \
   --enable-sdk=all \
@@ -89,8 +97,8 @@ mkdir bc_gcc
 cd bc_gcc
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54412
 curl -sL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
-patch -d $M_SOURCE/gcc-$VER_GCC -p2 < vmov-alignment.patch
-$M_SOURCE/gcc-$VER_GCC/configure \
+patch -d $M_SOURCE/gcc-13-20230422 -p2 < vmov-alignment.patch
+$M_SOURCE/gcc-13-20230422/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
   --libdir=$M_CROSS/lib \
@@ -115,7 +123,7 @@ echo "building mingw-w64-crt"
 echo "======================="
 mkdir bc_mingw_crt
 cd bc_mingw_crt
-$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-crt/configure \
+$M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE $MINGW_LIB \
   --with-sysroot=$M_CROSS \
@@ -130,7 +138,7 @@ echo "building winpthreads"
 echo "======================="
 mkdir bc_mingw_winpthreads
 cd bc_mingw_winpthreads
-$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-libraries/winpthreads/configure \
+$M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
   --disable-shared \
@@ -143,7 +151,7 @@ echo "building gendef"
 echo "======================="
 mkdir bc_mingw_gendef
 cd bc_mingw_gendef
-$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-tools/gendef/configure --prefix=$M_CROSS
+$M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure --prefix=$M_CROSS
 make -j$MJOBS || echo "(-) Build Error!"
 make install-strip
 cd ..
@@ -152,7 +160,7 @@ echo "building widl"
 echo "======================="
 mkdir bc_mingw_widl
 cd bc_mingw_gendef
-$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-tools/widl/configure --host=$MINGW_TRIPLE --prefix=$M_CROSS
+$M_SOURCE/mingw-w64/mingw-w64-tools/widl/configure --host=$MINGW_TRIPLE --prefix=$M_CROSS
 make -j$MJOBS || echo "(-) Build Error!"
 make install-strip
 cd ..
