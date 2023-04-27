@@ -81,8 +81,8 @@ make install-strip
 cd ..
 
 cd $M_CROSS
-ln -s `which pkg-config` bin/$MINGW_TRIPLE-pkg-config
-ln -s `which pkg-config` bin/$MINGW_TRIPLE-pkgconf
+ln -s $(which pkg-config) bin/$MINGW_TRIPLE-pkg-config
+ln -s $(which pkg-config) bin/$MINGW_TRIPLE-pkgconf
 cd $M_BUILD
 
 echo "building gcc"
@@ -123,9 +123,7 @@ $M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-crt/configure \
   --with-default-msvcrt=msvcrt-os \
   --enable-lib64 \
   --disable-lib32
-
 make -j$MJOBS || echo "(-) Build Error!"
-make || echo "(-) Build Error!"
 make install-strip
 cd ..
 
@@ -146,8 +144,7 @@ echo "building gendef"
 echo "======================="
 mkdir bc_mingw_gendef
 cd bc_mingw_gendef
-$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-tools/gendef/configure \
-  --prefix=$M_CROSS
+$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-tools/gendef/configure --prefix=$M_CROSS
 make -j$MJOBS || echo "(-) Build Error!"
 make install-strip
 cd ..
@@ -156,14 +153,13 @@ echo "building widl"
 echo "======================="
 mkdir bc_mingw_widl
 cd bc_mingw_gendef
-$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-tools/widl/configure $BHT \
-  --prefix=$M_CROSS
+$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-tools/widl/configure $BHT --prefix=$M_CROSS
 make -j$MJOBS || echo "(-) Build Error!"
 make install-strip
 cd ..
 
-echo "building rustup"
-echo "======================="
-curl -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --target x86_64-pc-windows-gnu --no-modify-path --profile minimal
-rustup update
-cargo install cargo-c --profile=release-strip --features=vendored-openssl
+#echo "building rustup"
+#echo "======================="
+#curl -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --target x86_64-pc-windows-gnu --no-modify-path --profile minimal
+#rustup update
+#cargo install cargo-c --profile=release-strip --features=vendored-openssl
