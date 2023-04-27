@@ -44,17 +44,12 @@ xz -c -d gcc-$VER_GCC.tar.xz | tar xf -
 # get mingw-w64
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
-mkdir -p $M_BUILD
-cd $M_BUILD
-rm -rf bc_binutils bc_gcc bc_mingw_crt bc_mingw_headers bc_mingw_winpthreads bc_mingw_gendef
-
 # <2> build
 echo "building binutils"
 echo "======================="
 
-mkdir bc_binutils
-cd bc_binutils
-$M_SOURCE/binutils-2.40/configure \
+cd binutils-2.40
+./configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
   --with-sysroot=$M_CROSS \
@@ -72,16 +67,14 @@ cd ..
 cd $M_CROSS
 ln -s $(which pkg-config) bin/$MINGW_TRIPLE-pkg-config
 ln -s $(which pkg-config) bin/$MINGW_TRIPLE-pkgconf
-cd $M_BUILD
 
-( cd $M_CROSS ; ln -s $MINGW_TRIPLE mingw ; cd $M_BUILD )
+( cd $M_CROSS ; ln -s $MINGW_TRIPLE mingw ; cd $M_SOURCE )
 
 echo "building mingw-w64-headers"
 echo "======================="
 
-mkdir bc_mingw_headers
-cd bc_mingw_headers
-$M_SOURCE/mingw-w64/mingw-w64-headers/configure \
+cd mingw-w64/mingw-w64-headers 
+./configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE \
   --enable-sdk=all \
@@ -89,16 +82,16 @@ $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --with-default-msvcrt=msvcrt
 make -j$MJOBS || echo "(-) Build Error!"
 make install install-strip
-cd ..
+cd $M_SOURCE
 
 echo "building gcc"
 echo "======================="
-mkdir bc_gcc
-cd bc_gcc
+
+cd gcc-13-20230422
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54412
 curl -sL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
-patch -d $M_SOURCE/gcc-13-20230422 -p2 < vmov-alignment.patch
-$M_SOURCE/gcc-13-20230422/configure \
+patch -p2 < vmov-alignment.patch
+./configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
   --libdir=$M_CROSS/lib \
@@ -117,13 +110,13 @@ $M_SOURCE/gcc-13-20230422/configure \
   --disable-sjlj-exceptions
 make -j$MJOBS all-gcc || echo "(-) Build Error!"
 make install-strip-gcc
-cd ..
+cd $M_SOURCE
 
 echo "building mingw-w64-crt"
 echo "======================="
-mkdir bc_mingw_crt
-cd bc_mingw_crt
-$M_SOURCE/mingw-w64/mingw-w64-crt/configure \
+
+cd mingw-w64/mingw-w64-crt
+./configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE $MINGW_LIB \
   --with-sysroot=$M_CROSS \
@@ -132,38 +125,38 @@ $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --disable-lib32
 make -j$MJOBS || echo "(-) Build Error!"
 make install-strip
-cd ..
+cd $M_SOURCE
 
 echo "building winpthreads"
 echo "======================="
-mkdir bc_mingw_winpthreads
-cd bc_mingw_winpthreads
-$M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
+
+cd mingw-w64/mingw-w64-libraries/winpthreads
+./configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
   --disable-shared \
   --enable-static
 make -j$MJOBS || echo "(-) Build Error!"
 make install-strip
-cd ..
+cd $M_SOURCE
 
 echo "building gendef"
 echo "======================="
-mkdir bc_mingw_gendef
-cd bc_mingw_gendef
-$M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure --prefix=$M_CROSS
+
+cd mingw-w64/mingw-w64-tools/gendef
+./configure --prefix=$M_CROSS
 make -j$MJOBS || echo "(-) Build Error!"
 make install-strip
-cd ..
+cd $M_SOURCE
 
 echo "building widl"
 echo "======================="
-mkdir bc_mingw_widl
-cd bc_mingw_gendef
-$M_SOURCE/mingw-w64/mingw-w64-tools/widl/configure --host=$MINGW_TRIPLE --prefix=$M_CROSS
+
+cd mingw-w64/mingw-w64-tools/widl
+./configure --host=$MINGW_TRIPLE --prefix=$M_CROSS
 make -j$MJOBS || echo "(-) Build Error!"
 make install-strip
-cd ..
+cd $M_SOURCE
 
 echo "building rustup"
 echo "======================="
