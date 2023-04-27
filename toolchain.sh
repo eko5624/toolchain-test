@@ -2,7 +2,7 @@
 
 TOP_DIR=$(pwd)
 
-source $TOP_DIR/update_source.sh
+sh $TOP_DIR/update_source.sh
 
 # Speed up the process
 # Env Var NUMJOBS overrides automatic detection
