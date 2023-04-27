@@ -24,7 +24,7 @@ export RUSTUP_LOCATION=$M_ROOT/RUSTUP_LOCATION
 
 export BHT="--target=$MINGW_TRIPLE"
 
-export PATH="$M_CROSS/bin:$RUSTUP_LOCATION//.cargo/bin:$PATH"
+export PATH="$M_CROSS/bin:$RUSTUP_LOCATION/.cargo/bin:$PATH"
 export PKG_CONFIG="pkgconf --static"
 export PKG_CONFIG_LIBDIR="$M_CROSS/lib/pkgconfig"
 export RUSTUP_HOME="$RUSTUP_LOCATION/.rustup"
