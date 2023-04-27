@@ -2,7 +2,14 @@
 
 TOP_DIR=$(pwd)
 
-source $TOP_DIR/pkg_ver.sh
+source $TOP_DIR/update_source.sh
+
+# Speed up the process
+# Env Var NUMJOBS overrides automatic detection
+if [[ -n "$NUMJOBS" ]]; then
+  MJOBS="$NUMJOBS"
+else [[ -f /proc/cpuinfo ]]; then
+  MJOBS=$(grep -c processor /proc/cpuinfo)
 
 MACHINE_TYPE=x86_64
 MINGW_TRIPLE="x86_64-w64-mingw32"
@@ -25,6 +32,9 @@ export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
 
 set -x
 
+# <1> clean
+date
+
 rm -rf $M_CROSS
 
 mkdir -p $M_BUILD
@@ -46,3 +56,110 @@ $M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-headers/configure \
 make -j$MJOBS || echo "(-) Build Error!"
 make install install-strip
 cd ..
+
+( cd $M_CROSS ; ln -s $MINGW_TRIPLE mingw ; cd $M_BUILD )
+
+
+echo "building binutils"
+echo "======================="
+
+mkdir bc_binutils
+cd bc_binutils
+$M_SOURCE/binutils-$VER_BINUTILS/configure $BHT \
+  --prefix=$M_CROSS \
+  --with-sysroot=$M_CROSS \
+  --disable-multilib \
+  --disable-nls \
+  --disable-shared \
+  --disable-win32-registry \
+  --without-included-gettext \
+  --enable-lto \
+  --enable-plugins \
+  --enable-threads
+make -j$MJOBS || echo "(-) Build Error!"
+make install-strip
+cd ..
+
+cd $M_CROSS
+ln -s $(which pkg-config) bin/$MINGW_TRIPLE-pkg-config
+ln -s $(which pkg-config) bin/$MINGW_TRIPLE-pkgconf
+cd $M_BUILD
+
+echo "building gcc"
+echo "======================="
+mkdir bc_gcc
+cd bc_gcc
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54412
+curl -sL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
+patch -d $M_SOURCE/gcc-$VER_GCC -p2 < vmov-alignment.patch
+$M_SOURCE/gcc-$VER_GCC/configure $BHT \
+  --prefix=$M_CROSS \
+  --libdir=$M_CROSS/lib \
+  --with-sysroot=$M_CROSS \
+  --disable-multilib \
+  --enable-languages=c,c++ \
+  --disable-nls \
+  --disable-shared \
+  --disable-win32-registry \
+  --with-arch=$MACHINE_TYPE \
+  --with-tune=generic \
+  --enable-threads=posix \
+  --without-included-gettext \
+  --enable-lto \
+  --enable-checking=release \
+  --disable-sjlj-exceptions
+make -j$MJOBS all-gcc || echo "(-) Build Error!"
+make install-strip-gcc
+cd ..
+
+echo "building mingw-w64-crt"
+echo "======================="
+mkdir bc_mingw_crt
+cd bc_mingw_crt
+$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-crt/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_CROSS/$MINGW_TRIPLE $MINGW_LIB \
+  --with-sysroot=$M_CROSS \
+  --with-default-msvcrt=msvcrt-os \
+  --enable-lib64 \
+  --disable-lib32
+make -j$MJOBS || echo "(-) Build Error!"
+make install-strip
+cd ..
+
+echo "building winpthreads"
+echo "======================="
+mkdir bc_mingw_winpthreads
+cd bc_mingw_winpthreads
+$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-libraries/winpthreads/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_CROSS \
+  --disable-shared \
+  --enable-static
+make -j$MJOBS || echo "(-) Build Error!"
+make install-strip
+cd ..
+
+echo "building gendef"
+echo "======================="
+mkdir bc_mingw_gendef
+cd bc_mingw_gendef
+$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-tools/gendef/configure --prefix=$M_CROSS
+make -j$MJOBS || echo "(-) Build Error!"
+make install-strip
+cd ..
+
+echo "building widl"
+echo "======================="
+mkdir bc_mingw_widl
+cd bc_mingw_gendef
+$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-tools/widl/configure $BHT --prefix=$M_CROSS
+make -j$MJOBS || echo "(-) Build Error!"
+make install-strip
+cd ..
+
+#echo "building rustup"
+#echo "======================="
+#curl -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --target x86_64-pc-windows-gnu --no-modify-path --profile minimal
+#rustup update
+#cargo install cargo-c --profile=release-strip --features=vendored-openssl
