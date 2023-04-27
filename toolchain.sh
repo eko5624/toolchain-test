@@ -23,8 +23,6 @@ export PKG_CONFIG_LIBDIR="$M_CROSS/lib/pkgconfig"
 export RUSTUP_HOME="$RUSTUP_LOCATION/.rustup"
 export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
 
-set -x
-
 # <1> clean
 date
 rm -rf $M_CROSS
