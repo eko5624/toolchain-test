@@ -1,0 +1,49 @@
+name: toolchain
+defaults:
+  run:
+    shell: bash
+on:
+  workflow_dispatch:
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux/archlinux:base-devel
+    steps:    
+      - name: Install Dependencies
+        run: |
+          sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+          sudo pacman -Syu --noconfirm
+          sudo pacman -S --noconfirm --needed git gyp cvs mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global pull.rebase true
+          git config --global rebase.autoStash true
+          git config --global fetch.prune true
+          git config --global --add safe.directory $PWD
+          
+      - uses: actions/checkout@main
+      - name: build
+        run: |
+          chmod +x ./*.sh
+          ./toolchain.sh
+
+      - name: package
+        run: |
+          7z a m64-cross.7z cross/*
+          7z a m64-build.7z RUSTUP_LOCATION/*
+
+      - name: Get current time
+        run: |
+          echo "short_time=$(date "+%Y%m%d")" >> $GITHUB_ENV
+
+      - name: Release
+        continue-on-error: true
+        uses: softprops/action-gh-release@master
+        with:
+          tag_name: ${{ env.short_time }}
+          name: ${{ env.short_time }}
+          files: m64*.7z
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
