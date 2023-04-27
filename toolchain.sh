@@ -4,13 +4,6 @@ TOP_DIR=$(pwd)
 
 source $TOP_DIR/pkg_ver.sh
 
-# Speed up the process
-# Env Var NUMJOBS overrides automatic detection
-if [[ -n "$NUMJOBS" ]]; then
-  MJOBS="$NUMJOBS"
-elif [[ -f /proc/cpuinfo ]]; then
-  MJOBS=$(grep -c processor /proc/cpuinfo)
-
 MACHINE_TYPE=x86_64
 MINGW_TRIPLE="x86_64-w64-mingw32"
 
