@@ -39,24 +39,6 @@ cd $M_BUILD
 rm -rf bc_binutils bc_gcc bc_mingw_crt bc_mingw_headers bc_mingw_winpthreads bc_mingw_gendef
 
 # <2> build
-echo "building mingw-w64-headers"
-echo "======================="
-
-mkdir bc_mingw_headers
-cd bc_mingw_headers
-$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-headers/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE \
-  --enable-sdk=all \
-  --enable-idl \
-  --with-default-msvcrt=msvcrt
-make -j$MJOBS || echo "(-) Build Error!"
-make install install-strip
-cd ..
-
-( cd $M_CROSS ; ln -s $MINGW_TRIPLE mingw ; cd $M_BUILD )
-
-
 echo "building binutils"
 echo "======================="
 
@@ -76,11 +58,27 @@ $M_SOURCE/binutils-$VER_BINUTILS/configure $BHT \
 make -j$MJOBS || echo "(-) Build Error!"
 make install-strip
 cd ..
-
 cd $M_CROSS
 ln -s $(which pkg-config) bin/$MINGW_TRIPLE-pkg-config
 ln -s $(which pkg-config) bin/$MINGW_TRIPLE-pkgconf
 cd $M_BUILD
+
+( cd $M_CROSS ; ln -s $MINGW_TRIPLE mingw ; cd $M_BUILD )
+
+echo "building mingw-w64-headers"
+echo "======================="
+
+mkdir bc_mingw_headers
+cd bc_mingw_headers
+$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-headers/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_CROSS/$MINGW_TRIPLE \
+  --enable-sdk=all \
+  --enable-idl \
+  --with-default-msvcrt=msvcrt
+make -j$MJOBS || echo "(-) Build Error!"
+make install install-strip
+cd ..
 
 echo "building gcc"
 echo "======================="
