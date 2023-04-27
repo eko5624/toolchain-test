@@ -33,13 +33,13 @@ mkdir -p $M_SOURCE
 cd $M_SOURCE
 
 # get binutils
-wget -c -O binutils-$VER_BINUTILS.tar.bz2 http://ftp.gnu.org/gnu/binutils/binutils-2.40.tar.bz2
+wget -c -O binutils-2.40.tar.bz2 http://ftp.gnu.org/gnu/binutils/binutils-2.40.tar.bz2
 tar xjf binutils-2.40.tar.bz2
 
 # get gcc
 wget -c -O gcc-13-20230422.tar.xz https://mirrorservice.org/sites/sourceware.org/pub/gcc/snapshots/$VER_GCC/gcc-13-20230422.tar.xz
 # tar xJf gcc-$VER_GCC.tar.xz
-xz -c -d gcc-$VER_GCC.tar.xz | tar xf -
+xz -c -d gcc-13-20230422.tar.xz | tar xf -
 
 # get mingw-w64
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
