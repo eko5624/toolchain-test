@@ -110,7 +110,6 @@ patch -p2 -i vmov-alignment.patch
   --disable-nls \
   --disable-shared \
   --disable-win32-registry \
-  --with-arch=$MACHINE_TYPE \
   --with-tune=generic \
   --enable-threads=posix \
   --without-included-gettext \
