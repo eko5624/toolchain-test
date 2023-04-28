@@ -24,15 +24,48 @@ jobs:
           git config --global --add safe.directory $PWD
           
       - uses: actions/checkout@main
-      - name: build
+      - name: Loading gcc cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/cross
+          key: gcc-${{ github.run_id }}
+          restore-keys: |
+            gcc-
+            
+      - name: Loading rust toolchain cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/rustup_location
+          key: rust_toolchain-${{ github.run_id }}
+          restore-keys: |
+            rust_toolchain-
+            
+      - name: Building toolchain
         run: |
-          chmod +x ./*.sh
-          ./toolchain.sh
+          PWD=$(pwd)
+          if [[ ! "$(ls -A $PWD/cross/bin)" ]]; then
+            chmod +x ./*.sh
+            ./toolchain.sh
+          fi  
+
+      - name: Saving gcc cache
+        uses: actions/cache/save@main
+        if: always()
+        with:
+          path: ${{ github.workspace }}/cross
+          key: gcc-${{ github.run_id }}
+          
+      - name: Saving rust toolchain cache
+        uses: actions/cache/save@main
+        if: always()
+        with:
+          path: ${{ github.workspace }}/rustup_location
+          key: rust_toolchain-${{ github.run_id }}
 
       - name: package
         run: |
-          7z a m64-cross.7z cross/*
-          7z a m64-RUSTUP_LOCATION.7z RUSTUP_LOCATION/*
+          7z a gcc-toolchain-12-20230421.7z cross/*
+          7z a rustup-toolchain.7z rustup_location/*
 
       - name: Get current time
         run: |
@@ -42,8 +75,10 @@ jobs:
         continue-on-error: true
         uses: softprops/action-gh-release@master
         with:
-          tag_name: ${{ env.short_time }}
+          tag_name: toolchain
           name: ${{ env.short_time }}
-          files: m64*.7z
+          files: |
+            gcc-toolchain-12-20230421.7z
+            rustup-toolchain.7z
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
