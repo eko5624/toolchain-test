@@ -93,6 +93,34 @@ cd $M_CROSS
 ln -s $MINGW_TRIPLE mingw
 cd $M_SOURCE
 
+echo "building gcc"
+echo "======================="
+
+cd gcc-12-20230218
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54412
+curl -OL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
+patch -p2 -i vmov-alignment.patch
+./configure \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_CROSS \
+  --libdir=$M_CROSS/lib \
+  --with-sysroot=$M_CROSS \
+  --disable-multilib \
+  --enable-languages=c,c++ \
+  --disable-nls \
+  --disable-shared \
+  --disable-win32-registry \
+  --with-arch=$MACHINE_TYPE \
+  --with-tune=generic \
+  --enable-threads=posix \
+  --without-included-gettext \
+  --enable-lto \
+  --enable-checking=release \
+  --disable-sjlj-exceptions
+make -j$MJOBS all-gcc || echo "(-) Build Error!"
+make install-strip-gcc
+cd $M_SOURCE
+
 echo "building mingw-w64-crt"
 echo "======================="
 
@@ -128,34 +156,6 @@ cd mingw-w64/mingw-w64-tools/widl
 ./configure --host=$MINGW_TRIPLE --prefix=$M_CROSS
 make -j$MJOBS || echo "(-) Build Error!"
 make install-strip
-cd $M_SOURCE
-
-echo "building gcc"
-echo "======================="
-
-cd gcc-12-20230218
-# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54412
-curl -OL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
-patch -p2 -i vmov-alignment.patch
-./configure \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_CROSS \
-  --libdir=$M_CROSS/lib \
-  --with-sysroot=$M_CROSS \
-  --disable-multilib \
-  --enable-languages=c,c++ \
-  --disable-nls \
-  --disable-shared \
-  --disable-win32-registry \
-  --with-arch=$MACHINE_TYPE \
-  --with-tune=generic \
-  --enable-threads=posix \
-  --without-included-gettext \
-  --enable-lto \
-  --enable-checking=release \
-  --disable-sjlj-exceptions
-make -j$MJOBS all-gcc || echo "(-) Build Error!"
-make install-strip-gcc
 cd $M_SOURCE
 
 echo "building rustup"
