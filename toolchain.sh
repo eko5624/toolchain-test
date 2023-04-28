@@ -125,6 +125,7 @@ echo "building mingw-w64-crt"
 echo "======================="
 
 cd mingw-w64/mingw-w64-crt
+autoreconf -ivf
 ./configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE $MINGW_LIB \
