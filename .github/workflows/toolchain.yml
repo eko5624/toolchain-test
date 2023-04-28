@@ -64,7 +64,7 @@ jobs:
 
       - name: package
         run: |
-          7z a gcc-toolchain-12-20230421.7z cross/*
+          7z a -slp gcc-toolchain-12-20230421.7z cross/*
           7z a rustup-toolchain.7z rustup_location/*
 
       - name: Get current time
