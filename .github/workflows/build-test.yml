@@ -24,16 +24,27 @@ jobs:
           git config --global --add safe.directory $PWD
           
       - uses: actions/checkout@main
-      - name: build
+      - name: Loading gcc cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/cross
+          key: gcc-${{ github.run_id }}
+          restore-keys: |
+            gcc-
+            
+      - name: Loading rust toolchain cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/rustup_location
+          key: rust_toolchain-${{ github.run_id }}
+          restore-keys: |
+            rust_toolchain-
+            
+      - name: Building deps
         run: |
-          chmod +x ./*.sh
-          ./do_build_all.sh
-
-      - name: package
-        run: |
-          7z a m64-cross.7z cross/*
-          7z a m64-build.7z build/*
-          7z a m64-target.7z target/*
+          chmod +x ./build.sh
+          ./build.sh
+          7z a zlib.7z opt/*
 
       - name: Get current time
         run: |
@@ -43,8 +54,8 @@ jobs:
         continue-on-error: true
         uses: softprops/action-gh-release@master
         with:
-          tag_name: ${{ env.short_time }}
-          name: ${{ env.short_time }}
-          files: m64*.7z
+          tag_name: dev
+          name: dev
+          files: zlib.7z
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
