@@ -149,15 +149,6 @@ make -j$MJOBS || echo "(-) Build Error!"
 make install-strip
 cd $M_SOURCE
 
-echo "building widl"
-echo "======================="
-
-cd mingw-w64/mingw-w64-tools/widl
-./configure --host=$MINGW_TRIPLE --prefix=$M_CROSS
-make -j$MJOBS || echo "(-) Build Error!"
-make install-strip
-cd $M_SOURCE
-
 echo "building rustup"
 echo "======================="
 curl -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --target x86_64-pc-windows-gnu --no-modify-path --profile minimal
