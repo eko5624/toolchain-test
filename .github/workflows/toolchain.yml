@@ -32,7 +32,7 @@ jobs:
       - name: package
         run: |
           7z a m64-cross.7z cross/*
-          7z a m64-build.7z RUSTUP_LOCATION/*
+          7z a m64-RUSTUP_LOCATION.7z RUSTUP_LOCATION/*
 
       - name: Get current time
         run: |
