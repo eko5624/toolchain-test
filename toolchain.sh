@@ -15,7 +15,7 @@ export M_ROOT=$(pwd)
 export M_SOURCE=$M_ROOT/source
 export M_BUILD=$M_ROOT/build
 export M_CROSS=$M_ROOT/cross
-export RUSTUP_LOCATION=$M_ROOT/RUSTUP_LOCATION
+export RUSTUP_LOCATION=$M_ROOT/rustup_location
 
 export PATH="$M_CROSS/bin:$RUSTUP_LOCATION/.cargo/bin:$PATH"
 export PKG_CONFIG="pkgconf --static"
