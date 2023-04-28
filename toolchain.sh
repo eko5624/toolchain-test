@@ -35,29 +35,21 @@ wget -c -O binutils-2.40.tar.bz2 http://ftp.gnu.org/gnu/binutils/binutils-2.40.t
 tar xjf binutils-2.40.tar.bz2
 
 # get gcc
-wget -c -O gcc-13-20230422.tar.xz https://mirrorservice.org/sites/sourceware.org/pub/gcc/snapshots/13-20230422/gcc-13-20230422.tar.xz
+wget -c -O gcc-12-20230218.tar.xz https://mirrorservice.org/sites/sourceware.org/pub/gcc/snapshots/12-20230218/gcc-12-20230218.tar.xz
 # tar xJf gcc-$VER_GCC.tar.xz
-xz -c -d gcc-13-20230422.tar.xz | tar xf -
+xz -c -d gcc-12-20230218.tar.xz | tar xf -
 
 # get mingw-w64
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
 # <2> build
-echo "building mingw-w64-headers"
+echo "building gendef"
 echo "======================="
 
-cd mingw-w64/mingw-w64-headers 
-./configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE \
-  --enable-sdk=all \
-  --enable-idl \
-  --with-default-msvcrt=msvcrt
+cd mingw-w64/mingw-w64-tools/gendef
+./configure --prefix=$M_CROSS
 make -j$MJOBS || echo "(-) Build Error!"
-make install install-strip
-
-cd $M_CROSS 
-ln -s $MINGW_TRIPLE mingw
+make install-strip
 cd $M_SOURCE
 
 echo "building binutils"
@@ -84,10 +76,27 @@ ln -s $(which pkg-config) bin/$MINGW_TRIPLE-pkg-config
 ln -s $(which pkg-config) bin/$MINGW_TRIPLE-pkgconf
 cd $M_SOURCE
 
+echo "building mingw-w64-headers"
+echo "======================="
+
+cd mingw-w64/mingw-w64-headers 
+./configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_CROSS/$MINGW_TRIPLE \
+  --enable-sdk=all \
+  --enable-idl \
+  --with-default-msvcrt=msvcrt
+make -j$MJOBS || echo "(-) Build Error!"
+make install install-strip
+
+cd $M_CROSS 
+ln -s $MINGW_TRIPLE mingw
+cd $M_SOURCE
+
 echo "building gcc"
 echo "======================="
 
-cd gcc-13-20230422
+cd gcc-12-20230218
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54412
 curl -OL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
 patch -p2 -i vmov-alignment.patch
@@ -136,15 +145,6 @@ cd mingw-w64/mingw-w64-libraries/winpthreads
   --prefix=$M_CROSS \
   --disable-shared \
   --enable-static
-make -j$MJOBS || echo "(-) Build Error!"
-make install-strip
-cd $M_SOURCE
-
-echo "building gendef"
-echo "======================="
-
-cd mingw-w64/mingw-w64-tools/gendef
-./configure --prefix=$M_CROSS
 make -j$MJOBS || echo "(-) Build Error!"
 make install-strip
 cd $M_SOURCE
