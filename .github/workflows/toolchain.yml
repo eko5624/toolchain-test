@@ -76,7 +76,7 @@ jobs:
         uses: softprops/action-gh-release@master
         with:
           tag_name: toolchain
-          name: ${{ env.short_time }}
+          name: toolchain
           files: |
             gcc-toolchain-12-20230421.7z
             rustup-toolchain.7z
