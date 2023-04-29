@@ -10,7 +10,7 @@ set(CMAKE_RANLIB ${triple}-gcc-ranlib)
 set(CMAKE_AR ${triple}-gcc-ar)
 set(CMAKE_ASM_COMPILER ${triple}-gcc-as)
 
-set(CMAKE_FIND_ROOT_PATH $TOP_DIR/opt)
+set(CMAKE_FIND_ROOT_PATH $M_CROSS/bin)
 
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
