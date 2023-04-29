@@ -34,7 +34,7 @@ CHOST=$MINGW_TRIPLE \
 ./configure \
   --prefix=$TOP_DIR/opt \
   --static
-make -j$MJOBS -f win32/Makefile.gcc || echo "(-) Build Error!"
+make -j$MJOBS
 make install
 
 cd ..
