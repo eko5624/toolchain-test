@@ -22,8 +22,6 @@ export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
 
 export MINGW_TRIPLE
 
-set -x
-
 cd $TOP_DIR
 git clone https://github.com/madler/zlib.git --branch master --depth 1
 cd zlib
