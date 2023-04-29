@@ -32,11 +32,10 @@ patch -p1 -i zlib-1-win32-static.patch
 
 CHOST=$MINGW_TRIPLE \
 ./configure \
-  --host=$MINGW_TRIPLE \
   --prefix=$TOP_DIR/opt \
   --static
 make -j$MJOBS -f win32/Makefile.gcc || echo "(-) Build Error!"
-make install install-strip
+make install
 
 cd ..
 
