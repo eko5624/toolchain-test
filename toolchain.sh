@@ -126,7 +126,7 @@ cd mingw-w64/mingw-w64-crt
 autoreconf -ivf
 ./configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE $MINGW_LIB \
+  --prefix=$M_CROSS/$MINGW_TRIPLE \
   --with-sysroot=$M_CROSS \
   --with-default-msvcrt=msvcrt-os \
   --enable-lib64 \
@@ -141,7 +141,7 @@ echo "======================="
 cd mingw-w64/mingw-w64-libraries/winpthreads
 ./configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS \
+  --prefix=$M_CROSS/$MINGW_TRIPLE \
   --disable-shared \
   --enable-static
 make -j$MJOBS || echo "(-) Build Error!"
