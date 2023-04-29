@@ -22,6 +22,17 @@ export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
 
 export MINGW_TRIPLE
 
+export CC=$M_CROSS/bin/$MINGW_TRIPLE-gcc
+export CXX=$M_CROSS/bin/$MINGW_TRIPLE-g++
+export AR=$M_CROSS/bin/$MINGW_TRIPLE-ar
+export RANLIB=$M_CROSS/bin/$MINGW_TRIPLE-ranlib
+export AS=$M_CROSS/bin/$MINGW_TRIPLE-as
+export LD=$M_CROSS/bin/$MINGW_TRIPLE-ld
+export STRIP=$M_CROSS/bin/$MINGW_TRIPLE-strip
+export NM=$M_CROSS/bin/$MINGW_TRIPLE-nm
+export DLLTOOL=$M_CROSS/bin/$MINGW_TRIPLE-dlltool
+export WINDRES=$M_CROSS/bin/$MINGW_TRIPLE-windres
+
 cd $TOP_DIR
 git clone https://github.com/madler/zlib.git --branch master --depth 1
 cd zlib
