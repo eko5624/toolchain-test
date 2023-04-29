@@ -87,9 +87,6 @@ cd mingw-w64/mingw-w64-headers
   --with-default-msvcrt=msvcrt
 make -j$MJOBS || echo "(-) Build Error!"
 make install install-strip
-
-cd $M_CROSS 
-ln -s $MINGW_TRIPLE mingw
 cd $M_SOURCE
 
 echo "building gcc"
@@ -154,7 +151,7 @@ curl -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --target
 rustup update
 cargo install cargo-c --profile=release-strip --features=vendored-openssl
 
-cat <<EOF > $CARGO_HOME/config
+cat <<EOF >$CARGO_HOME/config
 [net]
 git-fetch-with-cli = true
 
