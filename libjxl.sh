@@ -21,6 +21,11 @@ export RUSTUP_HOME="$RUSTUP_LOCATION/.rustup"
 export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
 
 cd $TOP_DIR
+curl -OL https://github.com/${{ github.repository }}/releases/download/dev/libpng.7z
+curl -OL https://github.com/${{ github.repository }}/releases/download/dev/libjpeg.7z
+curl -OL https://github.com/${{ github.repository }}/releases/download/dev/brotli.7z
+curl -OL https://github.com/${{ github.repository }}/releases/download/dev/highway.7z
+7z x *.7z
 git clone https://github.com/libjxl/libjxl.git
 cd libjxl
 rm -rf build && mkdir build && cd build
