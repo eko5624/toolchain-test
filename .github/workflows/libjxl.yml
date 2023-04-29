@@ -1,0 +1,394 @@
+name: libjxl
+defaults:
+  run:
+    shell: bash
+on:
+  workflow_dispatch:
+  
+jobs:
+  brotli:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux/archlinux:base-devel
+    steps:    
+      - name: Install Dependencies
+        run: |
+          sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+          sudo pacman -Syu --noconfirm
+          sudo pacman -S --noconfirm --needed git gyp mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
+          pip3 install -U setuptools rst2pdf mako jsonschema meson
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global pull.rebase true
+          git config --global rebase.autoStash true
+          git config --global fetch.prune true
+          git config --global --add safe.directory $PWD
+          
+      - uses: actions/checkout@main
+      - name: Loading gcc cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/cross
+          key: gcc-${{ github.run_id }}
+          restore-keys: |
+            gcc-
+            
+      - name: Loading rust toolchain cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/rustup_location
+          key: rust_toolchain-${{ github.run_id }}
+          restore-keys: |
+            rust_toolchain-
+            
+      - name: Building
+        run: |
+          chmod +x ./brotli.sh
+          ./brotli.sh
+          7z a brotli.7z opt/*
+
+      - name: Get current time
+        run: |
+          echo "short_time=$(date "+%Y%m%d")" >> $GITHUB_ENV
+
+      - name: Release
+        continue-on-error: true
+        uses: softprops/action-gh-release@master
+        with:
+          tag_name: dev
+          name: dev
+          files: brotli.7z
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+  highway:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux/archlinux:base-devel
+    steps:    
+      - name: Install Dependencies
+        run: |
+          sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+          sudo pacman -Syu --noconfirm
+          sudo pacman -S --noconfirm --needed git gyp mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
+          pip3 install -U setuptools rst2pdf mako jsonschema meson
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global pull.rebase true
+          git config --global rebase.autoStash true
+          git config --global fetch.prune true
+          git config --global --add safe.directory $PWD
+          
+      - uses: actions/checkout@main
+      - name: Loading gcc cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/cross
+          key: gcc-${{ github.run_id }}
+          restore-keys: |
+            gcc-
+            
+      - name: Loading rust toolchain cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/rustup_location
+          key: rust_toolchain-${{ github.run_id }}
+          restore-keys: |
+            rust_toolchain-
+            
+      - name: Building
+        run: |
+          chmod +x ./highway.sh
+          ./highway.sh
+          7z a highway.7z opt/*
+
+      - name: Get current time
+        run: |
+          echo "short_time=$(date "+%Y%m%d")" >> $GITHUB_ENV
+
+      - name: Release
+        continue-on-error: true
+        uses: softprops/action-gh-release@master
+        with:
+          tag_name: dev
+          name: dev
+          files: highway.7z
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+  lcms2:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux/archlinux:base-devel
+    steps:    
+      - name: Install Dependencies
+        run: |
+          sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+          sudo pacman -Syu --noconfirm
+          sudo pacman -S --noconfirm --needed git gyp mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
+          pip3 install -U setuptools rst2pdf mako jsonschema meson
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global pull.rebase true
+          git config --global rebase.autoStash true
+          git config --global fetch.prune true
+          git config --global --add safe.directory $PWD
+          
+      - uses: actions/checkout@main
+      - name: Loading gcc cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/cross
+          key: gcc-${{ github.run_id }}
+          restore-keys: |
+            gcc-
+            
+      - name: Loading rust toolchain cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/rustup_location
+          key: rust_toolchain-${{ github.run_id }}
+          restore-keys: |
+            rust_toolchain-
+            
+      - name: Building
+        run: |
+          chmod +x ./lcms2.sh
+          ./lcms2.sh
+          7z a lcms2.7z opt/*
+
+      - name: Get current time
+        run: |
+          echo "short_time=$(date "+%Y%m%d")" >> $GITHUB_ENV
+
+      - name: Release
+        continue-on-error: true
+        uses: softprops/action-gh-release@master
+        with:
+          tag_name: dev
+          name: dev
+          files: lcms2.7z
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+  libjpeg:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux/archlinux:base-devel
+    steps:    
+      - name: Install Dependencies
+        run: |
+          sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+          sudo pacman -Syu --noconfirm
+          sudo pacman -S --noconfirm --needed git gyp mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
+          pip3 install -U setuptools rst2pdf mako jsonschema meson
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global pull.rebase true
+          git config --global rebase.autoStash true
+          git config --global fetch.prune true
+          git config --global --add safe.directory $PWD
+          
+      - uses: actions/checkout@main
+      - name: Loading gcc cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/cross
+          key: gcc-${{ github.run_id }}
+          restore-keys: |
+            gcc-
+            
+      - name: Loading rust toolchain cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/rustup_location
+          key: rust_toolchain-${{ github.run_id }}
+          restore-keys: |
+            rust_toolchain-
+            
+      - name: Building
+        run: |
+          chmod +x ./libjpeg.sh
+          ./libjpeg.sh
+          7z a libjpeg.7z opt/*
+
+      - name: Get current time
+        run: |
+          echo "short_time=$(date "+%Y%m%d")" >> $GITHUB_ENV
+
+      - name: Release
+        continue-on-error: true
+        uses: softprops/action-gh-release@master
+        with:
+          tag_name: dev
+          name: dev
+          files: libjpeg.7z
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+  libjxl:
+    needs: [brotli, highway, lcms2, libjpeg, libpng]
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux/archlinux:base-devel
+    steps:    
+      - name: Install Dependencies
+        run: |
+          sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+          sudo pacman -Syu --noconfirm
+          sudo pacman -S --noconfirm --needed git gyp mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
+          pip3 install -U setuptools rst2pdf mako jsonschema meson
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global pull.rebase true
+          git config --global rebase.autoStash true
+          git config --global fetch.prune true
+          git config --global --add safe.directory $PWD
+          
+      - uses: actions/checkout@main
+      - name: Loading gcc cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/cross
+          key: gcc-${{ github.run_id }}
+          restore-keys: |
+            gcc-
+            
+      - name: Loading rust toolchain cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/rustup_location
+          key: rust_toolchain-${{ github.run_id }}
+          restore-keys: |
+            rust_toolchain-
+            
+      - name: Building
+        run: |
+          chmod +x ./libjxl.sh
+          ./libjxl.sh
+          7z a libjxl.7z opt/*
+
+      - name: Get current time
+        run: |
+          echo "short_time=$(date "+%Y%m%d")" >> $GITHUB_ENV
+
+      - name: Release
+        continue-on-error: true
+        uses: softprops/action-gh-release@master
+        with:
+          tag_name: dev
+          name: dev
+          files: libjxl.7z
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+  libpng:
+    needs: [zlib]
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux/archlinux:base-devel
+    steps:    
+      - name: Install Dependencies
+        run: |
+          sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+          sudo pacman -Syu --noconfirm
+          sudo pacman -S --noconfirm --needed git gyp mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
+          pip3 install -U setuptools rst2pdf mako jsonschema meson
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global pull.rebase true
+          git config --global rebase.autoStash true
+          git config --global fetch.prune true
+          git config --global --add safe.directory $PWD
+          
+      - uses: actions/checkout@main
+      - name: Loading gcc cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/cross
+          key: gcc-${{ github.run_id }}
+          restore-keys: |
+            gcc-
+            
+      - name: Loading rust toolchain cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/rustup_location
+          key: rust_toolchain-${{ github.run_id }}
+          restore-keys: |
+            rust_toolchain-
+            
+      - name: Building
+        run: |
+          chmod +x ./libpng.sh
+          ./libpng.sh
+          7z a libpng.7z opt/*
+
+      - name: Get current time
+        run: |
+          echo "short_time=$(date "+%Y%m%d")" >> $GITHUB_ENV
+
+      - name: Release
+        continue-on-error: true
+        uses: softprops/action-gh-release@master
+        with:
+          tag_name: dev
+          name: dev
+          files: libpng.7z
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+  zlib:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux/archlinux:base-devel
+    steps:    
+      - name: Install Dependencies
+        run: |
+          sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+          sudo pacman -Syu --noconfirm
+          sudo pacman -S --noconfirm --needed git gyp mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
+          pip3 install -U setuptools rst2pdf mako jsonschema meson
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global pull.rebase true
+          git config --global rebase.autoStash true
+          git config --global fetch.prune true
+          git config --global --add safe.directory $PWD
+          
+      - uses: actions/checkout@main
+      - name: Loading gcc cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/cross
+          key: gcc-${{ github.run_id }}
+          restore-keys: |
+            gcc-
+            
+      - name: Loading rust toolchain cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/rustup_location
+          key: rust_toolchain-${{ github.run_id }}
+          restore-keys: |
+            rust_toolchain-
+            
+      - name: Building
+        run: |
+          chmod +x ./zlib.sh
+          ./zlib.sh
+          7z a zlib.7z opt/*
+
+      - name: Get current time
+        run: |
+          echo "short_time=$(date "+%Y%m%d")" >> $GITHUB_ENV
+
+      - name: Release
+        continue-on-error: true
+        uses: softprops/action-gh-release@master
+        with:
+          tag_name: dev
+          name: dev
+          files: zlib.7z
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
