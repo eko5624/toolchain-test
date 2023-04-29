@@ -64,8 +64,7 @@ jobs:
 
       - name: package
         run: |
-          7z a -slp gcc-toolchain-12-20230421.7z cross/*
-          7z a rustup-toolchain.7z rustup_location/*
+          7z a gcc-toolchain-12-20230421.7z cross/*
 
       - name: Get current time
         run: |
@@ -79,6 +78,5 @@ jobs:
           name: toolchain
           files: |
             gcc-toolchain-12-20230421.7z
-            rustup-toolchain.7z
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
