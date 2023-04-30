@@ -28,6 +28,7 @@ export STRIP=$M_CROSS/bin/$MINGW_TRIPLE-strip
 export NM=$M_CROSS/bin/$MINGW_TRIPLE-nm
 export DLLTOOL=$M_CROSS/bin/$MINGW_TRIPLE-dlltool
 export WINDRES=$M_CROSS/bin/$MINGW_TRIPLE-windres
+sudo ln -s $M_CROSS/bin /cross/bin
 
 cd $TOP_DIR
 git clone https://github.com/libjpeg-turbo/libjpeg-turbo.git
