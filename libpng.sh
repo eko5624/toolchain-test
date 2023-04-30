@@ -21,7 +21,7 @@ export RUSTUP_HOME="$RUSTUP_LOCATION/.rustup"
 export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
 
 cd $TOP_DIR
-curl -OL https://github.com/${{ github.repository }}/releases/download/dev/zlib.7z
+curl -OL https://github.com/eko5624/toolchain-test/releases/download/dev/zlib.7z
 7z x *.7z
 git clone https://github.com/glennrp/libpng.git
 cd libpng
