@@ -12,7 +12,7 @@ set(CMAKE_RANLIB ${CROSS}/bin/${triple}-ranlib)
 set(CMAKE_AR ${CROSS}/bin/${triple}-ar)
 set(CMAKE_ASM_COMPILER ${CROSS}/bin/${triple}-as)
 
-set(CMAKE_FIND_ROOT_PATH ${TOP}/opt)
+set(CMAKE_FIND_ROOT_PATH ${CROSS}/${triple})
 
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
