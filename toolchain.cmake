@@ -8,12 +8,10 @@ set(TOP $ENV{TOP_DIR})
 set(CMAKE_C_COMPILER ${CROSS}/bin/${triple}-gcc)
 set(CMAKE_CXX_COMPILER ${CROSS}/bin/${triple}-g++)
 set(CMAKE_RC_COMPILER ${CROSS}/bin/${triple}-windres)
-set(CMAKE_RANLIB ${CROSS}/bin/${triple}-ranlib)
-set(CMAKE_AR ${CROSS}/bin/${triple}-ar)
 set(CMAKE_ASM_COMPILER ${CROSS}/bin/${triple}-as)
 
 set(CMAKE_FIND_ROOT_PATH ${CROSS}/${triple})
-
+set(CMAKE_INSTALL_PREFIX ${TOP}/opt)
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
