@@ -38,7 +38,9 @@ cmake .. -G Ninja \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
   -DENABLE_SHARED=OFF \
   -DENABLE_STATIC=ON \
-  -DCMAKE_BUILD_TYPE=Release
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER=$M_CROSS/bin/$MINGW_TRIPLE-gcc \
+  -DCMAKE_CXX_COMPILER=$M_CROSS/bin/$MINGW_TRIPLE-g++
 ninja -j$MJOBS
 ninja install
 
