@@ -1,4 +1,4 @@
-name: libjxl
+name: libjxl-test
 defaults:
   run:
     shell: bash
