@@ -31,9 +31,9 @@ export NM=$M_CROSS/bin/$MINGW_TRIPLE-gcc-nm
 export DLLTOOL=$M_CROSS/bin/$MINGW_TRIPLE-dlltool
 export WINDRES=$M_CROSS/bin/$MINGW_TRIPLE-windres
 
-CFLAGS="-I$TOP_DIR/opt/include"
-CXXFLAGS="-I$TOP_DIR/opt/include"
-LDFLAGS="-L$TOP_DIR/opt/lib"
+export CFLAGS="-I$TOP_DIR/opt/include"
+export CXXFLAGS="-I$TOP_DIR/opt/include"
+export LDFLAGS="-L$TOP_DIR/opt/lib"
 
 echo "building brotli"
 echo "======================="
