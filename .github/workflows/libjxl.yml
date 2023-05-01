@@ -191,25 +191,8 @@ jobs:
           git config --global --add safe.directory $PWD
           
       - uses: actions/checkout@main
-      - name: Loading gcc cache
-        uses: actions/cache/restore@main
-        with:
-          path: ${{ github.workspace }}/cross
-          key: gcc-${{ github.run_id }}
-          restore-keys: |
-            gcc-
-            
-      - name: Loading rust toolchain cache
-        uses: actions/cache/restore@main
-        with:
-          path: ${{ github.workspace }}/rustup_location
-          key: rust_toolchain-${{ github.run_id }}
-          restore-keys: |
-            rust_toolchain-
       - name: Building
         run: |
-          rm -rf cross/mingw
-          ln -s cross/x86_64-w64-mingw32 mingw
           chmod +x ./libjpeg.sh
           ./libjpeg.sh
           7z a libjpeg.7z opt/*
