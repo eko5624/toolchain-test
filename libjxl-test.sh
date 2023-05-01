@@ -20,20 +20,7 @@ export PKG_CONFIG_LIBDIR="$M_CROSS/mingw/lib/pkgconfig"
 export RUSTUP_HOME="$RUSTUP_LOCATION/.rustup"
 export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
 
-export CC=$M_CROSS/bin/$MINGW_TRIPLE-gcc
-export CXX=$M_CROSS/bin/$MINGW_TRIPLE-g++
-export AR=$M_CROSS/bin/$MINGW_TRIPLE-gcc-ar
-export RANLIB=$M_CROSS/bin/$MINGW_TRIPLE-gcc-ranlib
-export AS=$M_CROSS/bin/$MINGW_TRIPLE-as
-export LD=$M_CROSS/bin/$MINGW_TRIPLE-ld
-export STRIP=$M_CROSS/bin/$MINGW_TRIPLE-strip
-export NM=$M_CROSS/bin/$MINGW_TRIPLE-gcc-nm
-export DLLTOOL=$M_CROSS/bin/$MINGW_TRIPLE-dlltool
-export WINDRES=$M_CROSS/bin/$MINGW_TRIPLE-windres
 
-export CFLAGS="-I$M_CROSS/mingw/include"
-export CXXFLAGS="-I$M_CROSS/mingw/include"
-export LDFLAGS="-L$M_CROSS/mingw/lib"
 
 echo "building brotli"
 echo "======================="
