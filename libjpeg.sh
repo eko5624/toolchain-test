@@ -2,9 +2,9 @@
 
 # basic param and command line option to change it
 
-export TOP_DIR=$(pwd)
-export M_CROSS=$TOP_DIR/cross
-export RUSTUP_LOCATION=$TOP_DIR/rustup_location
+TOP_DIR=$(pwd)
+M_CROSS=$TOP_DIR/cross
+RUSTUP_LOCATION=$TOP_DIR/rustup_location
 
 # Speed up the process
 # Env Var NUMJOBS overrides automatic detection
