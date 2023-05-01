@@ -18,6 +18,10 @@ export PKG_CONFIG="pkgconf --static"
 export PKG_CONFIG_LIBDIR="$M_CROSS/opt/lib/pkgconfig"
 
 cd $TOP_DIR
+curl -OL https://github.com/eko5624/toolchain-test/releases/download/toolchain/gcc-toolchain-12-20230421.7z
+7z x gcc-toolchain-12-20230421.7z
+rm -rf cross/mingw
+ln -s cross/x86_64-w64-mingw32 mingw
 git clone https://github.com/libjpeg-turbo/libjpeg-turbo.git
 cd libjpeg-turbo
 rm -rf build && mkdir build && cd build
