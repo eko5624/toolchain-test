@@ -21,6 +21,9 @@ export RUSTUP_HOME="$RUSTUP_LOCATION/.rustup"
 export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
 
 cd $TOP_DIR
+curl -OL https://github.com/eko5624/mpv-toolchain/releases/download/2023-04-29/gcc.7z
+7z x gcc.7z
+mv mpv-winbuild-cmake/build64/install cross
 curl -OL https://github.com/${{ github.repository }}/releases/download/dev/libpng.7z
 curl -OL https://github.com/${{ github.repository }}/releases/download/dev/libjpeg.7z
 curl -OL https://github.com/${{ github.repository }}/releases/download/dev/brotli.7z
@@ -30,7 +33,10 @@ git clone https://github.com/libjxl/libjxl.git
 cd libjxl
 rm -rf build && mkdir build && cd build
 cmake .. -G Ninja \
+  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
+  -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
   -DBUILD_SHARED_LIBS=OFF \
+  -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
   -DJPEGXL_STATIC=ON \
   -DBUILD_TESTING=OFF \
@@ -46,7 +52,9 @@ cmake .. -G Ninja \
   -DJPEGXL_ENABLE_PLUGINS=OFF \
   -DJPEGXL_ENABLE_DEVTOOLS=OFF \
   -DJPEGXL_ENABLE_BENCHMARK=OFF \
-  -DJPEGXL_ENABLE_SJPEG=OFF
+  -DJPEGXL_ENABLE_SJPEG=OFF \
+  -DCMAKE_CXX_FLAGS='${CMAKE_CXX_FLAGS} -Wa,-muse-unaligned-vector-move' \
+  -DCMAKE_C_FLAGS='${CMAKE_C_FLAGS} -Wa,-muse-unaligned-vector-move'
 ninja -j$MJOBS
 ninja install
 
