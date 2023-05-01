@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # basic param and command line option to change it
+set -e
 
 export TOP_DIR=$(pwd)
 export M_CROSS=$TOP_DIR/cross
