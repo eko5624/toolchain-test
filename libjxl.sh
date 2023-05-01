@@ -25,7 +25,7 @@ curl -OL https://github.com/eko5624/toolchain-test/releases/download/dev/libpng.
 curl -OL https://github.com/eko5624/toolchain-test/releases/download/dev/libjpeg.7z
 curl -OL https://github.com/eko5624/toolchain-test/releases/download/dev/brotli.7z
 curl -OL https://github.com/eko5624/toolchain-test/releases/download/dev/highway.7z
-7z x *.7z
+for f in *.7z; do 7z x "$f"; done
 git clone https://github.com/libjxl/libjxl.git
 cd libjxl
 rm -rf build && mkdir build && cd build
