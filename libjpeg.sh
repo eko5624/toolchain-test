@@ -17,17 +17,6 @@ export PATH="$M_CROSS/bin:$RUSTUP_LOCATION/.cargo/bin:$PATH"
 export PKG_CONFIG="pkgconf --static"
 export PKG_CONFIG_LIBDIR="$M_CROSS/opt/lib/pkgconfig"
 
-CC=$M_CROSS/bin/$MINGW_TRIPLE-gcc
-CXX=$M_CROSS/bin/$MINGW_TRIPLE-g++
-AR=$M_CROSS/bin/$MINGW_TRIPLE-ar
-RANLIB=$M_CROSS/bin/$MINGW_TRIPLE-ranlib
-AS=$M_CROSS/bin/$MINGW_TRIPLE-as
-LD=$M_CROSS/bin/$MINGW_TRIPLE-ld
-STRIP=$M_CROSS/bin/$MINGW_TRIPLE-strip
-NM=$M_CROSS/bin/$MINGW_TRIPLE-nm
-DLLTOOL=$M_CROSS/bin/$MINGW_TRIPLE-dlltool
-WINDRES=$M_CROSS/bin/$MINGW_TRIPLE-windres
-
 cd $TOP_DIR
 curl -OL https://github.com/eko5624/mpv-toolchain/releases/download/2023-04-29/gcc.7z
 7z x gcc.7z
@@ -40,8 +29,7 @@ cmake .. -G Ninja \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
   -DENABLE_SHARED=OFF \
   -DENABLE_STATIC=ON \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_ENABLE_EXPORTS=ON
+  -DCMAKE_BUILD_TYPE=Release
 ninja -j$MJOBS
 ninja install
 
