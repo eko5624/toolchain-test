@@ -24,6 +24,7 @@ curl -OL https://github.com/eko5624/toolchain-test/releases/download/dev/zlib.7z
 for f in *.7z; do 7z x "$f"; done
 git clone https://github.com/glennrp/libpng.git
 cd libpng
+autoreconf -ivf
 ./configure \
   CFLAGS='-fno-asynchronous-unwind-tables' \
   --host=$MINGW_TRIPLE \
