@@ -89,6 +89,7 @@ echo "======================="
 git clone https://github.com/glennrp/libpng.git
 cd libpng
 CFLAGS+=" -fno-asynchronous-unwind-tables"
+CPPFLAGS+=" -I$M_CROSS/mingw/include"
 autoreconf -ivf
 ./configure \
   --host=$MINGW_TRIPLE \
