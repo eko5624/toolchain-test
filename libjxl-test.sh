@@ -4,7 +4,6 @@
 set -e
 
 TOP_DIR=$(pwd)
-
 M_CROSS=$TOP_DIR/cross
 RUSTUP_LOCATION=$TOP_DIR/rustup_location
 
@@ -89,7 +88,7 @@ echo "building libpng"
 echo "======================="
 git clone https://github.com/glennrp/libpng.git
 cd libpng
-export CFLAGS='$CFLAGS -fno-asynchronous-unwind-tables'
+CFLAGS+=" -fno-asynchronous-unwind-tables"
 autoreconf -ivf
 ./configure \
   --host=$MINGW_TRIPLE \
