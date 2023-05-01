@@ -21,6 +21,9 @@ export RUSTUP_HOME="$RUSTUP_LOCATION/.rustup"
 export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
 
 cd $TOP_DIR
+curl -OL https://github.com/eko5624/mpv-toolchain/releases/download/2023-04-29/gcc.7z
+7z x gcc.7z
+mv mpv-winbuild-cmake/build64/install cross
 git clone https://github.com/google/brotli.git
 cd brotli
 rm -rf build && mkdir build && cd build
