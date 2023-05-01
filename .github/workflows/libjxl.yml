@@ -208,6 +208,8 @@ jobs:
             rust_toolchain-
       - name: Building
         run: |
+          rm -rf cross/mingw
+          ln -s cross/x86_64-w64-mingw32 mingw
           chmod +x ./libjpeg.sh
           ./libjpeg.sh
           7z a libjpeg.7z opt/*
