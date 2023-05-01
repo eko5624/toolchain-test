@@ -32,7 +32,7 @@ export NM=$M_CROSS/bin/$MINGW_TRIPLE-nm
 export DLLTOOL=$M_CROSS/bin/$MINGW_TRIPLE-dlltool
 export WINDRES=$M_CROSS/bin/$MINGW_TRIPLE-windres
 
-export CFLAGS="-I$TOP_DIR/opt/include"
+export CFLAGS="-static-libgcc -static-libstdc++ -I$TOP_DIR/opt/include"
 export CXXFLAGS="-static-libgcc -static-libstdc++ -I$TOP_DIR/opt/include"
 export LDFLAGS="-static-libgcc -static-libstdc++ -L$TOP_DIR/opt/lib"
 
