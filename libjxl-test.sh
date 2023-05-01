@@ -64,7 +64,7 @@ git clone https://github.com/madler/zlib.git
 cd zlib
 curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
 patch -p1 -i zlib-1-win32-static.patch
-
+rm -rf build && mkdir build && cd build
 cmake .. -G Ninja \
   -DCMAKE_INSTALL_PREFIX=$M_CROSS/mingw \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
