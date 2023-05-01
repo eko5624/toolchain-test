@@ -2,17 +2,16 @@
 
 # basic param and command line option to change it
 
-TOP_DIR=$(pwd)
-
-M_CROSS=$TOP_DIR/cross
-RUSTUP_LOCATION=$TOP_DIR/rustup_location
+export TOP_DIR=$(pwd)
+export M_CROSS=$TOP_DIR/cross
+export RUSTUP_LOCATION=$TOP_DIR/rustup_location
 
 # Speed up the process
 # Env Var NUMJOBS overrides automatic detection
 MJOBS=$(grep -c processor /proc/cpuinfo)
 
 
-MINGW_TRIPLE="x86_64-w64-mingw32"
+export MINGW_TRIPLE="x86_64-w64-mingw32"
 
 export PATH="$M_CROSS/bin:$RUSTUP_LOCATION/.cargo/bin:$PATH"
 export PKG_CONFIG="pkgconf --static"
