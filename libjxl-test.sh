@@ -32,7 +32,7 @@ export NM=$M_CROSS/bin/$MINGW_TRIPLE-nm
 export DLLTOOL=$M_CROSS/bin/$MINGW_TRIPLE-dlltool
 export WINDRES=$M_CROSS/bin/$MINGW_TRIPLE-windres
 
-export CFLAGS="-static-libgcc -static-libstdc++ -I$TOP_DIR/opt/include"
+export CFLAGS="-I$TOP_DIR/opt/include"
 export CXXFLAGS="-static-libgcc -static-libstdc++ -I$TOP_DIR/opt/include"
 export LDFLAGS="-static-libgcc -static-libstdc++ -L$TOP_DIR/opt/lib"
 
@@ -89,7 +89,7 @@ echo "building libpng"
 echo "======================="
 git clone https://github.com/glennrp/libpng.git
 cd libpng
-export CFLAGS='-fno-asynchronous-unwind-tables'
+export CFLAGS='$CFLAGS -fno-asynchronous-unwind-tables'
 autoreconf -ivf
 ./configure \
   --host=$MINGW_TRIPLE \
