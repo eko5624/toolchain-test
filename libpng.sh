@@ -21,7 +21,7 @@ git clone https://github.com/glennrp/libpng.git
 cd libpng
 export PATH="$M_CROSS/bin:$RUSTUP_LOCATION/.cargo/bin:$PATH"
 export PKG_CONFIG="pkgconf --static"
-export PKG_CONFIG_LIBDIR="$M_CROSS/opt/lib/pkgconfig"
+export PKG_CONFIG_PATH="$M_CROSS/opt/lib/pkgconfig"
 export RUSTUP_HOME="$RUSTUP_LOCATION/.rustup"
 export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
 export CFLAGS='-fno-asynchronous-unwind-tables'
