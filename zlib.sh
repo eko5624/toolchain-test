@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # basic param and command line option to change it
+set -e
 
 TOP_DIR=$(pwd)
 
