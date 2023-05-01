@@ -68,12 +68,12 @@ rm -rf build && mkdir build && cd build
 cmake .. -G Ninja \
   -DCMAKE_INSTALL_PREFIX=$M_CROSS/mingw \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
-  -DENABLE_SHARED=OFF \
-  -DENABLE_STATIC=ON \
+  -DBUILD_SHARED_LIBS=OFF \
   -DCMAKE_BUILD_TYPE=Release
 ninja -j$MJOBS
 ninja install
 cd $TOP_DIR
+mv cross/mingw/lib/libzlibstatic.a cross/mingw/lib/libz.a
 
 echo "building libpng"
 echo "======================="
