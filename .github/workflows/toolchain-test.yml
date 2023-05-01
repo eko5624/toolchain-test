@@ -47,3 +47,10 @@ jobs:
           mv install cross
           rm -rf cross/mingw
           ln -s cross/x86_64-w64-mingw32 mingw
+          
+      - name: Saving gcc cache
+        uses: actions/cache/save@main
+        if: always()
+        with:
+          path: ${{ github.workspace }}/cross
+          key: gcc-${{ github.run_id }}
