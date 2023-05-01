@@ -21,7 +21,7 @@ export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
 
 cd $TOP_DIR
 curl -OL https://github.com/eko5624/toolchain-test/releases/download/dev/zlib.7z
-7z x *.7z
+7z x zlib.7z
 git clone https://github.com/glennrp/libpng.git
 cd libpng
 ./configure \
