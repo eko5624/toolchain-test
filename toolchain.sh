@@ -87,6 +87,9 @@ cd mingw-w64/mingw-w64-headers
   --with-default-msvcrt=msvcrt
 make -j$MJOBS || echo "(-) Build Error!"
 make install install-strip
+
+cd $M_CROSS
+ln -s $MINGW_TRIPLE mingw
 cd $M_SOURCE
 
 echo "building gcc"
