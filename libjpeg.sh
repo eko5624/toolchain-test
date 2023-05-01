@@ -29,8 +29,9 @@ DLLTOOL=$M_CROSS/bin/$MINGW_TRIPLE-dlltool
 WINDRES=$M_CROSS/bin/$MINGW_TRIPLE-windres
 
 cd $TOP_DIR
-curl -OL https://github.com/eko5624/toolchain-test/releases/download/toolchain/gcc-toolchain-12-20230421.7z
-7z x gcc-toolchain-12-20230421.7z
+curl -OL https://github.com/eko5624/mpv-toolchain/releases/download/2023-04-29/gcc.7z
+7z x gcc.7z
+mv mpv-winbuild-cmake/build64/install cross
 git clone https://github.com/libjpeg-turbo/libjpeg-turbo.git
 cd libjpeg-turbo
 rm -rf build && mkdir build && cd build
