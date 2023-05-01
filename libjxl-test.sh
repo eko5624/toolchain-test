@@ -16,7 +16,7 @@ export MINGW_TRIPLE="x86_64-w64-mingw32"
 
 export PATH="$M_CROSS/bin:$RUSTUP_LOCATION/.cargo/bin:$PATH"
 export PKG_CONFIG="pkgconf --static"
-export PKG_CONFIG_LIBDIR="$TOP_DIR/opt/lib/pkgconfig"
+export PKG_CONFIG_LIBDIR="$M_CROSS/mingw/lib/pkgconfig"
 export RUSTUP_HOME="$RUSTUP_LOCATION/.rustup"
 export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
 
@@ -31,9 +31,9 @@ export NM=$M_CROSS/bin/$MINGW_TRIPLE-gcc-nm
 export DLLTOOL=$M_CROSS/bin/$MINGW_TRIPLE-dlltool
 export WINDRES=$M_CROSS/bin/$MINGW_TRIPLE-windres
 
-export CFLAGS="-I$TOP_DIR/opt/include"
-export CXXFLAGS="-I$TOP_DIR/opt/include"
-export LDFLAGS="-L$TOP_DIR/opt/lib"
+export CFLAGS="-I$M_CROSS/mingw/include"
+export CXXFLAGS="-I$M_CROSS/mingw/include"
+export LDFLAGS="-L$M_CROSS/mingw/lib"
 
 echo "building brotli"
 echo "======================="
@@ -42,7 +42,7 @@ git clone https://github.com/google/brotli.git
 cd brotli
 rm -rf build && mkdir build && cd build
 cmake .. -G Ninja \
-  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
+  -DCMAKE_INSTALL_PREFIX=$M_CROSS/mingw \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
   -DBUILD_SHARED_LIBS=OFF \
   -DCMAKE_BUILD_TYPE=Release \
@@ -57,7 +57,7 @@ git clone https://github.com/google/highway.git
 cd highway
 rm -rf build && mkdir build && cd build
 cmake .. -G Ninja \
-  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
+  -DCMAKE_INSTALL_PREFIX=$M_CROSS/mingw \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
   -DCMAKE_BUILD_TYPE=Release \
   -DBUILD_TESTING=OFF \
@@ -79,7 +79,7 @@ curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/p
 patch -p1 -i zlib-1-win32-static.patch
 
 CHOST=$MINGW_TRIPLE \
-./configure --prefix=$TOP_DIR/opt --static
+./configure --prefix=$M_CROSS/mingw --static
 make -j$MJOBS
 make install
 cd $TOP_DIR
@@ -92,7 +92,7 @@ CFLAGS+=" -fno-asynchronous-unwind-tables"
 autoreconf -ivf
 ./configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$TOP_DIR/opt \
+  --prefix=$M_CROSS/mingw \
   --disable-shared
 make -j$MJOBS
 make install
@@ -106,7 +106,7 @@ git clone https://github.com/libjpeg-turbo/libjpeg-turbo.git
 cd libjpeg-turbo
 rm -rf build && mkdir build && cd build
 cmake .. -G Ninja \
-  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
+  -DCMAKE_INSTALL_PREFIX=$M_CROSS/mingw \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
   -DENABLE_SHARED=OFF \
   -DENABLE_STATIC=ON \
@@ -121,7 +121,7 @@ git clone https://github.com/mm2/Little-CMS.git
 cd Little-CMS
 ./configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$TOP_DIR/opt \
+  --prefix=$M_CROSS/mingw \
   --disable-shared
 make -j$MJOBS
 make install
@@ -133,7 +133,7 @@ git clone https://github.com/libjxl/libjxl.git
 cd libjxl
 rm -rf build && mkdir build && cd build
 cmake .. -G Ninja \
-  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
+  -DCMAKE_INSTALL_PREFIX=$M_CROSS/mingw \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
   -DBUILD_SHARED_LIBS=OFF \
   -DCMAKE_BUILD_TYPE=Release \
