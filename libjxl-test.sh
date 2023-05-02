@@ -115,6 +115,7 @@ echo "======================="
 git clone https://github.com/libjxl/libjxl.git
 cd libjxl
 rm -rf third_party/brotli
+ln -s  $TOP_DIR/brotli $TOP_DIR/libjxl/third_party/brotli
 rm -rf build && mkdir build && cd build
 cmake .. -G Ninja \
   -DCMAKE_INSTALL_PREFIX=$M_CROSS/mingw \
