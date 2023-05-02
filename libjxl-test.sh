@@ -76,6 +76,7 @@ git clone https://github.com/glennrp/libpng.git
 cd libpng
 export LDFLAGS="-L$$M_CROSS/mingw/lib"
 export CPPFLAGS="-I$M_CROSS/mingw/include"
+export PKG_CONFIG_PATH="$M_CROSS/mingw/lib/pkgconfig"
 autoreconf -ivf
 ./configure \
   --host=$MINGW_TRIPLE \
