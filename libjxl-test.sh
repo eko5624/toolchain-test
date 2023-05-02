@@ -80,7 +80,8 @@ cmake .. -G Ninja \
   -DENABLE_SHARED=OFF \
   -DENABLE_STATIC=ON \
   -DCMAKE_BUILD_TYPE=Release \
-  -DZLIB_ROOT=$M_CROSS/mingw
+  -DZLIB_LIBRARY=$M_CROSS/mingw/lib \
+  -DZLIB_INCLUDE_DIR=$M_CROSS/mingw/include
 ninja -j$MJOBS
 ninja install
 ln -s $M_CROSS/mingw/bin/libpng-config $M_CROSS/bin/libpng-config
