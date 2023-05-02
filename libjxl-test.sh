@@ -72,6 +72,7 @@ echo "building libpng"
 echo "======================="
 git clone https://github.com/glennrp/libpng.git
 cd libpng
+export ZLIB_ROOT_DIR="$M_CROSS/mingw"
 export CFLAGS="-fno-asynchronous-unwind-tables"
 rm -rf build && mkdir build && cd build
 cmake .. -G Ninja \
