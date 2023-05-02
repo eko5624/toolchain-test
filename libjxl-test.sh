@@ -72,7 +72,6 @@ echo "building libpng"
 echo "======================="
 git clone https://github.com/glennrp/libpng.git
 cd libpng
-export ZLIB_ROOT_DIR="$M_CROSS/mingw"
 export CFLAGS="-fno-asynchronous-unwind-tables"
 rm -rf build && mkdir build && cd build
 cmake .. -G Ninja \
@@ -80,7 +79,8 @@ cmake .. -G Ninja \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
   -DENABLE_SHARED=OFF \
   -DENABLE_STATIC=ON \
-  -DCMAKE_BUILD_TYPE=Release
+  -DCMAKE_BUILD_TYPE=Release \
+  -DZLIB_ROOT=$M_CROSS/mingw
 ninja -j$MJOBS
 ninja install
 ln -s $M_CROSS/mingw/bin/libpng-config $M_CROSS/bin/libpng-config
