@@ -64,16 +64,12 @@ git clone https://github.com/madler/zlib.git
 cd zlib
 curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
 patch -p1 -i zlib-1-win32-static.patch
-rm -rf build && mkdir build && cd build
-cmake .. -G Ninja \
-  -DCMAKE_INSTALL_PREFIX=$M_CROSS/mingw \
-  -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
-  -DBUILD_SHARED_LIBS=OFF \
-  -DCMAKE_BUILD_TYPE=Release
-ninja -j$MJOBS
-ninja install
-cd $TOP_DIR
-mv cross/mingw/lib/libzlibstatic.a cross/mingw/lib/libz.a
+export BINARY_PATH=$M_CROSS/mingw/zlib/bin
+export INCLUDE_PATH=$M_CROSS/mingw/zlib/include
+export LIBRARY_PATH=$M_CROSS/mingw/zlib/lib
+./configure --static
+make -f -j$MJOBS win32/Makefile.gcc
+make install win32/Makefile.gcc
 
 echo "building libpng"
 echo "======================="
