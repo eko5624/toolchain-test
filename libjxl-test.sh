@@ -15,8 +15,8 @@ MJOBS=$(grep -c processor /proc/cpuinfo)
 export MINGW_TRIPLE="x86_64-w64-mingw32"
 
 export PATH="$M_CROSS/bin:$RUSTUP_LOCATION/.cargo/bin:$PATH"
-#export PKG_CONFIG="pkgconf --static"
-#export PKG_CONFIG_LIBDIR="$M_CROSS/mingw/lib/pkgconfig:$M_CROSS/mingw/share/pkgconfig"
+export PKG_CONFIG="pkgconf --static"
+export PKG_CONFIG_LIBDIR="$M_CROSS/mingw/lib/pkgconfig
 export RUSTUP_HOME="$RUSTUP_LOCATION/.rustup"
 export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
 
@@ -73,20 +73,17 @@ echo "======================="
 git clone https://github.com/glennrp/libpng.git
 cd libpng
 export CFLAGS="-fno-asynchronous-unwind-tables"
-export LDFLAGS="-L$$M_CROSS/mingw/lib"
-export CPPFLAGS="-I$M_CROSS/mingw/include"
-export PKG_CONFIG_PATH="$M_CROSS/mingw/lib/pkgconfig"
-autoreconf -ivf
-./configure \
-  --host=$MINGW_TRIPLE \
-  --build=x86_64-linux-gnu \
-  --prefix=$M_CROSS/mingw \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-ln -s $TOP_DIR/opt/bin/libpng-config $M_CROSS/bin/libpng-config
-ln -s $TOP_DIR/opt/bin/libpng16-config $M_CROSS/bin/libpng16-config
+rm -rf build && mkdir build && cd build
+cmake .. -G Ninja \
+  -DCMAKE_INSTALL_PREFIX=$M_CROSS/mingw \
+  -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
+  -DENABLE_SHARED=OFF \
+  -DENABLE_STATIC=ON \
+  -DCMAKE_BUILD_TYPE=Release
+ninja -j$MJOBS
+ninja install
+ln -s $M_CROSS/mingw/bin/libpng-config $M_CROSS/bin/libpng-config
+ln -s $M_CROSS/mingw/bin/libpng16-config $M_CROSS/bin/libpng16-config
 cd $TOP_DIR
 
 echo "building libjpeg"
