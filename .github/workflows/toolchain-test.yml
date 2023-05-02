@@ -54,3 +54,14 @@ jobs:
         with:
           path: ${{ github.workspace }}/cross
           key: gcc-${{ github.run_id }}
+          
+      - name: Release
+        continue-on-error: true
+        uses: softprops/action-gh-release@master
+        with:
+          tag_name: toolchain
+          name: toolchain
+          files: |
+            gcc-toolchain-12-20230421.7z
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
