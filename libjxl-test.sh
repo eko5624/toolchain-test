@@ -84,9 +84,7 @@ autoreconf -ivf
   --build=x86_64-linux-gnu \
   --prefix=$M_CROSS/mingw \
   --enable-static \
-  --disable-shared \
-  --with-zlib-include=$M_CROSS/mingw/include \
-  --with-zlib-lib=$M_CROSS/mingw/lib
+  --disable-shared
 make -j$MJOBS
 make install
 ln -s $TOP_DIR/opt/bin/libpng-config $M_CROSS/bin/libpng-config
