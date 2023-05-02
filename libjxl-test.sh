@@ -74,7 +74,6 @@ autoreconf -ivf
 ./configure \
   CFLAGS='-fno-asynchronous-unwind-tables' \
   --host=$MINGW_TRIPLE \
-  --build=x86_64-linux-gnu \
   --prefix=$M_CROSS/mingw \
   --enable-static \
   --disable-shared
@@ -115,6 +114,7 @@ echo "building libjxl"
 echo "======================="
 git clone https://github.com/libjxl/libjxl.git
 cd libjxl
+rm -rf third_party/brotli
 rm -rf build && mkdir build && cd build
 cmake .. -G Ninja \
   -DCMAKE_INSTALL_PREFIX=$M_CROSS/mingw \
