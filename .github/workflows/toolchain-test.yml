@@ -15,7 +15,7 @@ jobs:
         run: |
           sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
           sudo pacman -Syu --noconfirm
-          sudo pacman -S --noconfirm --needed git gyp cvs mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
+          sudo pacman -S --noconfirm --needed git gyp cvs mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf zip unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global pull.rebase true
@@ -38,13 +38,13 @@ jobs:
           curl -OL https://github.com/eko5624/mpv-toolchain/releases/download/20230501/gcc.7z
           7z x gcc.7z
           mv mpv-winbuild-cmake/build64/install ./
-          mv install cross
-          rm -rf cross/mingw
-          ln -s cross/x86_64-w64-mingw32 mingw
-          
+
       - name: Package toolchain
         run: |
-          7z a gcc-toolchain-12-20230421.7z cross/*
+          mv install cross
+          rm -rf cross/mingw
+          ln -s cross/x86_64-w64-mingw32 mingw          
+          zip -r -y gcc-toolchain-12-20230421.zip cross/*
           
       - name: Release
         continue-on-error: true
