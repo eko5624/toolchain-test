@@ -64,22 +64,24 @@ git clone https://github.com/madler/zlib.git
 cd zlib
 #curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
 #patch -p1 -i zlib-1-win32-static.patch
-export BINARY_PATH=$M_CROSS/mingw/zlib/bin
-export INCLUDE_PATH=$M_CROSS/mingw/zlib/include
-export LIBRARY_PATH=$M_CROSS/mingw/zlib/lib
-make -f win32/Makefile.gcc PREFIX=$MINGW_TRIPLE- 
+export BINARY_PATH=$M_CROSS/mingw/bin
+export INCLUDE_PATH=$M_CROSS/mingw/include
+export LIBRARY_PATH=$M_CROSS/mingw/lib
+make -f win32/Makefile.gcc PREFIX=$MINGW_TRIPLE-
 make install -f win32/Makefile.gcc PREFIX=$MINGW_TRIPLE-
 
 echo "building libpng"
 echo "======================="
 git clone https://github.com/glennrp/libpng.git
 cd libpng
-CFLAGS+=" -fno-asynchronous-unwind-tables"
-CPPFLAGS+=" -I$M_CROSS/mingw/include"
+export LDFLAGS="-L$$M_CROSS/mingw/lib"
+export CPPFLAGS="-I$M_CROSS/mingw/include"
 autoreconf -ivf
 ./configure \
   --host=$MINGW_TRIPLE \
+  --build=x86_64-linux-gnu \
   --prefix=$M_CROSS/mingw \
+  --enable-static \
   --disable-shared
 make -j$MJOBS
 make install
