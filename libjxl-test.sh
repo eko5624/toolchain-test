@@ -62,18 +62,17 @@ echo "building zlib"
 echo "======================="
 git clone https://github.com/madler/zlib.git
 cd zlib
-#curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
-#patch -p1 -i zlib-1-win32-static.patch
-export BINARY_PATH=$M_CROSS/mingw/bin
-export INCLUDE_PATH=$M_CROSS/mingw/include
-export LIBRARY_PATH=$M_CROSS/mingw/lib
-make -f win32/Makefile.gcc PREFIX=$MINGW_TRIPLE-
-make install -f win32/Makefile.gcc PREFIX=$MINGW_TRIPLE-
+curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
+patch -p1 -i zlib-1-win32-static.patch
+CHOST=$MINGW_TRIPLE ./configure --prefix=$M_CROSS/mingw --static
+make -j$MJOBS
+make install
 
 echo "building libpng"
 echo "======================="
 git clone https://github.com/glennrp/libpng.git
 cd libpng
+export CFLAGS="-fno-asynchronous-unwind-tables"
 export LDFLAGS="-L$$M_CROSS/mingw/lib"
 export CPPFLAGS="-I$M_CROSS/mingw/include"
 export PKG_CONFIG_PATH="$M_CROSS/mingw/lib/pkgconfig"
