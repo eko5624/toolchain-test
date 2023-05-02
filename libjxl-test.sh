@@ -112,10 +112,8 @@ cd $TOP_DIR
 
 echo "building libjxl"
 echo "======================="
-git clone https://github.com/libjxl/libjxl.git
+git clone --recursive https://github.com/libjxl/libjxl.git
 cd libjxl
-CFLAGS="-I$M_CROSS/mingw/include"
-LDFLAGS="-L$M_CROSS/mingw/lib"
 rm -rf build && mkdir build && cd build
 cmake .. -G Ninja \
   -DCMAKE_INSTALL_PREFIX=$M_CROSS/mingw \
