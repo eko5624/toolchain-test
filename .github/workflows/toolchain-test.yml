@@ -53,7 +53,7 @@ jobs:
           tag_name: toolchain
           name: toolchain
           files: |
-            gcc-toolchain-12-20230421.7z
+            gcc-toolchain-12-20230421.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
