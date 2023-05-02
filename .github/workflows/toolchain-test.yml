@@ -38,11 +38,11 @@ jobs:
           curl -OL https://github.com/eko5624/mpv-toolchain/releases/download/20230501/gcc.7z
           7z x gcc.7z
           mv mpv-winbuild-cmake/build64/install ./
-
-      - name: Package toolchain
-        run: |
           mv install cross
           rm -rf cross/mingw
+          
+      - name: Package toolchain
+        run: |
           ln -s cross/x86_64-w64-mingw32 mingw          
           zip -r -y gcc-toolchain-12-20230421.zip cross/*
           
