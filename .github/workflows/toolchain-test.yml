@@ -31,15 +31,9 @@ jobs:
           key: gcc-${{ github.run_id }}
           restore-keys: |
             gcc-
-
-      - name: Saving gcc cache
-        uses: actions/cache/save@main
-        if: always()
-        with:
-          path: ${{ github.workspace }}/cross
-          key: gcc-${{ github.run_id }}
           
       - name: Setup toolchain
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           curl -OL https://github.com/eko5624/mpv-toolchain/releases/download/20230501/gcc.7z
           7z x gcc.7z
@@ -48,12 +42,9 @@ jobs:
           rm -rf cross/mingw
           ln -s cross/x86_64-w64-mingw32 mingw
           
-      - name: Saving gcc cache
-        uses: actions/cache/save@main
-        if: always()
-        with:
-          path: ${{ github.workspace }}/cross
-          key: gcc-${{ github.run_id }}
+      - name: Package toolchain
+        run: |
+          7z a gcc-toolchain-12-20230421.7z cross/*
           
       - name: Release
         continue-on-error: true
@@ -65,3 +56,11 @@ jobs:
             gcc-toolchain-12-20230421.7z
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Saving gcc cache
+        uses: actions/cache/save@main
+        if: always()
+        with:
+          path: ${{ github.workspace }}/cross
+          key: gcc-${{ github.run_id }}
+          
