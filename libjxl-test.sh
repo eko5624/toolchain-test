@@ -62,14 +62,13 @@ echo "building zlib"
 echo "======================="
 git clone https://github.com/madler/zlib.git
 cd zlib
-curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
-patch -p1 -i zlib-1-win32-static.patch
+#curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
+#patch -p1 -i zlib-1-win32-static.patch
 export BINARY_PATH=$M_CROSS/mingw/zlib/bin
 export INCLUDE_PATH=$M_CROSS/mingw/zlib/include
 export LIBRARY_PATH=$M_CROSS/mingw/zlib/lib
-./configure --static
-make -f -j$MJOBS win32/Makefile.gcc
-make install win32/Makefile.gcc
+make -f win32/Makefile.gcc PREFIX=$MINGW_TRIPLE- 
+make install -f win32/Makefile.gcc PREFIX=$MINGW_TRIPLE-
 
 echo "building libpng"
 echo "======================="
