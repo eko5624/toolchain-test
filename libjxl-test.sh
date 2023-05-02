@@ -72,20 +72,19 @@ echo "building libpng"
 echo "======================="
 git clone https://github.com/glennrp/libpng.git
 cd libpng
-export CFLAGS="-fno-asynchronous-unwind-tables"
-rm -rf build && mkdir build && cd build
-cmake .. -G Ninja \
-  -DCMAKE_INSTALL_PREFIX=$M_CROSS/mingw \
-  -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
-  -DENABLE_SHARED=OFF \
-  -DENABLE_STATIC=ON \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DZLIB_LIBRARY=$M_CROSS/mingw/lib \
-  -DZLIB_INCLUDE_DIR=$M_CROSS/mingw/include
-ninja -j$MJOBS
-ninja install
-ln -s $M_CROSS/mingw/bin/libpng-config $M_CROSS/bin/libpng-config
-ln -s $M_CROSS/mingw/bin/libpng16-config $M_CROSS/bin/libpng16-config
+autoreconf -ivf
+./configure \
+  --host=$MINGW_TRIPLE \
+  --build=x86_64-linux-gnu \
+  --prefix=$M_CROSS/mingw \
+  --enable-static \
+  --disable-shared \
+  --with-zlib-include="${M_CROSS}"/mingw/include/ \
+  --with-zlib-lib="${M_CROSS}"/mingw/lib
+make -j$MJOBS
+make install
+ln -s $TOP_DIR/opt/bin/libpng-config $M_CROSS/bin/libpng-config
+ln -s $TOP_DIR/opt/bin/libpng16-config $M_CROSS/bin/libpng16-config
 cd $TOP_DIR
 
 echo "building libjpeg"
