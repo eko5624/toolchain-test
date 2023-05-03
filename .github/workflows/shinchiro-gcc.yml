@@ -1,4 +1,4 @@
-name: toolchain-test
+name: shinchiro-gcc
 defaults:
   run:
     shell: bash
