@@ -67,10 +67,6 @@ cd binutils-2.40
 make -j$MJOBS || echo "(-) Build Error!"
 make install-strip
 
-mkdir -p $M_CROSS/$MINGW_TRIPLE
-cd $M_CROSS
-ln -s $MINGW_TRIPLE mingw
-
 cd $M_CROSS/bin
 ln -s $(which pkg-config) $MINGW_TRIPLE-pkg-config
 ln -s $(which pkg-config) $MINGW_TRIPLE-pkgconf
@@ -87,7 +83,10 @@ cd mingw-w64/mingw-w64-headers
   --with-default-msvcrt=msvcrt
 make -j$MJOBS || echo "(-) Build Error!"
 make install install-strip
+
 cd $M_CROSS
+ln -s $MINGW_TRIPLE mingw
+cd $M_SOURCE
 
 echo "building gcc"
 echo "======================="
