@@ -12,7 +12,7 @@ export RUSTUP_LOCATION=$TOP_DIR/rustup_location
 MJOBS=$(grep -c processor /proc/cpuinfo)
 
 
-export MINGW_TRIPLE="x86_64-w64-opt32"
+export MINGW_TRIPLE="x86_64-w64-mingw32"
 
 export PATH="$M_CROSS/bin:$RUSTUP_LOCATION/.cargo/bin:$PATH"
 export PKG_CONFIG="pkgconf --static"
