@@ -60,7 +60,6 @@ cd binutils-2.40
   --disable-nls \
   --disable-shared \
   --disable-win32-registry \
-  --with-arch=x86_64 \
   --without-included-gettext \
   --enable-lto \
   --enable-plugins \
@@ -105,6 +104,7 @@ patch -p2 -i vmov-alignment.patch
   --disable-nls \
   --disable-shared \
   --disable-win32-registry \
+  --with-arch=x86_64 \
   --with-tune=generic \
   --enable-threads=posix \
   --without-included-gettext \
