@@ -60,6 +60,7 @@ cd binutils-2.40
   --disable-nls \
   --disable-shared \
   --disable-win32-registry \
+  --with-arch=x86_64 \
   --without-included-gettext \
   --enable-lto \
   --enable-plugins \
