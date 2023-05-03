@@ -1,0 +1,7 @@
+libdir=/opt/lib
+includedir=/opt/include
+
+Name: vapoursynth
+Description:
+Version: _ver
+Libs: -L${libdir} -lVapourSynth
