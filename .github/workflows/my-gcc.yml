@@ -1,4 +1,4 @@
-name: toolchain
+name: my-gcc
 defaults:
   run:
     shell: bash
