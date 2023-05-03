@@ -46,7 +46,7 @@ jobs:
           cd cross
           ln -s x86_64-w64-mingw32 mingw
           cd ..
-          zip -r -y gcc-toolchain-12-20230421.zip cross/*
+          zip -r -y shinchiro-gcc-12-20230421.zip cross/*
           
       - name: Release
         continue-on-error: true
@@ -55,7 +55,7 @@ jobs:
           tag_name: toolchain
           name: toolchain
           files: |
-            gcc-toolchain-12-20230421.zip
+            shinchiro*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
