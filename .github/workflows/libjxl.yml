@@ -15,7 +15,7 @@ jobs:
         run: |
           sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
           sudo pacman -Syu --noconfirm
-          sudo pacman -S --noconfirm --needed git gyp mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
+          sudo pacman -S --noconfirm --needed git ninja cmake python-pip curl
           pip3 install -U setuptools rst2pdf mako jsonschema meson
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -43,13 +43,7 @@ jobs:
             
       - name: Building
         run: |
-          chmod +x ./brotli.sh
-          ./brotli.sh
-          7z a brotli.7z opt/*
-
-      - name: Get current time
-        run: |
-          echo "short_time=$(date "+%Y%m%d")" >> $GITHUB_ENV
+          cd brotli-dev; makepkg
 
       - name: Release
         continue-on-error: true
@@ -57,7 +51,7 @@ jobs:
         with:
           tag_name: dev
           name: dev
-          files: brotli.7z
+          files: brotli-dev/*.zst
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
@@ -70,7 +64,7 @@ jobs:
         run: |
           sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
           sudo pacman -Syu --noconfirm
-          sudo pacman -S --noconfirm --needed git gyp mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
+          sudo pacman -S --noconfirm --needed git ninja cmake python-pip curl
           pip3 install -U setuptools rst2pdf mako jsonschema meson
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -98,13 +92,7 @@ jobs:
             
       - name: Building
         run: |
-          chmod +x ./highway.sh
-          ./highway.sh
-          7z a highway.7z opt/*
-
-      - name: Get current time
-        run: |
-          echo "short_time=$(date "+%Y%m%d")" >> $GITHUB_ENV
+          cd highway-dev; makepkg
 
       - name: Release
         continue-on-error: true
@@ -112,7 +100,7 @@ jobs:
         with:
           tag_name: dev
           name: dev
-          files: highway.7z
+          files: highway-dev/*.zst
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
@@ -126,7 +114,7 @@ jobs:
         run: |
           sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
           sudo pacman -Syu --noconfirm
-          sudo pacman -S --noconfirm --needed git gyp mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
+          sudo pacman -S --noconfirm --needed git ninja cmake python-pip curl
           pip3 install -U setuptools rst2pdf mako jsonschema meson
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -154,13 +142,10 @@ jobs:
             
       - name: Building
         run: |
-          chmod +x ./lcms2.sh
-          ./lcms2.sh
-          7z a lcms2.7z opt/*
-
-      - name: Get current time
-        run: |
-          echo "short_time=$(date "+%Y%m%d")" >> $GITHUB_ENV
+          curl -OL https://github.com/${{ github.repository }}/releases/download/dev/libjpeg-dev-2.1.91-1-x86_64.pkg.tar.zst
+          curl -OL https://github.com/${{ github.repository }}/releases/download/dev/zlib-dev-1.2.13-1-x86_64.pkg.tar.zst
+          pacman -U *.zst --noconfirm
+          cd lcms2-dev;makepkg
 
       - name: Release
         continue-on-error: true
@@ -168,7 +153,7 @@ jobs:
         with:
           tag_name: dev
           name: dev
-          files: lcms2.7z
+          files: lcms2-dev/*.zst
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
@@ -181,7 +166,7 @@ jobs:
         run: |
           sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
           sudo pacman -Syu --noconfirm
-          sudo pacman -S --noconfirm --needed git gyp mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
+          sudo pacman -S --noconfirm --needed git ninja cmake python-pip curl
           pip3 install -U setuptools rst2pdf mako jsonschema meson
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -208,13 +193,7 @@ jobs:
             rust_toolchain-
       - name: Building
         run: |
-          chmod +x ./libjpeg.sh
-          ./libjpeg.sh
-          7z a libjpeg.7z opt/*
-
-      - name: Get current time
-        run: |
-          echo "short_time=$(date "+%Y%m%d")" >> $GITHUB_ENV
+          cd libjpeg-dev; makepkg
 
       - name: Release
         continue-on-error: true
@@ -222,7 +201,7 @@ jobs:
         with:
           tag_name: dev
           name: dev
-          files: libjpeg.7z
+          files: libjpeg-dev/*.zst
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
@@ -236,7 +215,7 @@ jobs:
         run: |
           sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
           sudo pacman -Syu --noconfirm
-          sudo pacman -S --noconfirm --needed git gyp mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
+          sudo pacman -S --noconfirm --needed git ninja cmake python-pip curl
           pip3 install -U setuptools rst2pdf mako jsonschema meson
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -264,13 +243,14 @@ jobs:
             
       - name: Building
         run: |
-          chmod +x ./libjxl.sh
-          ./libjxl.sh
-          7z a libjxl.7z opt/*
-
-      - name: Get current time
-        run: |
-          echo "short_time=$(date "+%Y%m%d")" >> $GITHUB_ENV
+          curl -OL https://github.com/${{ github.repository }}/releases/download/dev/brotli-dev-1.0.9-1-x86_64.pkg.tar.zst
+          curl -OL https://github.com/${{ github.repository }}/releases/download/dev/highway-dev-1.0.4-1-x86_64.pkg.tar.zst
+          curl -OL https://github.com/${{ github.repository }}/releases/download/dev/lcms2-dev-2.15-1-x86_64.pkg.tar.zst
+          curl -OL https://github.com/${{ github.repository }}/releases/download/dev/libjpeg-dev-2.1.91-1-x86_64.pkg.tar.zst
+          curl -OL https://github.com/${{ github.repository }}/releases/download/dev/libpng-dev-1.6.39-1-x86_64.pkg.tar.zst
+          curl -OL https://github.com/${{ github.repository }}/releases/download/dev/zlib-dev-1.2.13-1-x86_64.pkg.tar.zst
+          pacman -U *.zst --noconfirm
+          cd libjxl-dev; makepkg
 
       - name: Release
         continue-on-error: true
@@ -278,7 +258,7 @@ jobs:
         with:
           tag_name: dev
           name: dev
-          files: libjxl.7z
+          files: libjxl-dev/*.zst
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
@@ -292,7 +272,7 @@ jobs:
         run: |
           sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
           sudo pacman -Syu --noconfirm
-          sudo pacman -S --noconfirm --needed git gyp mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
+          sudo pacman -S --noconfirm --needed git ninja cmake python-pip curl
           pip3 install -U setuptools rst2pdf mako jsonschema meson
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -320,13 +300,9 @@ jobs:
             
       - name: Building
         run: |
-          chmod +x ./libpng.sh
-          ./libpng.sh
-          7z a libpng.7z opt/*
-
-      - name: Get current time
-        run: |
-          echo "short_time=$(date "+%Y%m%d")" >> $GITHUB_ENV
+          curl -OL https://github.com/${{ github.repository }}/releases/download/dev/zlib-dev-1.2.13-1-x86_64.pkg.tar.zst
+          pacman -U *.zst --noconfirm
+          cd libpng-dev; makepkg
 
       - name: Release
         continue-on-error: true
@@ -334,7 +310,7 @@ jobs:
         with:
           tag_name: dev
           name: dev
-          files: libpng.7z
+          files: libpng-dev/*.zst
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
@@ -347,7 +323,7 @@ jobs:
         run: |
           sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
           sudo pacman -Syu --noconfirm
-          sudo pacman -S --noconfirm --needed git gyp mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
+          sudo pacman -S --noconfirm --needed git ninja cmake python-pip curl
           pip3 install -U setuptools rst2pdf mako jsonschema meson
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -375,13 +351,7 @@ jobs:
             
       - name: Building
         run: |
-          chmod +x ./zlib.sh
-          ./zlib.sh
-          7z a zlib.7z opt/*
-
-      - name: Get current time
-        run: |
-          echo "short_time=$(date "+%Y%m%d")" >> $GITHUB_ENV
+          cd zlib-dev; makepkg
 
       - name: Release
         continue-on-error: true
@@ -389,6 +359,6 @@ jobs:
         with:
           tag_name: dev
           name: dev
-          files: zlib.7z
+          files: zlib-dev/*.zst
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

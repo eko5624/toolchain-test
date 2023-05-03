@@ -9,15 +9,31 @@ license=('BSD')
 source=("git+https://github.com/libjxl/libjxl")
 md5sums=('SKIP')
 
+prepare() {
+  # Speed up the process
+  # Env Var NUMJOBS overrides automatic detection
+  MJOBS=$(grep -c processor /proc/cpuinfo)
+
+  export TOP_DIR=$(pwd)
+  export M_CROSS=$TOP_DIR/cross
+  export RUSTUP_LOCATION=$TOP_DIR/rustup_location
+
+  export MINGW_TRIPLE="x86_64-w64-mingw32"
+
+  export PATH="$M_CROSS/bin:$RUSTUP_LOCATION/.cargo/bin:$PATH"
+  export PKG_CONFIG="pkgconf --static"
+  export PKG_CONFIG_LIBDIR="$M_CROSS/opt/lib/pkgconfig"
+  export RUSTUP_HOME="$RUSTUP_LOCATION/.rustup"
+  export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
+
 build() {
-  # Fix AVX2 related crash due to unaligned stack memory
-  export CXXFLAGS="$CXXFLAGS -Wa,-muse-unaligned-vector-move"
-  export CFLAGS="$CFLAGS -Wa,-muse-unaligned-vector-move"
- 
   cd $srcdir/libjxl 
   rm -rf build && mkdir build && cd build
-  $CMAKE .. -G "MinGW Makefiles" -DCMAKE_INSTALL_PREFIX=/opt -DCMAKE_BUILD_TYPE=Release \
+  cmake .. -G Ninja \
+    -DCMAKE_INSTALL_PREFIX=$M_CROSS/mingw \
+    -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
     -DBUILD_SHARED_LIBS=OFF \
+    -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
     -DJPEGXL_STATIC=ON \
     -DBUILD_TESTING=OFF \
@@ -33,13 +49,13 @@ build() {
     -DJPEGXL_ENABLE_PLUGINS=OFF \
     -DJPEGXL_ENABLE_DEVTOOLS=OFF \
     -DJPEGXL_ENABLE_BENCHMARK=OFF \
-    -DJPEGXL_ENABLE_SJPEG=OFF  
-  $CMAKE --build .
+    -DJPEGXL_ENABLE_SJPEG=OFF \
+    -DCMAKE_CXX_FLAGS='${CMAKE_CXX_FLAGS} -Wa,-muse-unaligned-vector-move' \
+    -DCMAKE_C_FLAGS='${CMAKE_C_FLAGS} -Wa,-muse-unaligned-vector-move'
+ninja -j$MJOBS
 }
 
 package() {
   cd $srcdir/libjxl/build
-  $CMAKE --install . --prefix=$pkgdir/opt
-  sed -i 's/Libs.private: -lm/Libs.private: -lm -lstdc++/' $pkgdir/opt/lib/pkgconfig/libjxl.pc  
-  sed -i 's/Libs.private: -lm/Libs.private: -lm -lstdc++/' $pkgdir/opt/lib/pkgconfig/libjxl_threads.pc 
+  DESTDIR=$pkgdir ninja install
 }

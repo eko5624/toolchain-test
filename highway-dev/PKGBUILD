@@ -8,21 +8,42 @@ license=('Apache-2.0')
 source=("git+https://github.com/google/highway.git#commit=9c775721c1531fd1cf11cf52bbfde4d076691628")
 md5sums=('SKIP')
 
+prepare() {
+  # Speed up the process
+  # Env Var NUMJOBS overrides automatic detection
+  MJOBS=$(grep -c processor /proc/cpuinfo)
+
+  export TOP_DIR=$(pwd)
+  export M_CROSS=$TOP_DIR/cross
+  export RUSTUP_LOCATION=$TOP_DIR/rustup_location
+
+  export MINGW_TRIPLE="x86_64-w64-mingw32"
+
+  export PATH="$M_CROSS/bin:$RUSTUP_LOCATION/.cargo/bin:$PATH"
+  export PKG_CONFIG="pkgconf --static"
+  export PKG_CONFIG_LIBDIR="$M_CROSS/opt/lib/pkgconfig"
+  export RUSTUP_HOME="$RUSTUP_LOCATION/.rustup"
+  export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
+}
+
 build() {
   cd $srcdir/highway
   rm -rf build && mkdir build && cd build
-  $CMAKE .. -G "MinGW Makefiles" -DCMAKE_INSTALL_PREFIX=/opt -DCMAKE_BUILD_TYPE=Release \
+  cmake .. -G Ninja \
+    -DCMAKE_INSTALL_PREFIX=$M_CROSS/mingw \
+    -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
+    -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_TESTING=OFF \
     -DCMAKE_GNUtoMS=OFF \
     -DHWY_CMAKE_ARM7=OFF \
     -DHWY_ENABLE_CONTRIB=OFF \
     -DHWY_ENABLE_EXAMPLES=OFF \
     -DHWY_ENABLE_INSTALL=ON \
-    -DHWY_WARNINGS_ARE_ERRORS=OFF 
-  $CMAKE --build .
+    -DHWY_WARNINGS_ARE_ERRORS=OFF
+ninja -j$MJOBS
 }  
   
 package() {
   cd $srcdir/highway/build
-  $CMAKE --install . --prefix=$pkgdir/opt
+  DESTDIR=$pkgdir ninja install
 }  
