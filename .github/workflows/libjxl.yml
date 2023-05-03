@@ -43,7 +43,7 @@ jobs:
             
       - name: Building
         run: |
-          cd brotli-dev; makepkg
+          cd brotli-dev; makepkg -si
 
       - name: Release
         continue-on-error: true
@@ -92,7 +92,7 @@ jobs:
             
       - name: Building
         run: |
-          cd highway-dev; makepkg
+          cd highway-dev; makepkg -si
 
       - name: Release
         continue-on-error: true
@@ -145,7 +145,7 @@ jobs:
           curl -OL https://github.com/${{ github.repository }}/releases/download/dev/libjpeg-dev-2.1.91-1-x86_64.pkg.tar.zst
           curl -OL https://github.com/${{ github.repository }}/releases/download/dev/zlib-dev-1.2.13-1-x86_64.pkg.tar.zst
           pacman -U *.zst --noconfirm
-          cd lcms2-dev;makepkg
+          cd lcms2-dev;makepkg -si
 
       - name: Release
         continue-on-error: true
@@ -193,7 +193,7 @@ jobs:
             rust_toolchain-
       - name: Building
         run: |
-          cd libjpeg-dev; makepkg
+          cd libjpeg-dev; makepkg -si
 
       - name: Release
         continue-on-error: true
@@ -250,7 +250,7 @@ jobs:
           curl -OL https://github.com/${{ github.repository }}/releases/download/dev/libpng-dev-1.6.39-1-x86_64.pkg.tar.zst
           curl -OL https://github.com/${{ github.repository }}/releases/download/dev/zlib-dev-1.2.13-1-x86_64.pkg.tar.zst
           pacman -U *.zst --noconfirm
-          cd libjxl-dev; makepkg
+          cd libjxl-dev; makepkg -si
 
       - name: Release
         continue-on-error: true
@@ -302,7 +302,7 @@ jobs:
         run: |
           curl -OL https://github.com/${{ github.repository }}/releases/download/dev/zlib-dev-1.2.13-1-x86_64.pkg.tar.zst
           pacman -U *.zst --noconfirm
-          cd libpng-dev; makepkg
+          cd libpng-dev; makepkg -si
 
       - name: Release
         continue-on-error: true
@@ -351,7 +351,7 @@ jobs:
             
       - name: Building
         run: |
-          cd zlib-dev; makepkg
+          cd zlib-dev; makepkg -si
 
       - name: Release
         continue-on-error: true
