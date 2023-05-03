@@ -50,7 +50,7 @@ jobs:
 
       - name: Packaging toolchain
         run: |
-          zip -r -y  my-gcc-12-20230421.7z cross/*
+          zip -r -y  my-gcc-12-20230421.zip cross/*
 
       - name: Release
         continue-on-error: true
@@ -59,7 +59,7 @@ jobs:
           tag_name: toolchain
           name: toolchain
           files: |
-            my-gcc-12-20230421.7z
+            my-gcc*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
