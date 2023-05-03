@@ -16,7 +16,7 @@ export MINGW_TRIPLE="x86_64-w64-mingw32"
 
 export PATH="$M_CROSS/bin:$RUSTUP_LOCATION/.cargo/bin:$PATH"
 export PKG_CONFIG="pkgconf --static"
-export PKG_CONFIG_LIBDIR="$M_CROSS/opt/lib/pkgconfig"
+export PKG_CONFIG_LIBDIR="$TOP_DIR/opt/lib/pkgconfig"
 export RUSTUP_HOME="$RUSTUP_LOCATION/.rustup"
 export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
 
@@ -27,7 +27,7 @@ git clone https://github.com/google/brotli.git
 cd brotli
 rm -rf build && mkdir build && cd build
 cmake .. -G Ninja \
-  -DCMAKE_INSTALL_PREFIX=$M_CROSS/opt \
+  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
   -DBUILD_SHARED_LIBS=OFF \
   -DCMAKE_BUILD_TYPE=Release \
@@ -42,7 +42,7 @@ git clone https://github.com/google/highway.git
 cd highway
 rm -rf build && mkdir build && cd build
 cmake .. -G Ninja \
-  -DCMAKE_INSTALL_PREFIX=$M_CROSS/opt \
+  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
   -DCMAKE_BUILD_TYPE=Release \
   -DBUILD_TESTING=OFF \
@@ -62,7 +62,7 @@ git clone https://github.com/madler/zlib.git
 cd zlib
 curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
 patch -p1 -i zlib-1-win32-static.patch
-CHOST=$MINGW_TRIPLE ./configure --prefix=$M_CROSS/opt --static
+CHOST=$MINGW_TRIPLE ./configure --prefix=$TOP_DIR/opt --static
 make -j$MJOBS
 make install
 
@@ -74,7 +74,7 @@ autoreconf -ivf
 ./configure \
   CFLAGS='-fno-asynchronous-unwind-tables' \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/opt \
+  --prefix=$TOP_DIR/opt \
   --enable-static \
   --disable-shared
 make -j$MJOBS
@@ -89,7 +89,7 @@ git clone https://github.com/libjpeg-turbo/libjpeg-turbo.git
 cd libjpeg-turbo
 rm -rf build && mkdir build && cd build
 cmake .. -G Ninja \
-  -DCMAKE_INSTALL_PREFIX=$M_CROSS/opt \
+  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
   -DENABLE_SHARED=OFF \
   -DENABLE_STATIC=ON \
@@ -104,7 +104,7 @@ git clone https://github.com/mm2/Little-CMS.git
 cd Little-CMS
 ./configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/opt \
+  --prefix=$TOP_DIR/opt \
   --disable-shared
 make -j$MJOBS
 make install
@@ -118,7 +118,7 @@ rm -rf third_party/brotli
 cp -r $TOP_DIR/brotli third_party
 rm -rf build && mkdir build && cd build
 cmake .. -G Ninja \
-  -DCMAKE_INSTALL_PREFIX=$M_CROSS/opt \
+  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
   -DBUILD_SHARED_LIBS=OFF \
   -DCMAKE_BUILD_TYPE=Release \
