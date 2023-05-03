@@ -79,8 +79,8 @@ autoreconf -ivf
   --disable-shared
 make -j$MJOBS
 make install
-ln -s $TOP_DIR/mingw/bin/libpng-config $M_CROSS/bin/libpng-config
-ln -s $TOP_DIR/mingw/bin/libpng16-config $M_CROSS/bin/libpng16-config
+ln -s $M_CROSS/mingw/bin/libpng-config $M_CROSS/bin/libpng-config
+ln -s $M_CROSS/mingw/bin/libpng16-config $M_CROSS/bin/libpng16-config
 cd $TOP_DIR
 
 echo "building libjpeg"
