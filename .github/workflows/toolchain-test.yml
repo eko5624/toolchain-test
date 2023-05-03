@@ -35,7 +35,7 @@ jobs:
       - name: Setup toolchain
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          curl -OL https://github.com/eko5624/mpv-toolchain/releases/download/20230501/gcc.7z
+          curl -OL https://github.com/eko5624/mpv-toolchain/releases/download/2023-05-02/gcc.7z
           7z x gcc.7z
           mv mpv-winbuild-cmake/build64/install ./
           mv install cross
