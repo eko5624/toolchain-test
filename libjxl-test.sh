@@ -112,8 +112,10 @@ cd $TOP_DIR
 
 echo "building libjxl"
 echo "======================="
-git clone --recursive https://github.com/libjxl/libjxl.git
+git clone https://github.com/libjxl/libjxl.git
 cd libjxl
+rm -rf third_party/brotli
+cp -r $TOP_DIR/brotli third_party
 rm -rf build && mkdir build && cd build
 cmake .. -G Ninja \
   -DCMAKE_INSTALL_PREFIX=$M_CROSS/mingw \
