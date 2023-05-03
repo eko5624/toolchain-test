@@ -6,9 +6,11 @@ TOP_DIR=$(pwd)
 # Env Var NUMJOBS overrides automatic detection
 MJOBS=$(grep -c processor /proc/cpuinfo)
 
+CFLAGS="-pipe -O2"
 MINGW_TRIPLE="x86_64-w64-mingw32"
-
 export MINGW_TRIPLE
+export CFLAGS
+export CXXFLAGS=$CFLAGS
 
 export M_ROOT=$(pwd)
 export M_SOURCE=$M_ROOT/source
@@ -104,7 +106,6 @@ patch -p2 -i vmov-alignment.patch
   --disable-nls \
   --disable-shared \
   --disable-win32-registry \
-  --with-arch=x86_64 \
   --with-tune=generic \
   --enable-threads=posix \
   --without-included-gettext \
@@ -136,6 +137,8 @@ cd mingw-w64/mingw-w64-libraries/winpthreads
 ./configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE \
+  --enable-lib64 \
+  --disable-lib32 \
   --disable-shared \
   --enable-static
 make -j$MJOBS || echo "(-) Build Error!"
