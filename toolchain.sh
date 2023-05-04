@@ -97,7 +97,6 @@ cd gcc-12-20230421
 curl -OL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
 patch -p2 -i vmov-alignment.patch
 ./configure \
-  --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
