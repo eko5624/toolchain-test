@@ -96,7 +96,7 @@ cd gcc-12-20230421
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54412
 #curl -OL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
 #patch -p2 -i vmov-alignment.patch
-patch -d gcc/config/i386 -p1 -R < $TOP_DIR/patch/gcc-intrin.patch
+patch -d gcc/config/i386 -p1 -i < $TOP_DIR/patch/gcc-intrin.patch
 ./configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
