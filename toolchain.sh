@@ -112,12 +112,13 @@ patch -p2 -i vmov-alignment.patch
   --disable-nls \
   --disable-shared \
   --disable-win32-registry \
+  --with-arch=x86_64 \
   --with-tune=generic \
   --enable-threads=posix \
   --without-included-gettext \
   --enable-lto \
   --enable-checking=release \
-  --disable-sjlj-exceptions
+  --enable-seh-exceptions
 make -j$MJOBS all-gcc || echo "(-) Build Error!"
 make install-strip-gcc
 cd $M_SOURCE
