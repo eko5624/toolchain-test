@@ -44,7 +44,7 @@ jobs:
       - name: Building
         run: |
           exit
-          cd brotli-dev; makepkg -si
+          cd brotli-dev; makepkg
 
       - name: Release
         continue-on-error: true
