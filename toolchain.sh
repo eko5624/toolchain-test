@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 TOP_DIR=$(pwd)
 
@@ -69,9 +70,18 @@ cd binutils-2.40
 make -j$MJOBS || echo "(-) Build Error!"
 make install-strip
 
-cd $M_CROSS/bin
+cd $M_CROSS
+mkdir bin
+cd bin
 ln -s $(which pkg-config) $MINGW_TRIPLE-pkg-config
 ln -s $(which pkg-config) $MINGW_TRIPLE-pkgconf
+
+cd $M_CROSS
+mkdir -p $MINGW_TRIPLE/lib
+ln -s $MINGW_TRIPLE mingw
+cd $MINGW_TRIPLE
+ln -s lib lib64
+
 cd $M_SOURCE
 
 echo "building mingw-w64-headers"
@@ -86,8 +96,6 @@ cd mingw-w64/mingw-w64-headers
 make -j$MJOBS || echo "(-) Build Error!"
 make install install-strip
 
-cd $M_CROSS
-ln -s $MINGW_TRIPLE mingw
 cd $M_SOURCE
 
 echo "building gcc"
@@ -97,8 +105,6 @@ cd gcc-12-20230421
 curl -OL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
 patch -p2 -i vmov-alignment.patch
 ./configure \
-  --build=x86_64-pc-linux-gnu \
-  --host=x86_64-pc-linux-gnu \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
   --libdir=$M_CROSS/lib \
@@ -139,8 +145,6 @@ cd mingw-w64/mingw-w64-libraries/winpthreads
 ./configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE \
-  --enable-lib64 \
-  --disable-lib32 \
   --disable-shared \
   --enable-static
 make -j$MJOBS || echo "(-) Build Error!"
