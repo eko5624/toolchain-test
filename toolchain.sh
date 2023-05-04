@@ -70,9 +70,7 @@ cd binutils-2.40
 make -j$MJOBS || echo "(-) Build Error!"
 make install-strip
 
-cd $M_CROSS
-mkdir bin
-cd bin
+cd $M_CROSS/bin
 ln -s $(which pkg-config) $MINGW_TRIPLE-pkg-config
 ln -s $(which pkg-config) $MINGW_TRIPLE-pkgconf
 
