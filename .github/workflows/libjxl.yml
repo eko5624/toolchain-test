@@ -43,6 +43,7 @@ jobs:
             
       - name: Building
         run: |
+          exit
           cd brotli-dev; makepkg -si
 
       - name: Release
