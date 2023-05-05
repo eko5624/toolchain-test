@@ -111,7 +111,6 @@ cd gcc-13.1.0
   --enable-languages=c,c++ \
   --disable-nls \
   --disable-win32-registry \
-  --with-arch=x86-64 \
   --with-tune=generic \
   --enable-threads=posix \
   --without-included-gettext
