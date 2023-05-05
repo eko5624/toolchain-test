@@ -22,8 +22,8 @@ sh update_source.sh
 date
 sh rebuild_cross.sh $BT
 
-date
-sh rebuild_target.sh $BT
+#date
+#sh rebuild_target.sh $BT
 
 date
 
