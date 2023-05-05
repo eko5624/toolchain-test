@@ -22,8 +22,8 @@ if [ ! -d binutils-$VER_BINUTILS ] ; then
 fi
 
 # <2> gcc
-if [ ! -d gcc-13-20230422 ] ; then
-	wget -c -O gcc-13-20230422.tar.xz https://mirrorservice.org/sites/sourceware.org/pub/gcc/snapshots/$VER_GCC/gcc-$VER_GCC.tar.xz
+if [ ! -d gcc-$VER_GCC ] ; then
+	wget -c -O gcc-$VER_GCC.tar.xz http://ftp.gnu.org/gnu/gcc/gcc-$VER_GCC/gcc-$VER_GCC.tar.xz
 	# tar xJf gcc-$VER_GCC.tar.xz
 	xz -c -d gcc-$VER_GCC.tar.xz | tar xf -
 fi
