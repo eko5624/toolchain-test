@@ -82,10 +82,7 @@ echo "======================="
 cd mingw-w64/mingw-w64-headers 
 ./configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE \
-  --enable-sdk=all \
-  --enable-idl \
-  --with-default-msvcrt=msvcrt
+  --prefix=$M_CROSS/$MINGW_TRIPLE
 make -j$MJOBS
 make install
 
@@ -105,10 +102,7 @@ cd gcc-13.1.0
   --disable-multilib \
   --enable-languages=c,c++ \
   --disable-nls \
-  --disable-win32-registry \
-  --with-tune=generic \
-  --enable-threads=posix \
-  --without-included-gettext
+  --enable-threads=posix
 make -j$MJOBS all-gcc
 make install-gcc
 cd $M_SOURCE
@@ -121,7 +115,6 @@ autoreconf -ivf
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE \
   --with-sysroot=$M_CROSS \
-  --with-default-msvcrt=msvcrt-os \
   --enable-lib64 \
   --disable-lib32
 make -j$MJOBS
