@@ -48,7 +48,7 @@ echo "building gendef"
 echo "======================="
 cd mingw-w64/mingw-w64-tools/gendef
 ./configure --prefix=$M_CROSS
-make -j$MJOBS || echo "(-) Build Error!"
+make -j$MJOBS
 make install-strip
 cd $M_SOURCE
 
@@ -61,13 +61,8 @@ cd binutils-2.40
   --with-sysroot=$M_CROSS \
   --disable-multilib \
   --disable-nls \
-  --disable-shared \
-  --disable-win32-registry \
-  --without-included-gettext \
-  --enable-lto \
-  --enable-plugins \
-  --enable-threads
-make -j$MJOBS || echo "(-) Build Error!"
+  --disable-shared
+make -j$MJOBS
 make install-strip
 
 cd $M_CROSS/bin
@@ -87,11 +82,8 @@ echo "======================="
 cd mingw-w64/mingw-w64-headers 
 ./configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE \
-  --enable-sdk=all \
-  --enable-idl \
-  --with-default-msvcrt=msvcrt
-make -j$MJOBS || echo "(-) Build Error!"
+  --prefix=$M_CROSS/$MINGW_TRIPLE
+make -j$MJOBS
 make install install-strip
 
 cd $M_SOURCE
@@ -110,7 +102,7 @@ cd gcc-13.1.0
   --enable-languages=c,c++ \
   --disable-nls \
   --enable-threads=posix
-make -j$MJOBS all-gcc || echo "(-) Build Error!"
+make -j$MJOBS all-gcc
 make install-gcc
 cd $M_SOURCE
 
@@ -122,10 +114,9 @@ autoreconf -ivf
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE \
   --with-sysroot=$M_CROSS \
-  --with-default-msvcrt=msvcrt-os \
   --enable-lib64 \
   --disable-lib32
-make -j$MJOBS || echo "(-) Build Error!"
+make -j$MJOBS
 make install
 cd $M_SOURCE
 
@@ -137,7 +128,7 @@ cd mingw-w64/mingw-w64-libraries/winpthreads
   --prefix=$M_CROSS/$MINGW_TRIPLE \
   --disable-shared \
   --enable-static
-make -j$MJOBS || echo "(-) Build Error!"
+make -j$MJOBS
 make install
 cd $M_SOURCE
 
