@@ -105,15 +105,11 @@ cd gcc-13.1.0
 ./configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
-  --libdir=$M_CROSS/lib \
   --with-sysroot=$M_CROSS \
   --disable-multilib \
   --enable-languages=c,c++ \
   --disable-nls \
-  --disable-win32-registry \
-  --with-tune=generic \
-  --enable-threads=posix \
-  --without-included-gettext
+  --enable-threads=posix
 make -j$MJOBS all-gcc || echo "(-) Build Error!"
 make install-gcc
 cd $M_SOURCE
