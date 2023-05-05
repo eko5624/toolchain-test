@@ -44,12 +44,15 @@ xz -c -d gcc-13.1.0.tar.xz | tar xf -
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
 # <2> build
-echo "building gendef"
+echo "building mingw-w64-headers"
 echo "======================="
-cd mingw-w64/mingw-w64-tools/gendef
-./configure --prefix=$M_CROSS
+cd mingw-w64/mingw-w64-headers 
+./configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_CROSS/$MINGW_TRIPLE
 make -j$MJOBS
-make install-strip
+make install install-strip
+
 cd $M_SOURCE
 
 echo "building binutils"
@@ -74,17 +77,6 @@ mkdir -p $MINGW_TRIPLE/lib
 ln -s $MINGW_TRIPLE mingw
 cd $MINGW_TRIPLE
 ln -s lib lib64
-
-cd $M_SOURCE
-
-echo "building mingw-w64-headers"
-echo "======================="
-cd mingw-w64/mingw-w64-headers 
-./configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE
-make -j$MJOBS
-make install install-strip
 
 cd $M_SOURCE
 
@@ -130,6 +122,14 @@ cd mingw-w64/mingw-w64-libraries/winpthreads
   --enable-static
 make -j$MJOBS
 make install
+cd $M_SOURCE
+
+echo "building gendef"
+echo "======================="
+cd mingw-w64/mingw-w64-tools/gendef
+./configure --prefix=$M_CROSS
+make -j$MJOBS
+make install-strip
 cd $M_SOURCE
 
 echo "building rustup"
