@@ -110,7 +110,6 @@ cd gcc-13.1.0
   --disable-multilib \
   --enable-languages=c,c++ \
   --disable-nls \
-  --disable-shared \
   --disable-win32-registry \
   --with-arch=x86-64 \
   --with-tune=generic \
