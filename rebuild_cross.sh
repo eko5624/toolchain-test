@@ -81,16 +81,6 @@ make $MAKE_OPT || echo "(-) Build Error!"
 make install
 cd ..
 
-# disable begin
-if [ "1" == "1" ] ; then
-
-rm -rf bc_gmp bc_mpfr bc_mpc bc_isl $M_BUILD/for_cross
-
-MYABI=32
-if [ "$(uname -m)" == "x86_64" ] ; then
-MYABI=64
-fi
-
 echo "building gcc"
 echo "======================="
 mkdir bc_gcc
