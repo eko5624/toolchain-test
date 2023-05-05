@@ -58,6 +58,7 @@ rm -rf bc_bin bc_gcc bc_m64 bc_m64_head bc_winpth
 # <2> build
 echo "building mingw-w64-headers"
 echo "======================="
+mkdir bc_m64_head
 cd bc_m64_head
 $M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-headers/configure \
 	--host=$MINGW_TRIPLE --prefix=$M_CROSS/$MINGW_TRIPLE
@@ -79,7 +80,6 @@ $M_SOURCE/binutils-$VER_BINUTILS/configure $BHT --disable-nls \
 make $MAKE_OPT || echo "(-) Build Error!"
 make install
 cd ..
-
 
 # disable begin
 if [ "1" == "1" ] ; then
