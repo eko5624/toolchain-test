@@ -19,7 +19,6 @@ fi
 
 if [ "$1" == "64r" ] || [ "$1" == "32r" ] ; then
 	CFLAGS="-pipe -O2"
-	# CFLAGS="-pipe -O2 -fno-strict-aliasing"
 fi
 
 if [ "$1" == "32r" ] || [ "$1" == "32d" ] ; then
@@ -57,8 +56,8 @@ cd $M_BUILD
 rm -rf bc_bin bc_gcc bc_m64 bc_m64_head bc_winpth
 
 # <2> build
-date
-mkdir bc_m64_head
+echo "building mingw-w64-headers"
+echo "======================="
 cd bc_m64_head
 $M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-headers/configure \
 	--host=$MINGW_TRIPLE --prefix=$M_CROSS/$MINGW_TRIPLE
@@ -66,19 +65,17 @@ $M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-headers/configure \
 	# --enable-sdk=all   (ddk, directx)
 make $MAKE_OPT || echo "(-) Build Error!"
 make install
-cd ..
+cd $M_CROSS
+ln -s $MINGW_TRIPLE mingw
+cd $M_BUILD
 
-( cd $M_CROSS ; ln -s $MINGW_TRIPLE mingw ; cd $M_BUILD )
-
-
-date
+echo "building binutils"
+echo "======================="
 mkdir bc_bin
 cd bc_bin
 $M_SOURCE/binutils-$VER_BINUTILS/configure $BHT --disable-nls \
   --disable-multilib \
   --prefix=$M_CROSS --with-sysroot=$M_CROSS
-#  --enable-plugins
-# --disable-multilib 
 make $MAKE_OPT || echo "(-) Build Error!"
 make install
 cd ..
@@ -94,22 +91,24 @@ if [ "$(uname -m)" == "x86_64" ] ; then
 MYABI=64
 fi
 
-date
+echo "building gcc"
+echo "======================="
 mkdir bc_gcc
 cd bc_gcc
 patch -d $M_SOURCE/gcc-$VER_GCC/gcc/config/i386 -p1 < $M_ROOT/patch/gcc-intrin.patch
 $M_SOURCE/gcc-$VER_GCC/configure $BHT --disable-nls \
   --disable-multilib \
-  --enable-languages=c,c++,objc,obj-c++ \
+  --enable-languages=c,c++ \
   --disable-libstdcxx-pch \
-  --enable-threads=posix --enable-libssp \
-  --prefix=$M_CROSS --with-sysroot=$M_CROSS
-
+  --enable-threads=posix \
+  --prefix=$M_CROSS \
+  --with-sysroot=$M_CROSS
 make $MAKE_OPT all-gcc || echo "(-) Build Error!"
 make install-gcc
 cd ..
 
-date
+echo "building mingw-w64-crt"
+echo "======================="
 mkdir bc_m64
 cd bc_m64
 $M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-crt/configure \
@@ -119,7 +118,8 @@ make || echo "(-) Build Error!"
 make install
 cd ..
 
-date
+echo "building winpthreads"
+echo "======================="
 mkdir bc_winpth
 cd bc_winpth
 $M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-libraries/winpthreads/configure \
