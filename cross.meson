@@ -5,13 +5,10 @@ ar = 'x86_64-w64-mingw32-gcc-ar'
 ranlib = 'x86_64-w64-mingw32-gcc-ranlib'
 strip = 'x86_64-w64-mingw32-strip'
 windres = 'x86_64-w64-mingw32-windres'
-exe_wrapper = ['wine']
-
-[properties]
-needs_exe_wrapper = true
+# exe_wrapper = 'wine'
 
 [host_machine]
 system = 'windows'
 cpu_family = 'x86_64'
-cpu = 'x86_64'
+cpu = 'x86_64-w64-mingw32'
 endian = 'little'
