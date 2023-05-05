@@ -114,9 +114,7 @@ cd gcc-13.1.0
   --with-arch=x86-64 \
   --with-tune=generic \
   --enable-threads=posix \
-  --without-included-gettext \
-  --enable-lto \
-  --enable-checking=release
+  --without-included-gettext
 make -j$MJOBS all-gcc || echo "(-) Build Error!"
 make install-gcc
 cd $M_SOURCE
