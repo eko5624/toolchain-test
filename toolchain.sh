@@ -117,8 +117,7 @@ patch -p2 -i vmov-alignment.patch
   --enable-threads=posix \
   --without-included-gettext \
   --enable-lto \
-  --enable-checking=release \
-  --enable-seh-exceptions
+  --enable-checking=release
 make -j$MJOBS all-gcc || echo "(-) Build Error!"
 make install-strip-gcc
 cd $M_SOURCE
