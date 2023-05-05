@@ -25,34 +25,25 @@ export PKG_CONFIG_LIBDIR="$M_CROSS/lib/pkgconfig"
 export RUSTUP_HOME="$RUSTUP_LOCATION/.rustup"
 export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
 
-# <1> clean
-date
-rm -rf $M_CROSS
-
+echo "gettiong source"
+echo "======================="
 mkdir -p $M_SOURCE
 cd $M_SOURCE
 
-# get binutils
 wget -c -O binutils-2.40.tar.bz2 http://ftp.gnu.org/gnu/binutils/binutils-2.40.tar.bz2
 tar xjf binutils-2.40.tar.bz2
 
-# get gcc
 wget -c -O gcc-13.1.0.tar.xz https://ftp.gnu.org/gnu/gcc/gcc-13.1.0/gcc-13.1.0.tar.xz
 xz -c -d gcc-13.1.0.tar.xz | tar xf -
 
-# get mingw-w64
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
-# <2> build
-echo "building mingw-w64-headers"
+echo "building gendef"
 echo "======================="
-cd mingw-w64/mingw-w64-headers 
-./configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE
+cd mingw-w64/mingw-w64-tools/gendef
+./configure --prefix=$M_CROSS
 make -j$MJOBS
-make install install-strip
-
+make install
 cd $M_SOURCE
 
 echo "building binutils"
@@ -64,9 +55,14 @@ cd binutils-2.40
   --with-sysroot=$M_CROSS \
   --disable-multilib \
   --disable-nls \
-  --disable-shared
+  --disable-shared \
+  --disable-win32-registry \
+  --without-included-gettext \
+  --enable-lto \
+  --enable-plugins \
+  --enable-threads
 make -j$MJOBS
-make install-strip
+make install
 
 cd $M_CROSS/bin
 ln -s $(which pkg-config) $MINGW_TRIPLE-pkg-config
@@ -80,6 +76,21 @@ ln -s lib lib64
 
 cd $M_SOURCE
 
+
+echo "building mingw-w64-headers"
+echo "======================="
+cd mingw-w64/mingw-w64-headers 
+./configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_CROSS/$MINGW_TRIPLE \
+  --enable-sdk=all \
+  --enable-idl \
+  --with-default-msvcrt=msvcrt
+make -j$MJOBS
+make install
+
+cd $M_SOURCE
+
 echo "building gcc"
 echo "======================="
 cd gcc-13.1.0
@@ -89,11 +100,15 @@ cd gcc-13.1.0
 ./configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
+  --libdir=$M_CROSS/lib \
   --with-sysroot=$M_CROSS \
   --disable-multilib \
   --enable-languages=c,c++ \
   --disable-nls \
-  --enable-threads=posix
+  --disable-win32-registry \
+  --with-tune=generic \
+  --enable-threads=posix \
+  --without-included-gettext
 make -j$MJOBS all-gcc
 make install-gcc
 cd $M_SOURCE
@@ -106,6 +121,7 @@ autoreconf -ivf
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE \
   --with-sysroot=$M_CROSS \
+  --with-default-msvcrt=msvcrt-os \
   --enable-lib64 \
   --disable-lib32
 make -j$MJOBS
@@ -122,14 +138,6 @@ cd mingw-w64/mingw-w64-libraries/winpthreads
   --enable-static
 make -j$MJOBS
 make install
-cd $M_SOURCE
-
-echo "building gendef"
-echo "======================="
-cd mingw-w64/mingw-w64-tools/gendef
-./configure --prefix=$M_CROSS
-make -j$MJOBS
-make install-strip
 cd $M_SOURCE
 
 echo "building rustup"
