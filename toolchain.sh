@@ -37,8 +37,8 @@ wget -c -O binutils-2.40.tar.bz2 http://ftp.gnu.org/gnu/binutils/binutils-2.40.t
 tar xjf binutils-2.40.tar.bz2
 
 # get gcc
-wget -c -O gcc-12-20230421.tar.xz https://mirrorservice.org/sites/sourceware.org/pub/gcc/snapshots/12-20230421/gcc-12-20230421.tar.xz
-xz -c -d gcc-12-20230421.tar.xz | tar xf -
+wget -c -O gcc-13.1.0.tar.xz https://ftp.gnu.org/gnu/gcc/gcc-13.1.0/gcc-13.1.0.tar.xz
+xz -c -d gcc-13.1.0.tar.xz | tar xf -
 
 # get mingw-w64
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
@@ -98,10 +98,10 @@ cd $M_SOURCE
 
 echo "building gcc"
 echo "======================="
-cd gcc-12-20230421
+cd gcc-13.1.0
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54412
-curl -OL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
-patch -p2 -i vmov-alignment.patch
+# curl -OL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
+# patch -p2 -i vmov-alignment.patch
 ./configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
@@ -119,7 +119,7 @@ patch -p2 -i vmov-alignment.patch
   --enable-lto \
   --enable-checking=release
 make -j$MJOBS all-gcc || echo "(-) Build Error!"
-make install-strip-gcc
+make install-gcc
 cd $M_SOURCE
 
 echo "building mingw-w64-crt"
@@ -134,7 +134,7 @@ autoreconf -ivf
   --enable-lib64 \
   --disable-lib32
 make -j$MJOBS || echo "(-) Build Error!"
-make install-strip
+make install
 cd $M_SOURCE
 
 echo "building winpthreads"
@@ -146,7 +146,7 @@ cd mingw-w64/mingw-w64-libraries/winpthreads
   --disable-shared \
   --enable-static
 make -j$MJOBS || echo "(-) Build Error!"
-make install-strip
+make install
 cd $M_SOURCE
 
 echo "building rustup"
