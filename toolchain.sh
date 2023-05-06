@@ -106,11 +106,13 @@ $M_SOURCE/gcc-12-20230421/configure \
   --disable-nls \
   --disable-shared \
   --disable-win32-registry \
+  --with-arch=x86-64 \
   --with-tune=generic \
   --enable-threads=posix \
   --without-included-gettext \
   --enable-lto \
-  --enable-checking=release
+  --enable-checking=release \
+  --disable-sjlj-exceptions
 make -j$MJOBS all-gcc
 make install-gcc
 cd $M_BUILD
