@@ -32,7 +32,7 @@ jobs:
           restore-keys: |
             gcc-
             
-      - name: Building gcc with mcfgthread
+      - name: Building gcc with mcf
         run: |
           PWD=$(pwd)
           if [[ ! "$(ls -A $PWD/target/bin)" ]]; then
