@@ -231,7 +231,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-mpfr=$M_BUILD/for_target \
   --with-mpc=$M_BUILD/for_target \
   --with-isl=$M_BUILD/for_target \
-  --with-native-system-header-dir=$M_TARGET/mingw/include \
   --disable-nls \
   --disable-werror \
   --disable-shared \
