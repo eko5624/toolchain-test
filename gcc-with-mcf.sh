@@ -80,7 +80,7 @@ cd gendef-build
 $M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
-  --prefix=$M_CROSS
+  --prefix=$M_TARGET
 make -j$MJOBS
 make install
 cd $M_BUILD
@@ -91,14 +91,16 @@ mkdir binutils-build
 cd binutils-build
 $M_SOURCE/binutils-2.40/configure \
   --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
   --with-sysroot=$M_TARGET \
   --disable-nls \
-  --disable-shared \
-  --enable-lto \
-  --enable-64-bit-bfd
+  --disable-werror \
+  --disable-shared
 make -j$MJOBS
 make install
+cd $M_TARGET
+ln -s $MINGW_TRIPLE mingw
 cd $M_BUILD
 
 echo "building mingw-w64-headers"
