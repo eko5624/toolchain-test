@@ -218,6 +218,7 @@ echo "======================="
 mkdir gcc-build
 cd gcc-build
 $M_SOURCE/gcc-13.1.0/configure \
+  --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
