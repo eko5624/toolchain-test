@@ -52,7 +52,10 @@ echo "======================="
 cd $M_BUILD
 mkdir gendef-build
 cd gendef-build
-$M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure --prefix=$M_CROSS
+$M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_CROSS
 make -j$MJOBS
 make install
 cd $M_BUILD
@@ -63,7 +66,6 @@ mkdir binutils-build
 cd binutils-build
 $M_SOURCE/binutils-2.40/configure \
   --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
   --with-sysroot=$M_TARGET \
   --disable-nls \
