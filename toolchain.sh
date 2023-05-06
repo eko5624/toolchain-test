@@ -88,8 +88,6 @@ cd mingw-w64/mingw-w64-headers
   --with-default-msvcrt=msvcrt
 make -j$MJOBS
 make install
-cd $M_CROSS
-ln -s $MINGW_TRIPLE mingw
 cd $M_SOURCE
 
 echo "building gcc"
@@ -144,6 +142,13 @@ make -j$MJOBS
 make install
 cd $M_SOURCE
 
+echo "gcc final install"
+echo "======================="
+cd gcc-13.1.0
+make -j$MJOBS
+make install
+cd $M_SOURCE
+
 echo "building rustup"
 echo "======================="
 curl -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --target x86_64-pc-windows-gnu --no-modify-path --profile minimal
@@ -161,10 +166,3 @@ ar = "$M_CROSS/bin/x86_64-w64-mingw32-ar"
 panic = "abort"
 strip = true
 EOF
-
-echo "gcc final install"
-echo "======================="
-cd gcc-13.1.0
-make -j$MJOBS
-make install
-cd $M_SOURCE
