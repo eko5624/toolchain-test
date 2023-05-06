@@ -129,9 +129,6 @@ cd $M_BUILD
 
 echo "building gcc"
 echo "======================="
-# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54412
-#curl -OL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
-#patch -d $M_SOURCE/gcc-12-20230421 -p2 < vmov-alignment.patch
 mkdir gcc-build
 cd gcc-build
 $M_SOURCE/gcc-13.1.0/configure \
@@ -156,12 +153,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-gnu-ld
 make -j$MJOBS
 make install
+cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin
 cd $M_BUILD
 
-echo "installing gcc final"
-echo "======================="
-cd gcc-build
-make -j$MJOBS
-make install
-cd $M_SOURCE
 
