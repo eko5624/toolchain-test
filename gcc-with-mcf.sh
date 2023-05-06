@@ -206,7 +206,7 @@ $M_SOURCE/isl-0.24/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_BUILD/for_target \
-  --with-gmp=$M_BUILD/for_target \
+  --with-gmp-prefix=$M_BUILD/for_target \
   --enable-static \
   --disable-shared
 make -j$MJOBS
