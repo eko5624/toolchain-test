@@ -33,8 +33,8 @@ cd $M_SOURCE
 wget -c -O binutils-2.40.tar.bz2 http://ftp.gnu.org/gnu/binutils/binutils-2.40.tar.bz2
 tar xjf binutils-2.40.tar.bz2
 
-wget -c -O gcc-13.1.0.tar.xz https://ftp.gnu.org/gnu/gcc/gcc-13.1.0/gcc-13.1.0.tar.xz
-xz -c -d gcc-13.1.0.tar.xz | tar xf -
+wget -c -O gcc-12-20230421.tar.xz https://mirrorservice.org/sites/sourceware.org/pub/gcc/snapshots/12-20230421/gcc-12-20230421.tar.xz
+xz -c -d gcc-12-20230421.tar.xz | tar xf -
 
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
@@ -92,10 +92,10 @@ cd $M_SOURCE
 
 echo "building gcc"
 echo "======================="
-cd gcc-13.1.0
+cd gcc-12-20230421
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54412
-#curl -OL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
-#patch -p2 -i vmov-alignment.patch
+curl -OL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
+patch -p2 -i vmov-alignment.patch
 ./configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
@@ -144,7 +144,7 @@ cd $M_SOURCE
 
 echo "gcc final install"
 echo "======================="
-cd gcc-13.1.0
+cd gcc-12-20230421
 make -j$MJOBS
 make install
 cd $M_SOURCE
