@@ -50,7 +50,7 @@ jobs:
 
       - name: Packaging toolchain
         run: |
-          zip -r -y  my-gcc-12-20230421.zip cross/*
+          zip -r -y  my-gcc-13.1.0.zip cross/*
 
       - name: Release
         continue-on-error: true
