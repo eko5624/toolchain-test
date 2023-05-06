@@ -38,12 +38,16 @@ xz -c -d gcc-13.1.0.tar.xz | tar xf -
 
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
-echo "building gendef"
+echo "building mingw-w64-headers"
 echo "======================="
-cd mingw-w64/mingw-w64-tools/gendef
-./configure --prefix=$M_CROSS
+cd mingw-w64/mingw-w64-headers 
+./configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_CROSS/$MINGW_TRIPLE
 make -j$MJOBS
 make install
+cd $M_CROSS
+ln -s $MINGW_TRIPLE mingw
 cd $M_SOURCE
 
 echo "building binutils"
@@ -70,21 +74,8 @@ ln -s $(which pkg-config) $MINGW_TRIPLE-pkgconf
 
 cd $M_CROSS
 mkdir -p $MINGW_TRIPLE/lib
-ln -s $MINGW_TRIPLE mingw
 cd $MINGW_TRIPLE
 ln -s lib lib64
-
-cd $M_SOURCE
-
-
-echo "building mingw-w64-headers"
-echo "======================="
-cd mingw-w64/mingw-w64-headers 
-./configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE
-make -j$MJOBS
-make install
 
 cd $M_SOURCE
 
@@ -97,7 +88,6 @@ cd gcc-13.1.0
 ./configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
-  --libdir=$M_CROSS/lib \
   --with-sysroot=$M_CROSS \
   --disable-multilib \
   --enable-languages=c,c++ \
