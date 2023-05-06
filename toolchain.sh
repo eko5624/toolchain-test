@@ -38,16 +38,13 @@ xz -c -d gcc-13.1.0.tar.xz | tar xf -
 
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
-echo "building mingw-w64-headers"
+
+echo "building gendef"
 echo "======================="
-cd mingw-w64/mingw-w64-headers 
-./configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE
+cd mingw-w64/mingw-w64-tools/gendef
+./configure --prefix=$M_CROSS
 make -j$MJOBS
 make install
-cd $M_CROSS
-ln -s $MINGW_TRIPLE mingw
 cd $M_SOURCE
 
 echo "building binutils"
@@ -74,9 +71,25 @@ ln -s $(which pkg-config) $MINGW_TRIPLE-pkgconf
 
 cd $M_CROSS
 mkdir -p $MINGW_TRIPLE/lib
+ln -s $MINGW_TRIPLE mingw
 cd $MINGW_TRIPLE
 ln -s lib lib64
 
+cd $M_SOURCE
+
+echo "building mingw-w64-headers"
+echo "======================="
+cd mingw-w64/mingw-w64-headers 
+./configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_CROSS/$MINGW_TRIPLE \
+  --enable-sdk=all \
+  --enable-idl \
+  --with-default-msvcrt=msvcrt
+make -j$MJOBS
+make install
+cd $M_CROSS
+ln -s $MINGW_TRIPLE mingw
 cd $M_SOURCE
 
 echo "building gcc"
@@ -88,11 +101,18 @@ cd gcc-13.1.0
 ./configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
+  --libdir=$M_CROSS/lib \
   --with-sysroot=$M_CROSS \
   --disable-multilib \
   --enable-languages=c,c++ \
   --disable-nls \
-  --enable-threads=posix
+  --disable-shared \
+  --disable-win32-registry \
+  --with-tune=generic \
+  --enable-threads=posix \
+  --without-included-gettext \
+  --enable-lto \
+  --enable-checking=release
 make -j$MJOBS all-gcc
 make install-gcc
 cd $M_SOURCE
@@ -105,6 +125,7 @@ autoreconf -ivf
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE \
   --with-sysroot=$M_CROSS \
+  --with-default-msvcrt=msvcrt-os \
   --enable-lib64 \
   --disable-lib32
 make -j$MJOBS
@@ -140,3 +161,10 @@ ar = "$M_CROSS/bin/x86_64-w64-mingw32-ar"
 panic = "abort"
 strip = true
 EOF
+
+echo "gcc final install"
+echo "======================="
+cd gcc-13.1.0
+make -j$MJOBS
+make install
+cd $M_SOURCE
