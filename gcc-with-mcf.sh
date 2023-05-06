@@ -239,9 +239,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-threads=mcf \
   --enable-lto \
   --enable-checking=release \
-  --with-pkgversion="GCC with MCF thread model" \ 
-  --with-gnu-as \
-  --with-gnu-ld
+  --with-pkgversion="GCC with MCF thread model"
 make -j$MJOBS
 make install
 cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin
