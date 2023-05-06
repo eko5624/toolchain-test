@@ -100,6 +100,7 @@ $M_SOURCE/binutils-2.40/configure \
 make -j$MJOBS
 make install
 cd $M_TARGET
+mkdir $MINGW_TRIPLE
 ln -s $MINGW_TRIPLE mingw
 cd $M_BUILD
 
