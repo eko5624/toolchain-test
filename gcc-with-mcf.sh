@@ -85,6 +85,19 @@ make -j$MJOBS
 make install
 cd $M_BUILD
 
+echo "building mingw-w64-headers"
+echo "======================="
+mkdir headers-build
+cd headers-build
+$M_SOURCE/mingw-w64/mingw-w64-headers/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_TARGET/$MINGW_TRIPLE
+make -j$MJOBS
+make install
+cd $M_TARGET
+ln -s $MINGW_TRIPLE mingw
+cd $M_BUILD
+
 echo "building binutils"
 echo "======================="
 mkdir binutils-build
@@ -97,20 +110,6 @@ $M_SOURCE/binutils-2.40/configure \
   --disable-nls \
   --disable-werror \
   --disable-shared
-make -j$MJOBS
-make install
-cd $M_TARGET
-mkdir $MINGW_TRIPLE
-ln -s $MINGW_TRIPLE mingw
-cd $M_BUILD
-
-echo "building mingw-w64-headers"
-echo "======================="
-mkdir headers-build
-cd headers-build
-$M_SOURCE/mingw-w64/mingw-w64-headers/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE
 make -j$MJOBS
 make install
 cd $M_BUILD
@@ -232,13 +231,12 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-mpfr=$M_BUILD/for_target \
   --with-mpc=$M_BUILD/for_target \
   --with-isl=$M_BUILD/for_target \
-  --with-native-system-header-dir=$M_TARGET/$MINGW_TRIPLE/include \
+  --with-native-system-header-dir=$M_TARGET/mingw/include \
   --disable-nls \
   --disable-werror \
   --disable-shared \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
-  --with-arch=x86-64 \
   --with-tune=generic \
   --enable-threads=mcf \
   --enable-lto \
