@@ -32,14 +32,6 @@ jobs:
           restore-keys: |
             gcc-
             
-      - name: Loading rust toolchain cache
-        uses: actions/cache/restore@main
-        with:
-          path: ${{ github.workspace }}/rustup_location
-          key: rust_toolchain-${{ github.run_id }}
-          restore-keys: |
-            rust_toolchain-
-            
       - name: Building gcc with mcfgthread
         run: |
           PWD=$(pwd)
@@ -50,7 +42,7 @@ jobs:
 
       - name: Packaging toolchain
         run: |
-          7z a my-gcc-13.1.0.7z cross/*
+          7z a gcc-with-mcf-13.1.0.7z target/*
 
       - name: Release
         continue-on-error: true
@@ -59,7 +51,7 @@ jobs:
           tag_name: toolchain
           name: toolchain
           files: |
-            my-gcc*.7z
+            gcc-with-mcf*.7z
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -70,9 +62,3 @@ jobs:
           path: ${{ github.workspace }}/cross
           key: gcc-${{ github.run_id }}
           
-      - name: Saving rust toolchain cache
-        uses: actions/cache/save@main
-        if: always()
-        with:
-          path: ${{ github.workspace }}/rustup_location
-          key: rust_toolchain-${{ github.run_id }}
