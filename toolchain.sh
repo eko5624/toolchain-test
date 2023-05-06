@@ -25,32 +25,33 @@ export PKG_CONFIG_LIBDIR="$M_CROSS/lib/pkgconfig"
 export RUSTUP_HOME="$RUSTUP_LOCATION/.rustup"
 export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
 
+mkdir -p $M_SOURCE
+mkdir -p $M_BUILD
+
 echo "gettiong source"
 echo "======================="
-mkdir -p $M_SOURCE
 cd $M_SOURCE
-
 wget -c -O binutils-2.40.tar.bz2 http://ftp.gnu.org/gnu/binutils/binutils-2.40.tar.bz2
 tar xjf binutils-2.40.tar.bz2
-
 wget -c -O gcc-12-20230421.tar.xz https://mirrorservice.org/sites/sourceware.org/pub/gcc/snapshots/12-20230421/gcc-12-20230421.tar.xz
 xz -c -d gcc-12-20230421.tar.xz | tar xf -
-
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
-
 
 echo "building gendef"
 echo "======================="
-cd mingw-w64/mingw-w64-tools/gendef
-./configure --prefix=$M_CROSS
+cd $M_BUILD
+mkdir build_gendef
+cd build_gendef
+$M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure --prefix=$M_CROSS
 make -j$MJOBS
 make install
-cd $M_SOURCE
+cd $M_BUILD
 
 echo "building binutils"
 echo "======================="
-cd binutils-2.40
-./configure \
+mkdir build_binutils
+cd build_binutils
+$M_SOURCE/binutils-2.40/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
   --with-sysroot=$M_CROSS \
@@ -64,23 +65,21 @@ cd binutils-2.40
   --enable-threads
 make -j$MJOBS
 make install
-
 cd $M_CROSS/bin
 ln -s $(which pkg-config) $MINGW_TRIPLE-pkg-config
 ln -s $(which pkg-config) $MINGW_TRIPLE-pkgconf
-
 cd $M_CROSS
 mkdir -p $MINGW_TRIPLE/lib
 ln -s $MINGW_TRIPLE mingw
 cd $MINGW_TRIPLE
 ln -s lib lib64
-
-cd $M_SOURCE
+cd $M_BUILD
 
 echo "building mingw-w64-headers"
 echo "======================="
-cd mingw-w64/mingw-w64-headers 
-./configure \
+mkdir build_headers
+cd build_headers
+$M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE \
   --enable-sdk=all \
@@ -88,15 +87,16 @@ cd mingw-w64/mingw-w64-headers
   --with-default-msvcrt=msvcrt
 make -j$MJOBS
 make install
-cd $M_SOURCE
+cd $M_BUILD
 
 echo "building gcc"
 echo "======================="
-cd gcc-12-20230421
+mkdir build_gcc
+cd build_gcc
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54412
 curl -OL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
-patch -p2 -i vmov-alignment.patch
-./configure \
+patch -d $M_SOURCE/gcc-12-20230421 -p2 < vmov-alignment.patch
+$M_SOURCE/gcc-12-20230421/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
   --libdir=$M_CROSS/lib \
@@ -113,13 +113,15 @@ patch -p2 -i vmov-alignment.patch
   --enable-checking=release
 make -j$MJOBS all-gcc
 make install-gcc
-cd $M_SOURCE
+cd $M_BUILD
 
 echo "building mingw-w64-crt"
 echo "======================="
-cd mingw-w64/mingw-w64-crt
+mkdir build_crt
+cd $M_SOURCE/mingw-w64/mingw-w64-crt
 autoreconf -ivf
-./configure \
+cd build_crt
+$M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE \
   --with-sysroot=$M_CROSS \
@@ -128,23 +130,24 @@ autoreconf -ivf
   --disable-lib32
 make -j$MJOBS
 make install
-cd $M_SOURCE
+cd $M_BUILD
 
 echo "building winpthreads"
 echo "======================="
-cd mingw-w64/mingw-w64-libraries/winpthreads
-./configure \
+mkdir build_winpthread
+cd build_winpthread
+$M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE \
   --disable-shared \
   --enable-static
 make -j$MJOBS
 make install
-cd $M_SOURCE
+cd $M_BUILD
 
 echo "gcc final install"
 echo "======================="
-cd gcc-12-20230421
+cd build_gcc
 make -j$MJOBS
 make install
 cd $M_SOURCE
