@@ -40,8 +40,8 @@ git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 echo "building gendef"
 echo "======================="
 cd $M_BUILD
-mkdir build_gendef
-cd build_gendef
+mkdir gendef-build
+cd gendef-build
 $M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure --prefix=$M_CROSS
 make -j$MJOBS
 make install
@@ -49,8 +49,8 @@ cd $M_BUILD
 
 echo "building binutils"
 echo "======================="
-mkdir build_binutils
-cd build_binutils
+mkdir binutils-build
+cd binutils-build
 $M_SOURCE/binutils-2.40/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
@@ -77,8 +77,8 @@ cd $M_BUILD
 
 echo "building mingw-w64-headers"
 echo "======================="
-mkdir build_headers
-cd build_headers
+mkdir headers-build
+cd headers-build
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE \
@@ -91,11 +91,11 @@ cd $M_BUILD
 
 echo "building gcc"
 echo "======================="
-mkdir build_gcc
-cd build_gcc
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54412
 curl -OL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
 patch -d $M_SOURCE/gcc-12-20230421 -p2 < vmov-alignment.patch
+mkdir gcc-build
+cd gcc-build
 $M_SOURCE/gcc-12-20230421/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
@@ -117,10 +117,10 @@ cd $M_BUILD
 
 echo "building mingw-w64-crt"
 echo "======================="
-mkdir build_crt
 cd $M_SOURCE/mingw-w64/mingw-w64-crt
 autoreconf -ivf
-cd build_crt
+mkdir crt-build
+cd crt-build
 $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE \
@@ -134,8 +134,8 @@ cd $M_BUILD
 
 echo "building winpthreads"
 echo "======================="
-mkdir build_winpthread
-cd build_winpthread
+mkdir winpthreads-build
+cd winpthreads-build
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE \
@@ -147,7 +147,7 @@ cd $M_BUILD
 
 echo "gcc final install"
 echo "======================="
-cd build_gcc
+cd gcc-build
 make -j$MJOBS
 make install
 cd $M_SOURCE
