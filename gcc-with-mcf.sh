@@ -153,6 +153,7 @@ $M_SOURCE/mcfgthread/configure \
   --disable-pch
 make -j$MJOBS
 make install
+mv $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
 cd $M_BUILD
 
 echo "building gmp"
