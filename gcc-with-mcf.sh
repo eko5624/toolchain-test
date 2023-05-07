@@ -239,6 +239,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-nls \
   --disable-werror \
   --disable-shared \
+  --enable-libatomic \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
   --with-tune=generic \
