@@ -9,7 +9,6 @@ MJOBS=$(grep -c processor /proc/cpuinfo)
 
 CFLAGS="-pipe -O2"
 MINGW_TRIPLE="x86_64-w64-mingw32"
-LIBGCC_NAME="libgcc_s_seh-1.dll"
 
 export CFLAGS
 export CXXFLAGS=$CFLAGS
@@ -243,7 +242,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-pkgversion="GCC with MCF thread model"
 make -j$MJOBS
 make install
-cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin
 cd $M_BUILD
 
 
