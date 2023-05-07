@@ -226,7 +226,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --prefix=$M_TARGET \
   --with-sysroot=$M_TARGET \
   --disable-multilib \
-  --enable-languages=c,c++,objc,obj-c++ \
+  --enable-languages=c,c++ \
   --with-gmp=$M_BUILD/for_target \
   --with-mpfr=$M_BUILD/for_target \
   --with-mpc=$M_BUILD/for_target \
