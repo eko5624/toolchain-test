@@ -90,8 +90,7 @@ mkdir headers-build
 cd headers-build
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
-  --with-default-msvcrt=ucrt
+  --prefix=$M_TARGET/$MINGW_TRIPLE
 make -j$MJOBS
 make install
 cd $M_TARGET
@@ -123,7 +122,6 @@ cd crt-build
 $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/$MINGW_TRIPLE \
-  --with-default-msvcrt=ucrt \
   --enable-lib64 \
   --disable-lib32
 make -j$MJOBS
@@ -227,6 +225,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
   --with-sysroot=$M_TARGET \
+  --disable-multilib \
   --enable-languages=c,c++ \
   --with-gmp=$M_BUILD/for_target \
   --with-mpfr=$M_BUILD/for_target \
@@ -245,5 +244,3 @@ $M_SOURCE/gcc-13.1.0/configure \
 make -j$MJOBS
 make install
 cd $M_BUILD
-
-
