@@ -91,7 +91,6 @@ cd headers-build
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/$MINGW_TRIPLE \
-  --enable-sdk=all \
   --with-default-msvcrt=ucrt \
   --enable-idl \
   --without-widl
@@ -230,7 +229,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
   --with-sysroot=$M_TARGET \
-  --disable-multilib \
   --enable-languages=c,c++ \
   --with-gmp=$M_BUILD/for_target \
   --with-mpfr=$M_BUILD/for_target \
@@ -239,7 +237,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-nls \
   --disable-werror \
   --disable-shared \
-  --enable-libatomic \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
   --with-tune=generic \
