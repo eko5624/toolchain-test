@@ -42,7 +42,7 @@ jobs:
 
       - name: Packaging toolchain
         run: |
-          7z a gcc-with-mcf-13.1.0.7z target/*
+          zip -r -y gcc-with-mcf-ucrt-13.1.0.7z target/*
 
       - name: Release
         continue-on-error: true
