@@ -91,9 +91,7 @@ cd headers-build
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/$MINGW_TRIPLE \
-  --with-default-msvcrt=ucrt \
-  --enable-idl \
-  --without-widl
+  --with-default-msvcrt=ucrt
 make -j$MJOBS
 make install
 cd $M_TARGET
