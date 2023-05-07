@@ -90,7 +90,7 @@ mkdir headers-build
 cd headers-build
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
   --enable-sdk=all \
   --with-default-msvcrt=ucrt \
   --enable-idl \
