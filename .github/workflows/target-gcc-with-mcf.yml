@@ -1,4 +1,4 @@
-name: gcc-with-mcf
+name: target-gcc-with-mcf
 defaults:
   run:
     shell: bash
