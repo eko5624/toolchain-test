@@ -59,7 +59,7 @@ jobs:
           tag_name: toolchain
           name: toolchain
           files: |
-            gcc-with-mcf*.7z
+            target-gcc*.7z
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
