@@ -24,25 +24,33 @@ jobs:
           git config --global --add safe.directory $PWD
           
       - uses: actions/checkout@main
-      - name: Loading gcc cache
+      - name: Loading cross gcc cache
         uses: actions/cache/restore@main
         with:
           path: ${{ github.workspace }}/cross
-          key: gcc-${{ github.run_id }}
+          key: cross-gcc-${{ github.run_id }}
           restore-keys: |
-            gcc-
+            cross-gcc-
+            
+      - name: Loading target gcc cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/target
+          key: target-gcc-${{ github.run_id }}
+          restore-keys: |
+            target-gcc-
             
       - name: Building gcc with mcf
         run: |
           PWD=$(pwd)
           if [[ ! "$(ls -A $PWD/target/bin)" ]]; then
-            chmod +x ./gcc-with-mcf.sh
-            ./gcc-with-mcf.sh
+            chmod +x ./target-gcc-with-mcf.sh
+            ./target-gcc-with-mcf.sh
           fi  
 
       - name: Packaging toolchain
         run: |
-          zip -r -y gcc-with-mcf-ucrt-13.1.0.7z target/*
+          zip -r -y target-gcc-with-mcf-ucrt-13.1.0.7z target/*
 
       - name: Release
         continue-on-error: true
@@ -55,4 +63,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          
+      - name: Saving target gcc cache
+        uses: actions/cache/save@main
+        if: always()
+        with:
+          path: ${{ github.workspace }}/target
+          key: target-gcc-${{ github.run_id }}
