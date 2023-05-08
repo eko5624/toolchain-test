@@ -91,7 +91,10 @@ cd headers-build
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/$MINGW_TRIPLE \
-  --with-default-msvcrt=ucrt 
+  --enable-sdk=all \
+  --with-default-msvcrt=ucrt \
+  --enable-idl \
+  --without-widl
 make -j$MJOBS
 make install
 cd $M_TARGET
@@ -124,6 +127,8 @@ $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/$MINGW_TRIPLE \
   --with-default-msvcrt=ucrt \
+  --enable-wildcard \
+  --disable-dependency-tracking \
   --enable-lib64 \
   --disable-lib32
 make -j$MJOBS
