@@ -1,4 +1,4 @@
-name: my-gcc-ucrt
+name: cross-gcc-ucrt
 defaults:
   run:
     shell: bash
@@ -28,9 +28,9 @@ jobs:
         uses: actions/cache/restore@main
         with:
           path: ${{ github.workspace }}/cross
-          key: gcc-${{ github.run_id }}
+          key: cross-gcc-${{ github.run_id }}
           restore-keys: |
-            gcc-
+            cross-gcc-
             
       - name: Loading rust toolchain cache
         uses: actions/cache/restore@main
@@ -44,13 +44,13 @@ jobs:
         run: |
           PWD=$(pwd)
           if [[ ! "$(ls -A $PWD/cross/bin)" ]]; then
-            chmod +x ./*.sh
-            ./toolchain-ucrt.sh
+            chmod +x ./cross-gcc-ucrt.sh
+            ./cross-gcc.sh
           fi  
 
       - name: Packaging toolchain
         run: |
-          zip -r -y my-gcc-ucrt-13.1.0.zip cross/*
+          zip -r -y cross-gcc-ucrt-13.1.0.zip cross/*
 
       - name: Release
         continue-on-error: true
@@ -59,7 +59,7 @@ jobs:
           tag_name: toolchain
           name: toolchain
           files: |
-            my-gcc*.zip
+            cross-gcc-ucrt*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -68,11 +68,5 @@ jobs:
         if: always()
         with:
           path: ${{ github.workspace }}/cross
-          key: gcc-${{ github.run_id }}
+          key: cross-gcc-${{ github.run_id }}
           
-      - name: Saving rust toolchain cache
-        uses: actions/cache/save@main
-        if: always()
-        with:
-          path: ${{ github.workspace }}/rustup_location
-          key: rust_toolchain-${{ github.run_id }}
