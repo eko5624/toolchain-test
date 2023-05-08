@@ -45,7 +45,7 @@ jobs:
           PWD=$(pwd)
           if [[ ! "$(ls -A $PWD/cross/bin)" ]]; then
             chmod +x ./cross-gcc-ucrt.sh
-            ./cross-gcc.sh
+            ./cross-gcc-ucrt.sh
           fi  
 
       - name: Packaging toolchain
