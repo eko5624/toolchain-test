@@ -50,7 +50,7 @@ jobs:
 
       - name: Packaging toolchain
         run: |
-          zip -r -y target-gcc-with-mcf-ucrt-13.1.0.7z target/*
+          zip -r -y gcc-with-mcf-ucrt-test.7z target/*
 
       - name: Release
         continue-on-error: true
@@ -59,7 +59,7 @@ jobs:
           tag_name: toolchain
           name: toolchain
           files: |
-            target-gcc*.7z
+            gcc-with*.7z
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
