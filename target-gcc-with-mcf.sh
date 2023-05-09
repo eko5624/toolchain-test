@@ -272,7 +272,8 @@ $M_SOURCE/gcc-13.1.0/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
-  --with-native-system-header-dir=$M_TARGET/include \
+  --with-local-prefix=$M_TARGET \
+  --with-native-system-header-dir=$M_TARGET/mingw/include \
   --with-sysroot=$M_TARGET \
   --with-gmp=$M_BUILD/for_target \
   --with-mpfr=$M_BUILD/for_target \
