@@ -272,17 +272,15 @@ $M_SOURCE/gcc-13.1.0/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
-  --with-native-system-header-dir=$MINGW_TRIPLE/include \
-  --libexecdir=$M_TARGET/$MINGW_TRIPLE/lib \
-  --enable-bootstrap \
   --with-sysroot=$M_TARGET \
-  --disable-libssp \
-  --disable-multilib \
-  --enable-languages=c,c++ \
   --with-gmp=$M_BUILD/for_target \
   --with-mpfr=$M_BUILD/for_target \
   --with-mpc=$M_BUILD/for_target \
   --with-isl=$M_BUILD/for_target \
+  --enable-bootstrap \
+  --disable-libssp \
+  --disable-multilib \
+  --enable-languages=c,c++ \
   --disable-nls \
   --disable-werror \
   --disable-shared \
