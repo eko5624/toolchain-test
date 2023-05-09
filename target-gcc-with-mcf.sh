@@ -270,7 +270,12 @@ $M_SOURCE/gcc-13.1.0/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
+  --with-local-prefix=$M_TARGET/$MINGW_TRIPLE \
+  --with-native-system-header-dir=$M_TARGET/$MINGW_TRIPLE/include \
+  --libexecdir=$M_TARGET/$MINGW_TRIPLE/lib \
+  --enable-bootstrap \
   --with-sysroot=$M_TARGET \
+  --disable-libssp \
   --disable-multilib \
   --enable-languages=c,c++ \
   --with-gmp=$M_BUILD/for_target \
