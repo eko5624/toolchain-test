@@ -127,15 +127,14 @@ cd $M_BUILD
 echo "building mingw-w64-crt"
 echo "======================="
 mkdir crt-build
-cd crt-build
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9003-crt-Implement-standard-conforming-termination-suppor.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
-patch -d $M_SOURCE/mingw-w64 -p1 < 9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
-patch -d $M_SOURCE/mingw-w64 -p1 < 9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
-patch -d $M_SOURCE/mingw-w64 -p1 < 9003-crt-Implement-standard-conforming-termination-suppor.patch
-patch -d $M_SOURCE/mingw-w64 -p1 < 9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
+#curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
+#curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
+#curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9003-crt-Implement-standard-conforming-termination-suppor.patch
+#curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
+#patch -d $M_SOURCE/mingw-w64 -p1 < 9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
+#patch -d $M_SOURCE/mingw-w64 -p1 < 9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
+#patch -d $M_SOURCE/mingw-w64 -p1 < 9003-crt-Implement-standard-conforming-termination-suppor.patch
+#patch -d $M_SOURCE/mingw-w64 -p1 < 9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
 cd $M_SOURCE/mingw-w64/mingw-w64-crt
 autoreconf -ivf
 cd $M_BUILD/crt-build
@@ -143,8 +142,6 @@ $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/$MINGW_TRIPLE \
   --with-default-msvcrt=ucrt \
-  --enable-wildcard \
-  --disable-dependency-tracking \
   --enable-lib64 \
   --disable-lib32
 make -j$MJOBS
@@ -272,8 +269,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
-  --with-local-prefix=$M_TARGET \
-  --with-native-system-header-dir=$M_TARGET/mingw/include \
   --with-sysroot=$M_TARGET \
   --with-gmp=$M_BUILD/for_target \
   --with-mpfr=$M_BUILD/for_target \
