@@ -273,7 +273,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
   --with-native-system-header-dir=$MINGW_TRIPLE/include \
-  --libexecdir=$MINGW_TRIPLE/lib \
+  --libexecdir=$M_TARGET/$MINGW_TRIPLE/lib \
   --enable-bootstrap \
   --with-sysroot=$M_TARGET \
   --disable-libssp \
