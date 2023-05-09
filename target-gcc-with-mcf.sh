@@ -237,6 +237,10 @@ echo "building gcc"
 echo "======================="
 mkdir gcc-build
 cd gcc-build
+for patch in $$TOP_DIR/gcc-patch/*.patch; do
+    echo "Applying $patch"
+    patch -d $M_SOURCE/gcc-13.1.0 -p1 < "$patch"
+done
 $M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
