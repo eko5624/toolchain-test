@@ -88,6 +88,10 @@ echo "building mingw-w64-headers"
 echo "======================="
 mkdir headers-build
 cd headers-build
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-headers-git/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
+patch -d $M_SOURCE/mingw-w64 -p1 < 0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
+cd $M_SOURCE/mingw-w64/mingw-w64-headers
+touch include/windows.*.h include/wincrypt.h include/prsht.h
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/$MINGW_TRIPLE \
@@ -97,6 +101,9 @@ $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --without-widl
 make -j$MJOBS
 make install
+rm $M_TARGET/$MINGW_TRIPLE/include/pthread_signal.h
+rm $M_TARGET/$MINGW_TRIPLE/include/pthread_time.h
+rm $M_TARGET/$MINGW_TRIPLE/include/pthread_unistd.h
 cd $M_TARGET
 ln -s $MINGW_TRIPLE mingw
 cd $M_BUILD
@@ -133,20 +140,24 @@ $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --disable-lib32
 make -j$MJOBS
 make install
+# Create empty dummy archives, to avoid failing when the compiler driver
+# adds -lssp -lssh_nonshared when linking.
+ar rcs $M_TARGET/$MINGW_TRIPLE/lib/libssp.a
+ar rcs $M_TARGET/$MINGW_TRIPLE/lib/libssp_nonshared.a
 cd $M_BUILD
 
-echo "building winpthreads"
-echo "======================="
-mkdir winpthreads-build
-cd winpthreads-build
-$M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
-  --disable-shared \
-  --enable-static
-make -j$MJOBS
-make install
-cd $M_BUILD
+#echo "building winpthreads"
+#echo "======================="
+#mkdir winpthreads-build
+#cd winpthreads-build
+#$M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
+#  --host=$MINGW_TRIPLE \
+#  --prefix=$M_TARGET/$MINGW_TRIPLE \
+#  --disable-shared \
+#  --enable-static
+#make -j$MJOBS
+#make install
+#cd $M_BUILD
 
 echo "building mcfgthread"
 echo "======================="
@@ -250,4 +261,8 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-pkgversion="GCC with MCF thread model"
 make -j$MJOBS
 make install
+cp $TOP_DIR/libwinpthread-1.dll $M_TARGET/bin
+
+cd $M_TARGET
+rm -f mingw
 cd $M_BUILD
