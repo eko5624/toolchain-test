@@ -88,7 +88,7 @@ echo "building mingw-w64-headers"
 echo "======================="
 mkdir headers-build
 cd headers-build
-curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-headers-git/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-headers-git/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
 patch -d $M_SOURCE/mingw-w64 -p1 < 0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
 cd $M_SOURCE/mingw-w64/mingw-w64-headers
 touch include/windows.*.h include/wincrypt.h include/prsht.h
@@ -126,10 +126,20 @@ cd $M_BUILD
 
 echo "building mingw-w64-crt"
 echo "======================="
-cd $M_SOURCE/mingw-w64/mingw-w64-crt
-autoreconf -ivf
 mkdir crt-build
 cd crt-build
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9003-crt-Implement-standard-conforming-termination-suppor.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
+patch -d $M_SOURCE/mingw-w64 -p1 < 9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
+patch -d $M_SOURCE/mingw-w64 -p1 < 9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
+patch -d $M_SOURCE/mingw-w64 -p1 < 9003-crt-Implement-standard-conforming-termination-suppor.patch
+patch -d $M_SOURCE/mingw-w64 -p1 < 9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
+cd $M_SOURCE/mingw-w64/mingw-w64-crt
+automake
+patch -d $M_SOURCE/mingw-w64/mingw-w64-crt -p1 < $M_BUILD/crt-build/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
 $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/$MINGW_TRIPLE \
@@ -237,7 +247,22 @@ echo "building gcc"
 echo "======================="
 mkdir gcc-build
 cd gcc-build
-for patch in $TOP_DIR/gcc-patch/*.patch; do
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0002-Relocate-libintl.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0005-Windows-Don-t-ignore-native-system-header-dir.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0006-Windows-New-feature-to-allow-overriding.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0007-Build-EXTRA_GNATTOOLS-for-Ada.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0008-Prettify-linking-no-undefined.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0011-Enable-shared-gnat-implib.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0012-Handle-spaces-in-path-for-default-manifest.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0014-gcc-9-branch-clone_function_name_1-Retain-any-stdcall-suffix.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0020-libgomp-Don-t-hard-code-MS-printf-attributes.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0021-PR14940-Allow-a-PCH-to-be-mapped-to-a-different-addr.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0140-gcc-diagnostic-color.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0200-add-m-no-align-vector-insn-option-for-i386.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0300-override-builtin-printf-format.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0400-gcc-Make-stupid-AT-T-syntax-not-default.patch
+for patch in $M_BUILD/gcc-build/*.patch; do
     echo "Applying $patch"
     patch -d $M_SOURCE/gcc-13.1.0 -p1 < "$patch"
 done
