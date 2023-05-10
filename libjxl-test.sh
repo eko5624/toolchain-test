@@ -3,6 +3,7 @@
 # basic param and command line mingwion to change it
 set -e
 
+TOP_DIR=$(pwd)
 export M_ROOT=$(pwd)
 export M_SOURCE=$M_ROOT/source
 export M_BUILD=$M_ROOT/build
