@@ -42,7 +42,7 @@ jobs:
             
       - name: Building
         run: |
-          sudo -k && sudo su -c "cd brotli-dev; makepkg"
+          sudo -k && cd brotli-dev; makepkg -sri
 
       - name: Release
         continue-on-error: true
