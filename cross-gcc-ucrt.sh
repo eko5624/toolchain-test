@@ -109,9 +109,6 @@ $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --with-default-msvcrt=ucrt
 make -j$MJOBS
 make install
-rm $M_CROSS/$MINGW_TRIPLE/include/pthread_signal.h
-rm $M_CROSS/$MINGW_TRIPLE/include/pthread_time.h
-rm $M_CROSS/$MINGW_TRIPLE/include/pthread_unistd.h
 cd $M_BUILD
 
 echo "building gmp"
