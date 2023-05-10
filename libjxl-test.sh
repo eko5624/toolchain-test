@@ -3,9 +3,11 @@
 # basic param and command line mingwion to change it
 set -e
 
-export TOP_DIR=$(pwd)
-export M_CROSS=$TOP_DIR/cross
-export RUSTUP_LOCATION=$TOP_DIR/rustup_location
+export M_ROOT=$(pwd)
+export M_SOURCE=$M_ROOT/source
+export M_BUILD=$M_ROOT/build
+export M_CROSS=$M_ROOT/cross
+export RUSTUP_LOCATION=$M_ROOT/rustup_location
 
 # Speed up the process
 # Env Var NUMJOBS overrides automatic detection
@@ -15,37 +17,40 @@ export MINGW_TRIPLE="x86_64-w64-mingw32"
 
 export PATH="$M_CROSS/bin:$RUSTUP_LOCATION/.cargo/bin:$PATH"
 export PKG_CONFIG="pkgconf --static"
-export PKG_CONFIG_LIBDIR="$M_CROSS/opt/lib/pkgconfig"
+export PKG_CONFIG_LIBDIR="$TOP_DIR/opt/lib/pkgconfig"
 export RUSTUP_HOME="$RUSTUP_LOCATION/.rustup"
 export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
 
-export CFLAGS="-I$M_CROSS/opt/include"
-export CPPFLAGS="-I$M_CROSS/opt/include"
-export LDFLAGS="-L$M_CROSS/opt/lib"
+export CFLAGS="-I$TOP_DIR/opt/include"
+export CPPFLAGS="-I$TOP_DIR/opt/include"
+export LDFLAGS="-L$TOP_DIR/opt/lib"
+
+mkdir -p $M_SOURCE
+mkdir -p $M_BUILD
 
 echo "building brotli"
 echo "======================="
-cd $TOP_DIR
+cd $M_SOURCE
 git clone https://github.com/google/brotli.git
-cd brotli
-rm -rf build && mkdir build && cd build
-cmake .. -G Ninja \
-  -DCMAKE_INSTALL_PREFIX=$M_CROSS/opt \
+cd $M_BUILD
+mkdir brotli-build
+cmake -G Ninja -H$M_SOURCE/brotli -B$M_BUILD/brotli-build \
+  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
   -DBUILD_SHARED_LIBS=OFF \
   -DCMAKE_BUILD_TYPE=Release \
   -DBROTLI_EMSCRIPTEN=OFF
 ninja -j$MJOBS
 ninja install
-cd $TOP_DIR
 
 echo "building highway"
 echo "======================="
+cd $M_SOURCE
 git clone https://github.com/google/highway.git
-cd highway
-rm -rf build && mkdir build && cd build
-cmake .. -G Ninja \
-  -DCMAKE_INSTALL_PREFIX=$M_CROSS/opt \
+cd $M_BUILD
+mkdir highway-build
+cmake -G Ninja -H$M_SOURCE/highway -B$M_BUILD/highway-build \
+  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
   -DCMAKE_BUILD_TYPE=Release \
   -DBUILD_TESTING=OFF \
@@ -57,42 +62,46 @@ cmake .. -G Ninja \
   -DHWY_WARNINGS_ARE_ERRORS=OFF
 ninja -j$MJOBS
 ninja install
-cd $TOP_DIR
 
 echo "building zlib"
 echo "======================="
+cd $M_SOURCE
 git clone https://github.com/madler/zlib.git
-cd zlib
 curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
-patch -p1 -i zlib-1-win32-static.patch
-CHOST=$MINGW_TRIPLE ./configure --prefix=$M_CROSS/opt --static
+patch -d $M_SOURCE/zlib -p1 < $M_SOURCE/zlib-1-win32-static.patch
+cd $M_BUILD
+mkdir zlib-build && cd zlib-build
+CHOST=$MINGW_TRIPLE $M_SOURCE/zlib/configure --prefix=$TOP_DIR/opt --static
 make -j$MJOBS
 make install
 
 echo "building libpng"
 echo "======================="
+cd $M_SOURCE
 git clone https://github.com/glennrp/libpng.git
 cd libpng
 autoreconf -ivf
-./configure \
+cd $M_BUILD
+mkdir libpng-build && cd libpng-build
+$M_SOURCE/libpng/configure \
   CFLAGS='-fno-asynchronous-unwind-tables' \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/opt \
+  --prefix=$TOP_DIR/opt \
   --enable-static \
   --disable-shared
 make -j$MJOBS
 make install
-ln -s $M_CROSS/mingw/bin/libpng-config $M_CROSS/bin/libpng-config
-ln -s $M_CROSS/mingw/bin/libpng16-config $M_CROSS/bin/libpng16-config
-cd $TOP_DIR
+ln -s $TOP_DIR/opt/bin/libpng-config $M_CROSS/bin/libpng-config
+ln -s $TOP_DIR/opt/bin/libpng16-config $M_CROSS/bin/libpng16-config
 
 echo "building libjpeg"
 echo "======================="
+cd $M_SOURCE
 git clone https://github.com/libjpeg-turbo/libjpeg-turbo.git
-cd libjpeg-turbo
-rm -rf build && mkdir build && cd build
-cmake .. -G Ninja \
-  -DCMAKE_INSTALL_PREFIX=$M_CROSS/opt \
+cd $M_BUILD
+mkdir libjpeg-turbo-build
+cmake -G Ninja -H$M_SOURCE/libjpeg-turbo -B$M_BUILD/libjpeg-turbo-build \
+  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
   -DENABLE_SHARED=OFF \
   -DENABLE_STATIC=ON \
@@ -103,25 +112,28 @@ cd $TOP_DIR
 
 echo "building lcms2"
 echo "======================="
+cd $M_SOURCE
 git clone https://github.com/mm2/Little-CMS.git
-cd Little-CMS
-./configure \
+cd $M_BUILD
+mkdir lcms2-build && cd lcms2-build
+$M_SOURCE/Little-CMS/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/opt \
+  --prefix=$TOP_DIR/opt \
   --disable-shared
 make -j$MJOBS
 make install
-cd $TOP_DIR
 
 echo "building libjxl"
 echo "======================="
+cd $M_SOURCE
 git clone https://github.com/libjxl/libjxl.git
 cd libjxl
 rm -rf third_party/brotli
-cp -r $TOP_DIR/brotli third_party
-rm -rf build && mkdir build && cd build
-cmake .. -G Ninja \
-  -DCMAKE_INSTALL_PREFIX=$M_CROSS/opt \
+cp -r $M_SOURCE/brotli third_party
+cd $M_BUILD
+mkdir libjxl-build
+cmake -G Ninja -H$M_SOURCE/libjxl -B$M_BUILD/libjxl-build \
+  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
   -DBUILD_SHARED_LIBS=OFF \
   -DCMAKE_BUILD_TYPE=Release \
@@ -145,4 +157,3 @@ cmake .. -G Ninja \
   -DCMAKE_C_FLAGS='${CMAKE_C_FLAGS} -Wa,-muse-unaligned-vector-move'
 ninja -j$MJOBS
 ninja install
-cd $TOP_DIR
