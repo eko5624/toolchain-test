@@ -13,10 +13,10 @@ jobs:
     steps:    
       - name: Install Dependencies
         run: |
-          sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
-          sudo pacman -Syu --noconfirm
-          sudo pacman -S --noconfirm --needed git ninja cmake python-pip curl python-cairo
-          pip3 install -U setuptools rst2pdf mako jsonschema meson
+          #sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+          #sudo pacman -Syu --noconfirm
+          #sudo pacman -S --noconfirm --needed git ninja cmake python-pip curl python-cairo
+          #pip3 install -U setuptools rst2pdf mako jsonschema meson
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global pull.rebase true
