@@ -169,6 +169,7 @@ echo "building gcc"
 echo "======================="
 mkdir gcc-build
 cd gcc-build
+patch -d $M_SOURCE/gcc-13.1.0/gcc/config/i386 -p1 < $TOP_DIR/patch/gcc-intrin.patch
 $M_SOURCE/gcc-13.1.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
