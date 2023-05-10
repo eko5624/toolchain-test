@@ -97,9 +97,6 @@ $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --without-widl
 make -j$MJOBS
 make install
-rm $M_TARGET/$MINGW_TRIPLE/include/pthread_signal.h
-rm $M_TARGET/$MINGW_TRIPLE/include/pthread_time.h
-rm $M_TARGET/$MINGW_TRIPLE/include/pthread_unistd.h
 cd $M_TARGET
 ln -s $MINGW_TRIPLE mingw
 cd $M_BUILD
