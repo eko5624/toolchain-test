@@ -13,9 +13,8 @@ jobs:
     steps:    
       - name: Install Dependencies
         run: |
-          #sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
           pacman -Syu --noconfirm
-          pacman -S --noconfirm --needed git ninja cmake python-pip curl python-cairo
+          pacman -S --noconfirm --needed git ninja cmake python-pip curl python-cairo yaourt
           pip3 install -U setuptools rst2pdf mako jsonschema meson
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -43,7 +42,7 @@ jobs:
             
       - name: Building
         run: |
-          cd brotli-dev; makepkg
+          sudo -k && sudo su -c "cd brotli-dev; makepkg"
 
       - name: Release
         continue-on-error: true
