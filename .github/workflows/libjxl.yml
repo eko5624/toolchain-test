@@ -23,15 +23,18 @@ jobs:
           git config --global rebase.autoStash true
           git config --global fetch.prune true
           git config --global --add safe.directory $PWD
-          
+            
+      - name: Exit sudo mode
+        run: exit
+           
       - uses: actions/checkout@main
-      - name: Loading gcc cache
+      - name: Loading cross gcc cache
         uses: actions/cache/restore@main
         with:
           path: ${{ github.workspace }}/cross
-          key: gcc-${{ github.run_id }}
+          key: cross-gcc-${{ github.run_id }}
           restore-keys: |
-            gcc-
+            cross-gcc-
             
       - name: Loading rust toolchain cache
         uses: actions/cache/restore@main
