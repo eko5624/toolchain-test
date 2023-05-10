@@ -23,7 +23,6 @@ jobs:
           git config --global rebase.autoStash true
           git config --global fetch.prune true
           git config --global --add safe.directory $PWD
-          exit
            
       - uses: actions/checkout@main
       - name: Loading cross gcc cache
