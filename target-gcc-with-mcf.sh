@@ -226,6 +226,7 @@ echo "building gcc"
 echo "======================="
 mkdir gcc-build
 cd gcc-build
+patch -d $M_SOURCE/gcc-13.1.0/gcc/config/i386 -p1 < $TOP_DIR/patch/gcc-intrin.patch
 $M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
@@ -240,7 +241,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-isl=$M_BUILD/for_target \
   --disable-nls \
   --disable-werror \
-  --disable-shared \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
   --with-tune=generic \
