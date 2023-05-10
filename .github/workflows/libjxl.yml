@@ -14,7 +14,7 @@ jobs:
       - name: Install Dependencies
         run: |
           #sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
-          #sudo pacman -Syu --noconfirm
+          pacman -Syu --noconfirm
           pacman -S --noconfirm --needed git ninja cmake python-pip curl python-cairo
           pip3 install -U setuptools rst2pdf mako jsonschema meson
           git config --global user.name "github-actions[bot]"
