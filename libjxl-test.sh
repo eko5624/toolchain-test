@@ -61,8 +61,8 @@ cmake -G Ninja -H$M_SOURCE/highway -B$M_BUILD/highway-build \
   -DHWY_ENABLE_EXAMPLES=OFF \
   -DHWY_ENABLE_INSTALL=ON \
   -DHWY_WARNINGS_ARE_ERRORS=OFF
-ninja -j$MJOBS
-ninja install
+ninja -j$MJOBS -C $M_BUILD/highway-build
+ninja install -C $M_BUILD/highway-build
 
 echo "building zlib"
 echo "======================="
@@ -107,8 +107,8 @@ cmake -G Ninja -H$M_SOURCE/libjpeg-turbo -B$M_BUILD/libjpeg-turbo-build \
   -DENABLE_SHARED=OFF \
   -DENABLE_STATIC=ON \
   -DCMAKE_BUILD_TYPE=Release
-ninja -j$MJOBS
-ninja install
+ninja -j$MJOBS -C $M_BUILD/libjpeg-turbo-build
+ninja install -C $M_BUILD/libjpeg-turbo-build
 cd $TOP_DIR
 
 echo "building lcms2"
@@ -156,5 +156,5 @@ cmake -G Ninja -H$M_SOURCE/libjxl -B$M_BUILD/libjxl-build \
   -DJPEGXL_ENABLE_SJPEG=OFF \
   -DCMAKE_CXX_FLAGS='${CMAKE_CXX_FLAGS} -Wa,-muse-unaligned-vector-move' \
   -DCMAKE_C_FLAGS='${CMAKE_C_FLAGS} -Wa,-muse-unaligned-vector-move'
-ninja -j$MJOBS
-ninja install
+ninja -j$MJOBS -C $M_BUILD/libjxl-build
+ninja install -C $M_BUILD/libjxl-build
