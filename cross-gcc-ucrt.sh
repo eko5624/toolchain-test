@@ -87,13 +87,72 @@ $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --with-default-msvcrt=ucrt
 make -j$MJOBS
 make install
+rm $M_CROSS/$MINGW_TRIPLE/include/pthread_signal.h
+rm $M_CROSS/$MINGW_TRIPLE/include/pthread_time.h
+rm $M_CROSS/$MINGW_TRIPLE/include/pthread_unistd.h
+cd $M_BUILD
+
+echo "building gmp"
+echo "======================="
+mkdir gmp-build
+cd gmp-build
+$M_SOURCE/gmp-6.2.1/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_cross \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building mpfr"
+echo "======================="
+mkdir mpfr-build
+cd mpfr-build
+$M_SOURCE/mpfr-4.2.0/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_cross \
+  --with-gmp=$M_BUILD/for_cross \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building MPC"
+echo "======================="
+mkdir mpc-build
+cd mpc-build
+$M_SOURCE/mpc-1.3.1/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_cross \
+  --with-gmp=$M_BUILD/for_cross \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building isl"
+echo "======================="
+mkdir isl-build
+cd isl-build
+$M_SOURCE/isl-0.24/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_cross \
+  --with-gmp-prefix=$M_BUILD/for_cross \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
 cd $M_BUILD
 
 echo "building gcc"
 echo "======================="
-# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54412
-#curl -OL https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/raw/5e7d749d80e47d08e34a17971479d06cd423611e/debian/patches/vmov-alignment.patch
-#patch -d $M_SOURCE/gcc-12-20230421 -p2 < vmov-alignment.patch
 mkdir gcc-build
 cd gcc-build
 $M_SOURCE/gcc-13.1.0/configure \
@@ -106,6 +165,11 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-nls \
   --disable-shared \
   --disable-win32-registry \
+  --disable-libstdcxx-pch \
+  --with-gmp=$M_BUILD/for_cross \
+  --with-mpfr=$M_BUILD/for_cross \
+  --with-mpc=$M_BUILD/for_cross \
+  --with-isl=$M_BUILD/for_cross \
   --with-arch=x86-64 \
   --with-tune=generic \
   --enable-threads=posix \
@@ -142,7 +206,9 @@ $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE \
   --disable-shared \
-  --enable-static
+  --enable-static \
+  --enable-lib64 \
+  --disable-lib32
 make -j$MJOBS
 make install
 cd $M_BUILD
