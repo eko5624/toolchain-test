@@ -109,6 +109,9 @@ $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --with-default-msvcrt=ucrt
 make -j$MJOBS
 make install
+rm $M_CROSS/$MINGW_TRIPLE/include/pthread_signal.h
+rm $M_CROSS/$MINGW_TRIPLE/include/pthread_time.h
+rm $M_CROSS/$MINGW_TRIPLE/include/pthread_unistd.h
 cd $M_BUILD
 
 echo "building gmp"
@@ -116,8 +119,6 @@ echo "======================="
 mkdir gmp-build
 cd gmp-build
 $M_SOURCE/gmp-6.2.1/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
   --prefix=$M_BUILD/for_cross \
   --enable-static \
   --disable-shared
@@ -130,8 +131,6 @@ echo "======================="
 mkdir mpfr-build
 cd mpfr-build
 $M_SOURCE/mpfr-4.2.0/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
   --prefix=$M_BUILD/for_cross \
   --with-gmp=$M_BUILD/for_cross \
   --enable-static \
@@ -145,8 +144,6 @@ echo "======================="
 mkdir mpc-build
 cd mpc-build
 $M_SOURCE/mpc-1.3.1/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
   --prefix=$M_BUILD/for_cross \
   --with-gmp=$M_BUILD/for_cross \
   --enable-static \
@@ -160,8 +157,6 @@ echo "======================="
 mkdir isl-build
 cd isl-build
 $M_SOURCE/isl-0.24/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
   --prefix=$M_BUILD/for_cross \
   --with-gmp-prefix=$M_BUILD/for_cross \
   --enable-static \
