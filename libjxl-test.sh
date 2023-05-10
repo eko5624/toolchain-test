@@ -41,8 +41,8 @@ cmake -G Ninja -H$M_SOURCE/brotli -B$M_BUILD/brotli-build \
   -DBUILD_SHARED_LIBS=OFF \
   -DCMAKE_BUILD_TYPE=Release \
   -DBROTLI_EMSCRIPTEN=OFF
-ninja -j$MJOBS
-ninja install
+ninja -j$MJOBS -C $M_BUILD/brotli-build
+ninja install -C $M_BUILD/brotli-build
 
 echo "building highway"
 echo "======================="
