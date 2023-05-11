@@ -139,8 +139,6 @@ echo "building winpthreads"
 echo "======================="
 mkdir winpthreads-build
 cd winpthreads-build
-curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-winpthreads-git/0001-Define-__-de-register_frame_info-in-fake-libgcc_s.patch
-patch -d $M_SOURCE/mingw-w64 -p1 < 0001-Define-__-de-register_frame_info-in-fake-libgcc_s.patch
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/$MINGW_TRIPLE \
