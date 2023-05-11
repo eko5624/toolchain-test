@@ -141,25 +141,27 @@ mkdir winpthreads-build
 cd winpthreads-build
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --enable-static \
+  --enable-shared
 make -j$MJOBS
 make install
 cd $M_BUILD
 
-echo "building mcfgthread"
-echo "======================="
-cd $M_SOURCE/mcfgthread
-autoreconf -ivf
-mkdir mcfgthread-build
-cd mcfgthread-build
-$M_SOURCE/mcfgthread/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
-  --disable-pch
-make -j$MJOBS
-make install
-mv $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
-cd $M_BUILD
+#echo "building mcfgthread"
+#echo "======================="
+#cd $M_SOURCE/mcfgthread
+#autoreconf -ivf
+#mkdir mcfgthread-build
+#cd mcfgthread-build
+#$M_SOURCE/mcfgthread/configure \
+#  --host=$MINGW_TRIPLE \
+#  --prefix=$M_TARGET/$MINGW_TRIPLE \
+#  --disable-pch
+#make -j$MJOBS
+#make install
+#mv $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
+#cd $M_BUILD
 
 echo "building gmp"
 echo "======================="
@@ -243,10 +245,12 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-shared \
   --enable-static \
   --with-tune=generic \
-  --enable-threads=mcf \
+  --enable-threads=posix \
   --enable-lto \
   --enable-checking=release \
-  --with-pkgversion="GCC with MCF thread model"
+  --with-pkgversion="GCC with posix thread model"
 make -j$MJOBS
 make install
+cd $M_TARGET
+rm -f mingw
 cd $M_BUILD
