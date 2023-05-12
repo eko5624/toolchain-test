@@ -44,6 +44,12 @@ cd $M_SOURCE
 wget -c -O binutils-2.40.tar.bz2 http://ftp.gnu.org/gnu/binutils/binutils-2.40.tar.bz2
 tar xjf binutils-2.40.tar.bz2
 
+#windows-default-manifest
+git clone https://sourceware.org/git/cygwin-apps/windows-default-manifest.git
+
+#windows-default-manifest
+git clone https://sourceware.org/git/cygwin-apps/windows-default-manifest.git
+
 #gcc
 wget -c -O gcc-13.1.0.tar.xz https://ftp.gnu.org/gnu/gcc/gcc-13.1.0/gcc-13.1.0.tar.xz
 xz -c -d gcc-13.1.0.tar.xz | tar xf -
@@ -137,16 +143,15 @@ cd $M_BUILD
 
 #echo "building winpthreads"
 #echo "======================="
-#mkdir winpthreads-build
-#cd winpthreads-build
-#$M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
-#  --host=$MINGW_TRIPLE \
-#  --prefix=$M_TARGET/$MINGW_TRIPLE \
-#  --enable-static \
-#  --enable-shared
-#make -j$MJOBS
-#make install
-#cd $M_BUILD
+mkdir winpthreads-build
+cd winpthreads-build
+$M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --enable-static
+make -j$MJOBS
+make install
+cd $M_BUILD
 
 echo "building mcfgthread"
 echo "======================="
@@ -161,6 +166,30 @@ $M_SOURCE/mcfgthread/configure \
 make -j$MJOBS
 make install
 mv $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
+cd $M_BUILD
+
+echo "building windows-default-manifest"
+echo "======================="
+mkdir windows-default-manifest-build
+cd windows-default-manifest-build
+$M_SOURCE/windows-default-manifest/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building windows-default-manifest"
+echo "======================="
+mkdir windows-default-manifest-build
+cd windows-default-manifest-build
+$M_SOURCE/windows-default-manifest/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
+make -j$MJOBS
+make install
 cd $M_BUILD
 
 echo "building gmp"
