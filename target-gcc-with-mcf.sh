@@ -44,6 +44,9 @@ cd $M_SOURCE
 wget -c -O binutils-2.40.tar.bz2 http://ftp.gnu.org/gnu/binutils/binutils-2.40.tar.bz2
 tar xjf binutils-2.40.tar.bz2
 
+#windows-default-manifest
+git clone https://sourceware.org/git/cygwin-apps/windows-default-manifest.git
+
 #gcc
 wget -c -O gcc-13.1.0.tar.xz https://ftp.gnu.org/gnu/gcc/gcc-13.1.0/gcc-13.1.0.tar.xz
 xz -c -d gcc-13.1.0.tar.xz | tar xf -
