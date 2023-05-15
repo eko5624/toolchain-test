@@ -93,8 +93,7 @@ curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w
 cd $M_SOURCE/mingw-w64
 git reset --hard
 git clean -fdx
-
-patch -d $M_SOURCE/mingw-w64 -p1 < $M_BUILD/headers-build/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
+git apply $M_BUILD/headers-build/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
 cd $M_SOURCE/mingw-w64/mingw-w64-headers
 touch include/windows.*.h include/wincrypt.h include/prsht.h
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
@@ -132,23 +131,23 @@ echo "======================="
 mkdir crt-build
 
 #cd crt-build
-#curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
-#curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
-#curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
-#curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9003-crt-Implement-standard-conforming-termination-suppor.patch
-#curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9003-crt-Implement-standard-conforming-termination-suppor.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
 
-#cd $M_SOURCE/mingw-w64
-#git reset --hard
-#git clean -fdx
+cd $M_SOURCE/mingw-w64
+git reset --hard
+git clean -fdx
 
-#patch -p1 -i $M_BUILD/crt-build/9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
-#patch -p1 -i $M_BUILD/crt-build/9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
-#patch -p1 -i $M_BUILD/crt-build/9003-crt-Implement-standard-conforming-termination-suppor.patch
-#patch -p1 -i $M_BUILD/crt-build/9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
-#(cd mingw-w64-crt && automake)
+git apply $M_BUILD/crt-build/9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
+git apply $M_BUILD/crt-build/9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
+git apply $M_BUILD/crt-build/9003-crt-Implement-standard-conforming-termination-suppor.patch
+git apply $M_BUILD/crt-build/9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
+(cd mingw-w64-crt && automake)
 
-#patch -p1 -i $M_BUILD/crt-build/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
+git apply $M_BUILD/crt-build/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
 
 cd $M_BUILD/crt-build
 $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
@@ -290,7 +289,7 @@ sed -i 's/${prefix}\/mingw\//${prefix}\//g' configure
 
 # change hardcoded /mingw prefix to the real prefix .. isn't this rubbish?
 # it might work at build time and could be important there but beyond that?!
-local MINGW_NATIVE_PREFIX=$(cygpath -am ${MINGW_PREFIX})
+MINGW_NATIVE_PREFIX=$M_TARGET
 sed -i "s#\\/mingw\\/#${MINGW_NATIVE_PREFIX//\//\\/}\\/#g" gcc/config/i386/mingw32.h
 
 # so libgomp DLL gets built despide static libdl
