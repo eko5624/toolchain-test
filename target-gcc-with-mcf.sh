@@ -94,7 +94,7 @@ cd $M_SOURCE/mingw-w64
 git reset --hard
 git clean -fdx
 
-patch -d $M_SOURCE/mingw-w64 -p1 < 0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
+patch -d $M_SOURCE/mingw-w64 -p1 < $M_BUILD/headers-build/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
 cd $M_SOURCE/mingw-w64/mingw-w64-headers
 touch include/windows.*.h include/wincrypt.h include/prsht.h
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
@@ -140,10 +140,10 @@ cd $M_SOURCE/mingw-w64
 git reset --hard
 git clean -fdx
 
-patch -d $M_SOURCE/mingw-w64 -p1 < 9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
-patch -d $M_SOURCE/mingw-w64 -p1 < 9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
-patch -d $M_SOURCE/mingw-w64 -p1 < 9003-crt-Implement-standard-conforming-termination-suppor.patch
-patch -d $M_SOURCE/mingw-w64 -p1 < 9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
+patch -d $M_SOURCE/mingw-w64 -p1 < $M_BUILD/crt-build/9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
+patch -d $M_SOURCE/mingw-w64 -p1 < $M_BUILD/crt-build/9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
+patch -d $M_SOURCE/mingw-w64 -p1 < $M_BUILD/crt-build/9003-crt-Implement-standard-conforming-termination-suppor.patch
+patch -d $M_SOURCE/mingw-w64 -p1 < $M_BUILD/crt-build/9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
 
 cd $M_SOURCE/mingw-w64/mingw-w64-crt
 #autoreconf -ivf
@@ -162,8 +162,8 @@ make -j$MJOBS
 make install
 # Create empty dummy archives, to avoid failing when the compiler driver
 # adds -lssp -lssh_nonshared when linking.
-ar rcs $M_TARGET/$MINGW_TRIPLE/lib/libssp.a
-ar rcs $M_TARGET/$MINGW_TRIPLE/lib/libssp_nonshared.a
+ar rcs $M_TARGET/lib/libssp.a
+ar rcs $M_TARGET/lib/libssp_nonshared.a
 cd $M_BUILD
 
 echo "building mcfgthread"
