@@ -141,11 +141,11 @@ cd $M_SOURCE/mingw-w64
 git reset --hard
 git clean -fdx
 
-git apply $M_BUILD/crt-build/9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
-git apply $M_BUILD/crt-build/9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
-git apply $M_BUILD/crt-build/9003-crt-Implement-standard-conforming-termination-suppor.patch
-git apply $M_BUILD/crt-build/9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
-(cd mingw-w64-crt && automake)
+#git apply $M_BUILD/crt-build/9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
+#git apply $M_BUILD/crt-build/9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
+#git apply $M_BUILD/crt-build/9003-crt-Implement-standard-conforming-termination-suppor.patch
+#git apply $M_BUILD/crt-build/9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
+#(cd mingw-w64-crt && automake)
 
 git apply $M_BUILD/crt-build/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
 
