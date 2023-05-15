@@ -88,25 +88,28 @@ echo "building mingw-w64-headers"
 echo "======================="
 mkdir headers-build
 cd headers-build
-#curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-headers-git/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
-#patch -d $M_SOURCE/mingw-w64 -p1 < 0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
-#cd $M_SOURCE/mingw-w64/mingw-w64-headers
-#touch include/windows.*.h include/wincrypt.h include/prsht.h
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-headers-git/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
+  
+cd $M_SOURCE/mingw-w64
+git reset --hard
+git clean -fdx
+
+patch -d $M_SOURCE/mingw-w64 -p1 < 0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
+cd $M_SOURCE/mingw-w64/mingw-w64-headers
+touch include/windows.*.h include/wincrypt.h include/prsht.h
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --prefix=$M_TARGET \
   --enable-sdk=all \
+  --with-default-win32-winnt=0x603 \
   --with-default-msvcrt=ucrt \
   --enable-idl \
   --without-widl
 make -j$MJOBS
 make install
-#rm $M_TARGET/$MINGW_TRIPLE/include/pthread_signal.h
-#rm $M_TARGET/$MINGW_TRIPLE/include/pthread_time.h
-#rm $M_TARGET/$MINGW_TRIPLE/include/pthread_unistd.h
-cd $M_TARGET
-ln -s $MINGW_TRIPLE mingw
-cd $M_BUILD
+rm $M_TARGET/include/pthread_signal.h
+rm $M_TARGET/include/pthread_time.h
+rm $M_TARGET/include/pthread_unistd.h
 
 echo "building binutils"
 echo "======================="
@@ -127,59 +130,56 @@ cd $M_BUILD
 echo "building mingw-w64-crt"
 echo "======================="
 mkdir crt-build
-#curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
-#curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
-#curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9003-crt-Implement-standard-conforming-termination-suppor.patch
-#curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
-#patch -d $M_SOURCE/mingw-w64 -p1 < 9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
-#patch -d $M_SOURCE/mingw-w64 -p1 < 9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
-#patch -d $M_SOURCE/mingw-w64 -p1 < 9003-crt-Implement-standard-conforming-termination-suppor.patch
-#patch -d $M_SOURCE/mingw-w64 -p1 < 9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-headers-git/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9003-crt-Implement-standard-conforming-termination-suppor.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
+
+cd $M_SOURCE/mingw-w64
+git reset --hard
+git clean -fdx
+
+patch -d $M_SOURCE/mingw-w64 -p1 < 9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
+patch -d $M_SOURCE/mingw-w64 -p1 < 9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
+patch -d $M_SOURCE/mingw-w64 -p1 < 9003-crt-Implement-standard-conforming-termination-suppor.patch
+patch -d $M_SOURCE/mingw-w64 -p1 < 9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
+
 cd $M_SOURCE/mingw-w64/mingw-w64-crt
-autoreconf -ivf
+#autoreconf -ivf
+automake
+patch -d $M_SOURCE/mingw-w64 -p1 < $M_BUILD/crt-build/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
 cd $M_BUILD/crt-build
 $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --prefix=$M_TARGET \
   --with-default-msvcrt=ucrt \
+  --enable-wildcard \
+  --disable-dependency-tracking \
   --enable-lib64 \
   --disable-lib32
 make -j$MJOBS
 make install
 # Create empty dummy archives, to avoid failing when the compiler driver
 # adds -lssp -lssh_nonshared when linking.
-#ar rcs $M_TARGET/$MINGW_TRIPLE/lib/libssp.a
-#ar rcs $M_TARGET/$MINGW_TRIPLE/lib/libssp_nonshared.a
+ar rcs $M_TARGET/$MINGW_TRIPLE/lib/libssp.a
+ar rcs $M_TARGET/$MINGW_TRIPLE/lib/libssp_nonshared.a
 cd $M_BUILD
-
-#echo "building winpthreads"
-#echo "======================="
-#mkdir winpthreads-build
-#cd winpthreads-build
-#$M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
-#  --host=$MINGW_TRIPLE \
-#  --prefix=$M_TARGET/$MINGW_TRIPLE \
-#  --disable-shared \
-#  --enable-static \
-#  --enable-lib64 \
-#  --disable-lib32
-#make -j$MJOBS
-#make install
-#cd $M_BUILD
 
 echo "building mcfgthread"
 echo "======================="
 cd $M_SOURCE/mcfgthread
+git reset --hard
+git clean -fdx
 autoreconf -ivf
 mkdir mcfgthread-build
 cd mcfgthread-build
 $M_SOURCE/mcfgthread/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --prefix=$M_TARGET \
   --disable-pch
 make -j$MJOBS
 make install
-mv $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
 cd $M_BUILD
 
 echo "building gmp"
@@ -260,10 +260,40 @@ curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0200-add-m-no-align-vector-insn-option-for-i386.patch
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0300-override-builtin-printf-format.patch
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0400-gcc-Make-stupid-AT-T-syntax-not-default.patch
-for patch in $M_BUILD/gcc-build/*.patch; do
+curl -OL https://github.com/gcc-mirror/gcc/commit/1c118c9970600117700cc12284587e0238de6bbe.patch
+
+cd $M_SOURCE/gcc-13.1.0
+git reset --hard
+git clean -fdx
+
+for patch in $M_BUILD/gcc-build/00*.patch; do
     echo "Applying $patch"
     patch -d $M_SOURCE/gcc-13.1.0 -p1 < "$patch"
 done
+for patch in $M_BUILD/gcc-build/0*.patch; do
+    echo "Applying $patch"
+    patch -d $M_SOURCE/gcc-13.1.0 -p1 < "$patch"
+done
+
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=109670#c7
+# https://github.com/gcc-mirror/gcc/commit/1c118c9970600117700cc12284587e0238de6bbe
+patch -R -Nbp1 -i < $M_BUILD/gcc-build/1c118c9970600117700cc12284587e0238de6bbe.patch
+
+# do not expect ${prefix}/mingw symlink - this should be superceded by
+# 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
+sed -i 's/${prefix}\/mingw\//${prefix}\//g',configure
+
+# change hardcoded /mingw prefix to the real prefix .. isn't this rubbish?
+# it might work at build time and could be important there but beyond that?!
+local MINGW_NATIVE_PREFIX=$(cygpath -am ${MINGW_PREFIX})
+sed -i "s#\\/mingw\\/#${MINGW_NATIVE_PREFIX//\//\\/}\\/#g" gcc/config/i386/mingw32.h
+
+# so libgomp DLL gets built despide static libdl
+export lt_cv_deplibs_check_method='pass_all'
+
+# In addition adaint.c does `#include <accctrl.h>` which pulls in msxml.h, hacky hack:
+CPPFLAGS+=" -DCOM_NO_WINDOWS_H"
+
 $M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
@@ -275,23 +305,33 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-mpc=$M_BUILD/for_target \
   --with-isl=$M_BUILD/for_target \
   --enable-bootstrap \
+  --enable-libgomp \
   --disable-libssp \
+  --disable-rpath \
   --disable-multilib \
   --enable-languages=c,c++ \
   --disable-nls \
   --disable-werror \
-  --disable-shared \
+  --enable-shared \
+  --enable-static \
+  --enable-libatomic \
+  --enable-graphite \
+  --enable-fully-dynamic-string \
+  --enable-libstdcxx-filesystem-ts \
+  --enable-libstdcxx-time \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
   --with-tune=generic \
   --enable-threads=mcf \
   --enable-lto \
   --enable-checking=release \
+  --with-boot-ldflags="-static-libstdc++" \
+  --with-stage1-ldflags="-static-libstdc++" \
   --with-pkgversion="GCC with MCF thread model"
-make -j$MJOBS
+make -j$MJOBS -O STAGE1_CFLAGS="-O2" \
+  BOOT_CFLAGS="$CFLAGS" \
+  BOOT_LDFLAGS="$LDFLAGS" \
+  LDFLAGS_FOR_TARGET="$LDFLAGS" \
+  all
 make install
-cp $TOP_DIR/libwinpthread-1.dll $M_TARGET/bin
-
-cd $M_TARGET
-rm -f mingw
 cd $M_BUILD
