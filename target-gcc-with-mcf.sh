@@ -137,19 +137,19 @@ curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9003-crt-Implement-standard-conforming-termination-suppor.patch
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
 
-cd $M_SOURCE/mingw-w64
-git reset --hard
-git clean -fdx
+#cd $M_SOURCE/mingw-w64
+#git reset --hard
+#git clean -fdx
 
-patch -d $M_SOURCE/mingw-w64 -p1 < $M_BUILD/crt-build/9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
-patch -d $M_SOURCE/mingw-w64 -p1 < $M_BUILD/crt-build/9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
-patch -d $M_SOURCE/mingw-w64 -p1 < $M_BUILD/crt-build/9003-crt-Implement-standard-conforming-termination-suppor.patch
-patch -d $M_SOURCE/mingw-w64 -p1 < $M_BUILD/crt-build/9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
+#patch -d $M_SOURCE/mingw-w64 -p1 < $M_BUILD/crt-build/9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
+#patch -d $M_SOURCE/mingw-w64 -p1 < $M_BUILD/crt-build/9002-crt-Provide-wrappers-for-exit-in-libmingwex.patch
+#patch -d $M_SOURCE/mingw-w64 -p1 < $M_BUILD/crt-build/9003-crt-Implement-standard-conforming-termination-suppor.patch
+#patch -d $M_SOURCE/mingw-w64 -p1 < $M_BUILD/crt-build/9004-crt-Copy-clock-and-nanosleep-from-winpthreads.patch
 
 cd $M_SOURCE/mingw-w64/mingw-w64-crt
 autoreconf -ivf
 #automake
-patch -d $M_SOURCE/mingw-w64 -p1 < $M_BUILD/crt-build/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
+#patch -d $M_SOURCE/mingw-w64 -p1 < $M_BUILD/crt-build/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
 cd $M_BUILD/crt-build
 $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
