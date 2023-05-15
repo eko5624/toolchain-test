@@ -264,25 +264,25 @@ curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w
 curl -OL https://github.com/gcc-mirror/gcc/commit/1c118c9970600117700cc12284587e0238de6bbe.patch
 
 cd $M_SOURCE/gcc-13.1.0
-patch -p1 -i $M_BUILD/gcc-build/0002-Relocate-libintl.patch
-patch -p1 -i $M_BUILD/gcc-build/0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch
-patch -p1 -i $M_BUILD/gcc-build/0005-Windows-Don-t-ignore-native-system-header-dir.patch
-patch -p1 -i $M_BUILD/gcc-build/0006-Windows-New-feature-to-allow-overriding.patch
-patch -p1 -i $M_BUILD/gcc-build/0007-Build-EXTRA_GNATTOOLS-for-Ada.patch
-patch -p1 -i $M_BUILD/gcc-build/0008-Prettify-linking-no-undefined.patch
-patch -p1 -i $M_BUILD/gcc-build/0011-Enable-shared-gnat-implib.patch
-patch -p1 -i $M_BUILD/gcc-build/0012-Handle-spaces-in-path-for-default-manifest.patch
-patch -p1 -i $M_BUILD/gcc-build/0014-gcc-9-branch-clone_function_name_1-Retain-any-stdcall-suffix.patch
-patch -p1 -i $M_BUILD/gcc-build/0020-libgomp-Don-t-hard-code-MS-printf-attributes.patch
-patch -p1 -i $M_BUILD/gcc-build/0021-PR14940-Allow-a-PCH-to-be-mapped-to-a-different-addr.patch
-patch -p1 -i $M_BUILD/gcc-build/0140-gcc-diagnostic-color.patch
-patch -p1 -i $M_BUILD/gcc-build/0200-add-m-no-align-vector-insn-option-for-i386.patch
-patch -p1 -i $M_BUILD/gcc-build/0300-override-builtin-printf-format.patch
-patch -p1 -i $M_BUILD/gcc-build/0400-gcc-Make-stupid-AT-T-syntax-not-default.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0002-Relocate-libintl.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0005-Windows-Don-t-ignore-native-system-header-dir.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0006-Windows-New-feature-to-allow-overriding.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0007-Build-EXTRA_GNATTOOLS-for-Ada.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0008-Prettify-linking-no-undefined.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0011-Enable-shared-gnat-implib.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0012-Handle-spaces-in-path-for-default-manifest.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0014-gcc-9-branch-clone_function_name_1-Retain-any-stdcall-suffix.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0020-libgomp-Don-t-hard-code-MS-printf-attributes.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0021-PR14940-Allow-a-PCH-to-be-mapped-to-a-different-addr.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0140-gcc-diagnostic-color.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0200-add-m-no-align-vector-insn-option-for-i386.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0300-override-builtin-printf-format.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0400-gcc-Make-stupid-AT-T-syntax-not-default.patch
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=109670#c7
 # https://github.com/gcc-mirror/gcc/commit/1c118c9970600117700cc12284587e0238de6bbe
-patch -R -Nbp1 -i < $M_BUILD/gcc-build/1c118c9970600117700cc12284587e0238de6bbe.patch
+patch -R -Nbp1 -i $M_BUILD/gcc-build/1c118c9970600117700cc12284587e0238de6bbe.patch
 
 # do not expect ${prefix}/mingw symlink - this should be superceded by
 # 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
