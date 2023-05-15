@@ -98,7 +98,7 @@ cd $M_SOURCE/mingw-w64/mingw-w64-headers
 touch include/windows.*.h include/wincrypt.h include/prsht.h
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
   --enable-sdk=all \
   --with-default-win32-winnt=0x603 \
   --with-default-msvcrt=ucrt \
@@ -106,9 +106,12 @@ $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --without-widl
 make -j$MJOBS
 make install
-rm $M_TARGET/include/pthread_signal.h
-rm $M_TARGET/include/pthread_time.h
-rm $M_TARGET/include/pthread_unistd.h
+rm $M_TARGET/$MINGW_TRIPLE/include/pthread_signal.h
+rm $M_TARGET/$MINGW_TRIPLE/include/pthread_time.h
+rm $M_TARGET/$MINGW_TRIPLE/include/pthread_unistd.h
+cd $M_TARGET
+ln -s $MINGW_TRIPLE mingw
+cd $M_BUILD
 
 echo "building binutils"
 echo "======================="
@@ -152,7 +155,7 @@ git apply $M_BUILD/crt-build/0001-Allow-to-use-bessel-and-complex-functions-with
 cd $M_BUILD/crt-build
 $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
   --with-default-msvcrt=ucrt \
   --enable-wildcard \
   --disable-dependency-tracking \
@@ -162,8 +165,8 @@ make -j$MJOBS
 make install
 # Create empty dummy archives, to avoid failing when the compiler driver
 # adds -lssp -lssh_nonshared when linking.
-ar rcs $M_TARGET/lib/libssp.a
-ar rcs $M_TARGET/lib/libssp_nonshared.a
+ar rcs $M_TARGET/$MINGW_TRIPLE/lib/libssp.a
+ar rcs $M_TARGET/$MINGW_TRIPLE/lib/libssp_nonshared.a
 cd $M_BUILD
 
 echo "building mcfgthread"
@@ -176,7 +179,7 @@ mkdir mcfgthread-build
 cd mcfgthread-build
 $M_SOURCE/mcfgthread/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
   --disable-pch
 make -j$MJOBS
 make install
@@ -265,7 +268,7 @@ curl -OL https://github.com/gcc-mirror/gcc/commit/1c118c9970600117700cc12284587e
 cd $M_SOURCE/gcc-13.1.0
 patch -Nbp1 -i $M_BUILD/gcc-build/0002-Relocate-libintl.patch
 patch -Nbp1 -i $M_BUILD/gcc-build/0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0005-Windows-Don-t-ignore-native-system-header-dir.patch
+#patch -Nbp1 -i $M_BUILD/gcc-build/0005-Windows-Don-t-ignore-native-system-header-dir.patch
 patch -Nbp1 -i $M_BUILD/gcc-build/0006-Windows-New-feature-to-allow-overriding.patch
 patch -Nbp1 -i $M_BUILD/gcc-build/0007-Build-EXTRA_GNATTOOLS-for-Ada.patch
 patch -Nbp1 -i $M_BUILD/gcc-build/0008-Prettify-linking-no-undefined.patch
@@ -285,12 +288,12 @@ patch -R -Nbp1 -i $M_BUILD/gcc-build/1c118c9970600117700cc12284587e0238de6bbe.pa
 
 # do not expect ${prefix}/mingw symlink - this should be superceded by
 # 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
-sed -i 's#${prefix}/mingw#${prefix}#g' configure
+#sed -i 's#${prefix}/mingw#${prefix}#g' configure
 
 # change hardcoded /mingw prefix to the real prefix .. isn't this rubbish?
 # it might work at build time and could be important there but beyond that?!
-export MINGW_NATIVE_PREFIX=$M_TARGET
-sed -i "s#/mingw/#${MINGW_NATIVE_PREFIX}/#g" gcc/config/i386/mingw32.h
+#export MINGW_NATIVE_PREFIX=$M_TARGET
+#sed -i "s#/mingw/#${MINGW_NATIVE_PREFIX}/#g" gcc/config/i386/mingw32.h
 
 # so libgomp DLL gets built despide static libdl
 export lt_cv_deplibs_check_method='pass_all'
@@ -303,9 +306,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
-  --libexecdir=$M_TARGET/lib \
-  --with-local-prefix=$$M_TARGET/local \
-  --with-native-system-header-dir=$M_TARGET/include \
   --with-sysroot=$M_TARGET \
   --with-gmp=$M_BUILD/for_target \
   --with-mpfr=$M_BUILD/for_target \
