@@ -264,9 +264,6 @@ curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w
 curl -OL https://github.com/gcc-mirror/gcc/commit/1c118c9970600117700cc12284587e0238de6bbe.patch
 
 cd $M_SOURCE/gcc-13.1.0
-git reset --hard
-git clean -fdx
-
 patch -p1 -i $M_BUILD/gcc-build/0002-Relocate-libintl.patch
 patch -p1 -i $M_BUILD/gcc-build/0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch
 patch -p1 -i $M_BUILD/gcc-build/0005-Windows-Don-t-ignore-native-system-header-dir.patch
@@ -289,7 +286,7 @@ patch -R -Nbp1 -i < $M_BUILD/gcc-build/1c118c9970600117700cc12284587e0238de6bbe.
 
 # do not expect ${prefix}/mingw symlink - this should be superceded by
 # 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
-sed -i 's/${prefix}\/mingw\//${prefix}\//g',configure
+sed -i 's/${prefix}\/mingw\//${prefix}\//g' configure
 
 # change hardcoded /mingw prefix to the real prefix .. isn't this rubbish?
 # it might work at build time and could be important there but beyond that?!
