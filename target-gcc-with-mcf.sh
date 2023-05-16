@@ -309,10 +309,10 @@ patch -R -Nbp1 -i $M_BUILD/gcc-build/1c118c9970600117700cc12284587e0238de6bbe.pa
 #sed -i "s#/mingw/#${MINGW_NATIVE_PREFIX}/#g" gcc/config/i386/mingw32.h
 
 # so libgomp DLL gets built despide static libdl
-export lt_cv_deplibs_check_method='pass_all'
+#export lt_cv_deplibs_check_method='pass_all'
 
 # In addition adaint.c does `#include <accctrl.h>` which pulls in msxml.h, hacky hack:
-CPPFLAGS+=" -DCOM_NO_WINDOWS_H"
+#CPPFLAGS+=" -DCOM_NO_WINDOWS_H"
 
 $M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
@@ -324,8 +324,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-mpfr=$M_BUILD/for_target \
   --with-mpc=$M_BUILD/for_target \
   --with-isl=$M_BUILD/for_target \
-  --enable-bootstrap \
-  --enable-libgomp \
   --disable-libssp \
   --disable-rpath \
   --disable-multilib \
@@ -335,10 +333,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-shared \
   --enable-static \
   --enable-libatomic \
-  --enable-graphite \
-  --enable-fully-dynamic-string \
-  --enable-libstdcxx-filesystem-ts \
-  --enable-libstdcxx-time \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
   --with-tune=generic \
