@@ -196,7 +196,7 @@ $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --disable-lib32
 make -j$MJOBS
 make install
-#cd $M_BUILD
+cd $M_BUILD
 
 echo "building gmp"
 echo "======================="
