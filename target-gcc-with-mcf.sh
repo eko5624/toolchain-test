@@ -345,13 +345,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-threads=mcf \
   --enable-lto \
   --enable-checking=release \
-  --with-boot-ldflags="-static-libstdc++" \
-  --with-stage1-ldflags="-static-libstdc++" \
   --with-pkgversion="GCC with MCF thread model"
-make -j$MJOBS -O STAGE1_CFLAGS="-O2" \
-  BOOT_CFLAGS="$CFLAGS" \
-  BOOT_LDFLAGS="$LDFLAGS" \
-  LDFLAGS_FOR_TARGET="$LDFLAGS" \
-  all
+make -j$MJOBS
 make install
 cd $M_BUILD
