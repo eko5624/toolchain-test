@@ -81,7 +81,7 @@ mkdir headers-build
 cd headers-build
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS \
+  --prefix=$M_CROSS/$MINGW_TRIPLE \
   --enable-sdk=all \
   --enable-idl \
   --with-default-msvcrt=ucrt
@@ -110,6 +110,9 @@ $M_SOURCE/gcc-13.1.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
   --with-sysroot=$M_CROSS \
+  --with-native-system-header-dir=$M_CROSS/$MINGW_TRIPLE/include \
+  --libexecdir=$M_CROSS/lib \
+  --with-gxx-include-dir=$M_CROSS/include/c++/13.1.0 \
   --disable-multilib \
   --enable-languages=c,c++ \
   --disable-nls \
