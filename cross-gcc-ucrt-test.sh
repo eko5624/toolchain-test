@@ -137,7 +137,6 @@ cd crt-build
 $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
-  --with-sysroot=$M_CROSS \
   --with-default-msvcrt=ucrt \
   --enable-lib64 \
   --disable-lib32
