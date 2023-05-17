@@ -120,11 +120,16 @@ $M_SOURCE/binutils-2.40/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
   --with-sysroot=$M_TARGET \
+  --enable-64-bit-bfd \
+  --enable-install-libiberty \
+  --enable-plugins \
+  --enable-lto \
   --disable-nls \
   --disable-werror \
   --disable-shared
 make -j$MJOBS
 make install
+rm $M_TARGET/lib/bfd-plugins/libdep.a
 cd $M_BUILD
 
 echo "building mingw-w64-crt"
