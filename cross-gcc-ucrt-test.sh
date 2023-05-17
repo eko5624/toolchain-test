@@ -109,8 +109,6 @@ cd gcc-build
 $M_SOURCE/gcc-13.1.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
-  --with-native-system-header-dir=$M_CROSS/include \
-  --libexecdir=$M_CROSS/lib \
   --with-sysroot=$M_CROSS \
   --disable-multilib \
   --enable-languages=c,c++ \
