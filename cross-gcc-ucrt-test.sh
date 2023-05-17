@@ -81,7 +81,7 @@ mkdir headers-build
 cd headers-build
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS \
+  --prefix=$M_CROSS/$MINGW_TRIPLE \
   --enable-sdk=all \
   --enable-idl \
   --with-default-msvcrt=ucrt
@@ -134,7 +134,7 @@ mkdir crt-build
 cd crt-build
 $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS \
+  --prefix=$M_CROSS/$MINGW_TRIPLE \
   --with-sysroot=$M_CROSS \
   --with-default-msvcrt=ucrt \
   --enable-lib64 \
@@ -149,7 +149,7 @@ mkdir winpthreads-build
 cd winpthreads-build
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS \
+  --prefix=$M_CROSS/$MINGW_TRIPLE \
   --disable-shared \
   --enable-static
 make -j$MJOBS
