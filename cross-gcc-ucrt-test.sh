@@ -81,7 +81,7 @@ mkdir headers-build
 cd headers-build
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE \
+  --prefix=$M_CROSS \
   --enable-sdk=all \
   --enable-idl \
   --with-default-msvcrt=ucrt
