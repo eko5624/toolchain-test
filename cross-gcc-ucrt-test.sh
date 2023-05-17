@@ -97,12 +97,12 @@ patch -p1 -i $M_BUILD/0005-Windows-Don-t-ignore-native-system-header-dir.patch
 
 # do not expect ${prefix}/mingw symlink - this should be superceded by
 # 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
-#sed -i 's#${prefix}/mingw#${prefix}#g' configure
+sed -i 's#${prefix}/mingw#${prefix}#g' configure
 
 # change hardcoded /mingw prefix to the real prefix .. isn't this rubbish?
 # it might work at build time and could be important there but beyond that?!
-#export MINGW_NATIVE_PREFIX=$M_TARGET
-#sed -i "s#/mingw/#${MINGW_NATIVE_PREFIX}/#g" gcc/config/i386/mingw32.h
+export MINGW_NATIVE_PREFIX=$M_TARGET
+sed -i "s#/mingw/#${MINGW_NATIVE_PREFIX}/#g" gcc/config/i386/mingw32.h
 
 mkdir gcc-build
 cd gcc-build
