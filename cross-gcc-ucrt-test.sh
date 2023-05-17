@@ -93,7 +93,7 @@ echo "building gcc"
 echo "======================="
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0005-Windows-Don-t-ignore-native-system-header-dir.patch
 cd $M_SOURCE/gcc-13.1.0
-patch -p1 -i < $M_BUILD/0005-Windows-Don-t-ignore-native-system-header-dir.patch
+patch -p1 -i $M_BUILD/0005-Windows-Don-t-ignore-native-system-header-dir.patch
 
 # do not expect ${prefix}/mingw symlink - this should be superceded by
 # 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
