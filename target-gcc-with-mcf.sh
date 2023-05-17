@@ -106,9 +106,9 @@ $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --without-widl
 make -j$MJOBS
 make install
-rm $M_TARGET/$MINGW_TRIPLE/include/pthread_signal.h
-rm $M_TARGET/$MINGW_TRIPLE/include/pthread_time.h
-rm $M_TARGET/$MINGW_TRIPLE/include/pthread_unistd.h
+rm $M_TARGET/include/pthread_signal.h
+rm $M_TARGET/include/pthread_time.h
+rm $M_TARGET/include/pthread_unistd.h
 cd $M_BUILD
 
 echo "building binutils"
