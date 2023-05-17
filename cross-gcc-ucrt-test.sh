@@ -81,7 +81,7 @@ mkdir headers-build
 cd headers-build
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE \
+  --prefix=$M_CROSS
   --enable-sdk=all \
   --enable-idl \
   --with-default-msvcrt=ucrt
@@ -101,7 +101,7 @@ sed -i 's#${prefix}/mingw#${prefix}#g' configure
 
 # change hardcoded /mingw prefix to the real prefix .. isn't this rubbish?
 # it might work at build time and could be important there but beyond that?!
-export MINGW_NATIVE_PREFIX=$M_CROSS/$MINGW_TRIPLE
+export MINGW_NATIVE_PREFIX=$M_CROSS
 sed -i "s#/mingw/#${MINGW_NATIVE_PREFIX}/#g" gcc/config/i386/mingw32.h
 
 mkdir gcc-build
@@ -110,7 +110,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
   --with-sysroot=$M_CROSS \
-  --with-native-system-header-dir=$M_CROSS/$MINGW_TRIPLE/include \
+  --with-headers=$M_CROSS/include \
   --libexecdir=$M_CROSS/lib \
   --with-gxx-include-dir=$M_CROSS/include/c++/13.1.0 \
   --disable-multilib \
@@ -137,7 +137,7 @@ mkdir crt-build
 cd crt-build
 $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE \
+  --prefix=$M_CROSS \
   --with-sysroot=$M_CROSS \
   --with-default-msvcrt=ucrt \
   --enable-lib64 \
@@ -152,7 +152,7 @@ mkdir winpthreads-build
 cd winpthreads-build
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE \
+  --prefix=$M_CROSS \
   --disable-shared \
   --enable-static
 make -j$MJOBS
