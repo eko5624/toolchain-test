@@ -344,7 +344,7 @@ $M_SOURCE/gcc-13.1.0/configure \
 make -j$MJOBS
 make install
 
-cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/*plugin*.dll       ${pkgdir}${MINGW_PREFIX}/lib/bfd-plugins/
+cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/liblto_plugin.dll  $M_TARGET//lib/bfd-plugins
 cd $M_TARGET/bin
 ln -s gcc.exe cc.exe
 
