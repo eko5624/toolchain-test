@@ -115,6 +115,29 @@ echo "building binutils"
 echo "======================="
 mkdir binutils-build
 cd binutils-build
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0002-check-for-unusual-file-harder.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0010-bfd-Increase-_bfd_coff_max_nscns-to-65279.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0110-binutils-mingw-gnu-print.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/2001-ld-option-to-move-default-bases-under-4GB.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/2003-Restore-old-behaviour-of-windres-so-that-options-con.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/reproducible-import-libraries.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/specify-timestamp.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/libiberty-unlink-handle-windows-nul.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/bfd-real-fopen-handle-windows-nul.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/3001-try-fix-compare_section-abort.patch
+
+cd $M_SOURCE/binutils-2.40
+patch -p1 -i $M_BUILD/binutils-build/0002-check-for-unusual-file-harder.patch
+patch -p1 -i $M_BUILD/binutils-build/0010-bfd-Increase-_bfd_coff_max_nscns-to-65279.patch
+patch -p1 -i $M_BUILD/binutils-build/0110-binutils-mingw-gnu-print.patch
+patch -p1 -i $M_BUILD/binutils-build/2001-ld-option-to-move-default-bases-under-4GB.patch
+patch -R -p1 -i $M_BUILD/binutils-build/2003-Restore-old-behaviour-of-windres-so-that-options-con.patch
+patch -p2 -i $M_BUILD/binutils-build/reproducible-import-libraries.patch
+patch -p2 -i $M_BUILD/binutils-build/specify-timestamp.patch
+patch -p1 -i $M_BUILD/binutils-build/libiberty-unlink-handle-windows-nul.patch
+patch -p1 -i $M_BUILD/binutils-build/bfd-real-fopen-handle-windows-nul.patch
+patch -p1 -i $M_BUILD/binutils-build/3001-try-fix-compare_section-abort.patch
+
 $M_SOURCE/binutils-2.40/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
