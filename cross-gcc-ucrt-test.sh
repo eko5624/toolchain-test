@@ -59,15 +59,6 @@ tar xjf isl-0.24.tar.bz2
 #mingw-w64
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
-echo "building gendef"
-echo "======================="
-cd $M_BUILD
-mkdir gendef-build
-cd gendef-build
-$M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure --prefix=$M_CROSS
-make -j$MJOBS
-make install
-cd $M_BUILD
 
 echo "building binutils"
 echo "======================="
@@ -107,57 +98,6 @@ $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --enable-sdk=all \
   --enable-idl \
   --with-default-msvcrt=ucrt
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building gmp"
-echo "======================="
-mkdir gmp-build
-cd gmp-build
-$M_SOURCE/gmp-6.2.1/configure \
-  --prefix=$M_BUILD/for_cross \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building mpfr"
-echo "======================="
-mkdir mpfr-build
-cd mpfr-build
-$M_SOURCE/mpfr-4.2.0/configure \
-  --prefix=$M_BUILD/for_cross \
-  --with-gmp=$M_BUILD/for_cross \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building MPC"
-echo "======================="
-mkdir mpc-build
-cd mpc-build
-$M_SOURCE/mpc-1.3.1/configure \
-  --prefix=$M_BUILD/for_cross \
-  --with-gmp=$M_BUILD/for_cross \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building isl"
-echo "======================="
-mkdir isl-build
-cd isl-build
-$M_SOURCE/isl-0.24/configure \
-  --prefix=$M_BUILD/for_cross \
-  --with-gmp-prefix=$M_BUILD/for_cross \
-  --enable-static \
-  --disable-shared
 make -j$MJOBS
 make install
 cd $M_BUILD
