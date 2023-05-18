@@ -70,7 +70,7 @@ git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 #mcfgthread
 git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
 
-#cmake
+#make
 wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
 tar xzf make-4.4.1.tar.gz
 echo "building gendef"
