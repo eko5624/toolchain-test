@@ -7,7 +7,7 @@ TOP_DIR=$(pwd)
 # Env Var NUMJOBS overrides automatic detection
 MJOBS=$(grep -c processor /proc/cpuinfo)
 
-CFLAGS="-pipe -O2"
+#CFLAGS="-pipe -O2"
 MINGW_TRIPLE="x86_64-w64-mingw32"
 
 export CFLAGS
@@ -304,12 +304,12 @@ patch -R -Nbp1 -i $M_BUILD/gcc-build/1c118c9970600117700cc12284587e0238de6bbe.pa
 
 # do not expect ${prefix}/mingw symlink - this should be superceded by
 # 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
-sed -i 's#${prefix}/mingw#${prefix}#g' configure
+#sed -i 's#${prefix}/mingw#${prefix}#g' configure
 
 # change hardcoded /mingw prefix to the real prefix .. isn't this rubbish?
 # it might work at build time and could be important there but beyond that?!
-export MINGW_NATIVE_PREFIX=$M_TARGET
-sed -i "s#/mingw/#${MINGW_NATIVE_PREFIX}/#g" gcc/config/i386/mingw32.h
+#export MINGW_NATIVE_PREFIX=$M_TARGET
+#sed -i "s#/mingw/#${MINGW_NATIVE_PREFIX}/#g" gcc/config/i386/mingw32.h
 
 # so libgomp DLL gets built despide static libdl
 #export lt_cv_deplibs_check_method='pass_all'
@@ -324,10 +324,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --prefix=$M_TARGET \
   --with-native-system-header-dir=$M_TARGET/include \
   --libexecdir=$M_TARGET/lib \
-  --with-gmp=$M_BUILD/for_target \
-  --with-mpfr=$M_BUILD/for_target \
-  --with-mpc=$M_BUILD/for_target \
-  --with-isl=$M_BUILD/for_target \
+  --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
   --disable-libssp \
   --disable-rpath \
   --disable-multilib \
