@@ -40,22 +40,6 @@ tar xjf binutils-2.40.tar.bz2
 wget -c -O gcc-13.1.0.tar.xz https://ftp.gnu.org/gnu/gcc/gcc-13.1.0/gcc-13.1.0.tar.xz
 xz -c -d gcc-13.1.0.tar.xz | tar xf -
 
-#gmp
-wget -c -O gmp-6.2.1.tar.bz2 https://ftp.gnu.org/gnu/gmp/gmp-6.2.1.tar.bz2
-tar xjf gmp-6.2.1.tar.bz2
-
-#mpfr
-wget -c -O mpfr-4.2.0.tar.bz2 https://ftp.gnu.org/gnu/mpfr/mpfr-4.2.0.tar.bz2
-tar xjf mpfr-4.2.0.tar.bz2
-
-#MPC
-wget -c -O mpc-1.3.1.tar.gz https://ftp.gnu.org/gnu/mpc/mpc-1.3.1.tar.gz
-tar xzf mpc-1.3.1.tar.gz
-
-#isl
-wget -c -O isl-0.24.tar.bz2 https://gcc.gnu.org/pub/gcc/infrastructure/isl-0.24.tar.bz2
-tar xjf isl-0.24.tar.bz2
-
 #mingw-w64
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
@@ -111,62 +95,10 @@ make -j$MJOBS
 make install
 cd $M_BUILD
 
-echo "building gmp"
-echo "======================="
-mkdir gmp-build
-cd gmp-build
-$M_SOURCE/gmp-6.2.1/configure \
-  --prefix=$M_BUILD/for_cross \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building mpfr"
-echo "======================="
-mkdir mpfr-build
-cd mpfr-build
-$M_SOURCE/mpfr-4.2.0/configure \
-  --prefix=$M_BUILD/for_cross \
-  --with-gmp=$M_BUILD/for_cross \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building MPC"
-echo "======================="
-mkdir mpc-build
-cd mpc-build
-$M_SOURCE/mpc-1.3.1/configure \
-  --prefix=$M_BUILD/for_cross \
-  --with-gmp=$M_BUILD/for_cross \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building isl"
-echo "======================="
-mkdir isl-build
-cd isl-build
-$M_SOURCE/isl-0.24/configure \
-  --prefix=$M_BUILD/for_cross \
-  --with-gmp-prefix=$M_BUILD/for_cross \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
 echo "building gcc"
 echo "======================="
 mkdir gcc-build
 cd gcc-build
-patch -d $M_SOURCE/gcc-13.1.0/gcc/config/i386 -p1 < $TOP_DIR/patch/gcc-intrin.patch
 $M_SOURCE/gcc-13.1.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
@@ -178,10 +110,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-shared \
   --disable-win32-registry \
   --disable-libstdcxx-pch \
-  --with-gmp=$M_BUILD/for_cross \
-  --with-mpfr=$M_BUILD/for_cross \
-  --with-mpc=$M_BUILD/for_cross \
-  --with-isl=$M_BUILD/for_cross \
   --with-arch=x86-64 \
   --with-tune=generic \
   --enable-threads=posix \
