@@ -73,6 +73,7 @@ git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
 #make
 wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
 tar xzf make-4.4.1.tar.gz
+
 echo "building gendef"
 echo "======================="
 cd $M_BUILD
@@ -100,7 +101,7 @@ cd $M_SOURCE/mingw-w64/mingw-w64-headers
 touch include/windows.*.h include/wincrypt.h include/prsht.h
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
   --enable-sdk=all \
   --with-default-win32-winnt=0x603 \
   --with-default-msvcrt=ucrt \
@@ -108,9 +109,11 @@ $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --without-widl
 make -j$MJOBS
 make install
-rm $M_TARGET/include/pthread_signal.h
-rm $M_TARGET/include/pthread_time.h
-rm $M_TARGET/include/pthread_unistd.h
+rm $M_TARGET/$MINGW_TRIPLE/include/pthread_signal.h
+rm $M_TARGET/$MINGW_TRIPLE/include/pthread_time.h
+rm $M_TARGET/$MINGW_TRIPLE/include/pthread_unistd.h
+cd $M_TARGET
+ln -s $MINGW_TRIPLE mingw
 cd $M_BUILD
 
 echo "building binutils"
@@ -183,7 +186,7 @@ git apply $M_BUILD/crt-build/0001-Allow-to-use-bessel-and-complex-functions-with
 cd $M_BUILD/crt-build
 $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
   --with-default-msvcrt=ucrt \
   --enable-wildcard \
   --disable-dependency-tracking \
@@ -207,10 +210,11 @@ mkdir mcfgthread-build
 cd mcfgthread-build
 $M_SOURCE/mcfgthread/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
   --disable-pch
 make -j$MJOBS
 make install
+mv $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
 cd $M_BUILD
 
 echo "building winpthreads"
@@ -219,11 +223,12 @@ mkdir winpthreads-build
 cd winpthreads-build
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
   --enable-lib64 \
   --disable-lib32
 make -j$MJOBS
 make install
+mv $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin
 cd $M_BUILD
 
 echo "building gmp"
@@ -329,12 +334,12 @@ patch -R -Nbp1 -i $M_BUILD/gcc-build/1c118c9970600117700cc12284587e0238de6bbe.pa
 
 # do not expect ${prefix}/mingw symlink - this should be superceded by
 # 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
-#sed -i 's#${prefix}/mingw#${prefix}#g' configure
+sed -i 's#${prefix}/mingw#${prefix}#g' configure
 
 # change hardcoded /mingw prefix to the real prefix .. isn't this rubbish?
 # it might work at build time and could be important there but beyond that?!
 #export MINGW_NATIVE_PREFIX=$M_TARGET
-#sed -i "s#/mingw/#${MINGW_NATIVE_PREFIX}/#g" gcc/config/i386/mingw32.h
+sed -i "s#/mingw/#${MINGW_NATIVE_PREFIX}/#g" gcc/config/i386/mingw32.h
 
 # so libgomp DLL gets built despide static libdl
 #export lt_cv_deplibs_check_method='pass_all'
@@ -347,8 +352,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
-  --with-native-system-header-dir=$M_TARGET/include \
-  --libexecdir=$M_TARGET/lib \
+  --with-sysroot=$M_TARGET \
   --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
   --disable-libssp \
   --disable-rpath \
@@ -369,7 +373,7 @@ $M_SOURCE/gcc-13.1.0/configure \
 make -j$MJOBS
 make install
 
-cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/liblto_plugin.dll  $M_TARGET//lib/bfd-plugins
+mv $M_TARGET/libexec/gcc/x86_64-w64-mingw32/13.1.0/liblto_plugin.dll  $M_TARGET/lib/bfd-plugins
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cd $M_BUILD
 
