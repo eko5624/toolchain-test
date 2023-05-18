@@ -70,7 +70,9 @@ git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 #mcfgthread
 git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
 
-
+#cmake
+wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
+tar xzf make-4.4.1.tar.gz
 echo "building gendef"
 echo "======================="
 cd $M_BUILD
@@ -368,6 +370,20 @@ make -j$MJOBS
 make install
 
 cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/liblto_plugin.dll  $M_TARGET//lib/bfd-plugins
-cd $M_TARGET/bin
-ln -s gcc.exe cc.exe
+cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
+cd $M_BUILD
+
+echo "building make"
+echo "======================="
+mkdir make-build
+cd make-build
+$M_SOURCE/make-4.4.1/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_TARGET
+make -j$MJOBS
+make install
+
+cp $M_TARGET/bin/make.exe $M_TARGET/bin/mingw32-make.exe
+
 
