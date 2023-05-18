@@ -271,6 +271,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-pkgversion="GCC with MCF thread model"
 make -j$MJOBS
 make install
-cd $M_TARGET
+cd $M_TARGET/bin
+ln -s gcc.exe cc.exe
 rm -f mingw
 cd $M_BUILD
