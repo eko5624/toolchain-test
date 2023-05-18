@@ -314,7 +314,7 @@ curl -OL https://github.com/gcc-mirror/gcc/commit/1c118c9970600117700cc12284587e
 cd $M_SOURCE/gcc-13.1.0
 patch -Nbp1 -i $M_BUILD/gcc-build/0002-Relocate-libintl.patch
 patch -Nbp1 -i $M_BUILD/gcc-build/0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0005-Windows-Don-t-ignore-native-system-header-dir.patch
+#patch -Nbp1 -i $M_BUILD/gcc-build/0005-Windows-Don-t-ignore-native-system-header-dir.patch
 patch -Nbp1 -i $M_BUILD/gcc-build/0006-Windows-New-feature-to-allow-overriding.patch
 patch -Nbp1 -i $M_BUILD/gcc-build/0007-Build-EXTRA_GNATTOOLS-for-Ada.patch
 patch -Nbp1 -i $M_BUILD/gcc-build/0008-Prettify-linking-no-undefined.patch
@@ -334,12 +334,12 @@ patch -R -Nbp1 -i $M_BUILD/gcc-build/1c118c9970600117700cc12284587e0238de6bbe.pa
 
 # do not expect ${prefix}/mingw symlink - this should be superceded by
 # 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
-sed -i 's#${prefix}/mingw#${prefix}#g' configure
+#sed -i 's#${prefix}/mingw#${prefix}#g' configure
 
 # change hardcoded /mingw prefix to the real prefix .. isn't this rubbish?
 # it might work at build time and could be important there but beyond that?!
 #export MINGW_NATIVE_PREFIX=$M_TARGET
-sed -i "s#/mingw/#${MINGW_NATIVE_PREFIX}/#g" gcc/config/i386/mingw32.h
+#sed -i "s#/mingw/#${MINGW_NATIVE_PREFIX}/#g" gcc/config/i386/mingw32.h
 
 # so libgomp DLL gets built despide static libdl
 #export lt_cv_deplibs_check_method='pass_all'
