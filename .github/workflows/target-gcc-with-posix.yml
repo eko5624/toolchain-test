@@ -1,4 +1,4 @@
-name: target-gcc-with-posix-ucrt
+name: target-gcc-with-posix
 defaults:
   run:
     shell: bash
