@@ -109,11 +109,9 @@ $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --without-widl
 make -j$MJOBS
 make install
-rm $M_TARGET/$MINGW_TRIPLE/include/pthread_signal.h
-rm $M_TARGET/$MINGW_TRIPLE/include/pthread_time.h
-rm $M_TARGET/$MINGW_TRIPLE/include/pthread_unistd.h
-cd $M_TARGET
-ln -s $MINGW_TRIPLE mingw
+rm $M_TARGET/include/pthread_signal.h
+rm $M_TARGET/include/pthread_time.h
+rm $M_TARGET/include/pthread_unistd.h
 cd $M_BUILD
 
 echo "building binutils"
@@ -196,8 +194,8 @@ make -j$MJOBS
 make install
 # Create empty dummy archives, to avoid failing when the compiler driver
 # adds -lssp -lssh_nonshared when linking.
-ar rcs $M_TARGET/$MINGW_TRIPLE/lib/libssp.a
-ar rcs $M_TARGET/$MINGW_TRIPLE/lib/libssp_nonshared.a
+ar rcs $M_TARGET/lib/libssp.a
+ar rcs $M_TARGET/lib/libssp_nonshared.a
 cd $M_BUILD
 
 echo "building mcfgthread"
