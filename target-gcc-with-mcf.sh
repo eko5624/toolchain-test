@@ -330,15 +330,15 @@ patch -R -Nbp1 -i $M_BUILD/gcc-build/1c118c9970600117700cc12284587e0238de6bbe.pa
 
 # do not expect ${prefix}/mingw symlink - this should be superceded by
 # 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
-sed -i 's#${prefix}/mingw#${prefix}#g' configure
+sed -i 's/${prefix}\/mingw\//${prefix}\//g' configure
 
 # change hardcoded /mingw prefix to the real prefix .. isn't this rubbish?
 # it might work at build time and could be important there but beyond that?!
 export MINGW_NATIVE_PREFIX=$M_TARGET
-sed -i "s#/mingw/#${MINGW_NATIVE_PREFIX}/#g" gcc/config/i386/mingw32.h
+sed -i "s#\\/mingw\\/#${MINGW_NATIVE_PREFIX//\//\\/}\\/#g" gcc/config/i386/mingw32.h
 
 # so libgomp DLL gets built despide static libdl
-#export lt_cv_deplibs_check_method='pass_all'
+export lt_cv_deplibs_check_method='pass_all'
 
 # In addition adaint.c does `#include <accctrl.h>` which pulls in msxml.h, hacky hack:
 CPPFLAGS+=" -DCOM_NO_WINDOWS_H"
@@ -375,14 +375,9 @@ $M_SOURCE/gcc-13.1.0/configure \
 
 # https://gcc.gnu.org/onlinedocs/gccint/Makefile.html
 # https://bugs.archlinux.org/task/71777
-make -O STAGE1_CFLAGS="-O2" \
-        BOOT_CFLAGS="$CFLAGS" \
-        BOOT_LDFLAGS="$LDFLAGS" \
-        LDFLAGS_FOR_TARGET="$LDFLAGS" \
-        all
+make -O STAGE1_CFLAGS="-O2" all
 make install
 
-cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/liblto_plugin.dll  $M_TARGET/lib/bfd-plugins
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cd $M_BUILD
 
