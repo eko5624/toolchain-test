@@ -235,8 +235,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-pkgversion="GCC with posix thread model"
 make -j$MJOBS
 make install
-cd $M_TARGET
-rm -f mingw
+cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cd $M_BUILD
 
 echo "building make"
@@ -250,3 +249,5 @@ $M_SOURCE/make-4.4.1/configure \
 make -j$MJOBS
 make install
 cp $M_TARGET/bin/make.exe $M_TARGET/bin/mingw32-make.exe
+cd $M_TARGET
+rm -f mingw
