@@ -368,7 +368,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-fully-dynamic-string \
   --enable-lto \
   --enable-checking=release \
-  --with-pkgversion="GCC with MCF thread model"
+  --with-pkgversion="GCC with MCF thread model" \
   --with-boot-ldflags="-static-libstdc++" \
   --with-stage1-ldflags="-static-libstdc++"
 #make -j$MJOBS
