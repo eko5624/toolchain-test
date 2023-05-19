@@ -50,7 +50,7 @@ jobs:
 
       - name: Packaging toolchain
         run: |
-          zip -r -y gcc-with-mcf-ucrt-test.7z target/*
+          7z a gcc-with-mcf-ucrt-test.7z target/*
 
       - name: Release
         continue-on-error: true
