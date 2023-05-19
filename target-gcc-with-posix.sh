@@ -70,6 +70,10 @@ git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 #mcfgthread
 git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
 
+#make
+wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
+tar xzf make-4.4.1.tar.gz
+
 
 echo "building gendef"
 echo "======================="
@@ -141,27 +145,10 @@ mkdir winpthreads-build
 cd winpthreads-build
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
-  --enable-static \
-  --enable-shared
+  --prefix=$M_TARGET/$MINGW_TRIPLE
 make -j$MJOBS
 make install
 cd $M_BUILD
-
-#echo "building mcfgthread"
-#echo "======================="
-#cd $M_SOURCE/mcfgthread
-#autoreconf -ivf
-#mkdir mcfgthread-build
-#cd mcfgthread-build
-#$M_SOURCE/mcfgthread/configure \
-#  --host=$MINGW_TRIPLE \
-#  --prefix=$M_TARGET/$MINGW_TRIPLE \
-#  --disable-pch
-#make -j$MJOBS
-#make install
-#mv $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
-#cd $M_BUILD
 
 echo "building gmp"
 echo "======================="
@@ -234,10 +221,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-sysroot=$M_TARGET \
   --disable-multilib \
   --enable-languages=c,c++ \
-  --with-gmp=$M_BUILD/for_target \
-  --with-mpfr=$M_BUILD/for_target \
-  --with-mpc=$M_BUILD/for_target \
-  --with-isl=$M_BUILD/for_target \
+  --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
   --disable-nls \
   --disable-werror \
   --disable-libstdcxx-pch \
@@ -254,3 +238,15 @@ make install
 cd $M_TARGET
 rm -f mingw
 cd $M_BUILD
+
+echo "building make"
+echo "======================="
+mkdir make-build
+cd make-build
+$M_SOURCE/make-4.4.1/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_TARGET
+make -j$MJOBS
+make install
+cp $M_TARGET/bin/make.exe $M_TARGET/bin/mingw32-make.exe
