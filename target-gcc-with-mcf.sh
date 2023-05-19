@@ -206,6 +206,7 @@ git clean -fdx
 autoreconf -ivf
 mkdir mcfgthread-build
 cd mcfgthread-build
+export CFLAGS+=' -Os -g'
 $M_SOURCE/mcfgthread/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
