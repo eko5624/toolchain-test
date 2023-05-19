@@ -7,7 +7,7 @@ TOP_DIR=$(pwd)
 # Env Var NUMJOBS overrides automatic detection
 MJOBS=$(grep -c processor /proc/cpuinfo)
 
-CFLAGS="-pipe -O2"
+#CFLAGS="-pipe -O2"
 MINGW_TRIPLE="x86_64-w64-mingw32"
 
 export CFLAGS
@@ -341,7 +341,7 @@ sed -i "s#/mingw/#${MINGW_NATIVE_PREFIX}/#g" gcc/config/i386/mingw32.h
 #export lt_cv_deplibs_check_method='pass_all'
 
 # In addition adaint.c does `#include <accctrl.h>` which pulls in msxml.h, hacky hack:
-#CPPFLAGS+=" -DCOM_NO_WINDOWS_H"
+CPPFLAGS+=" -DCOM_NO_WINDOWS_H"
 
 $M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
@@ -350,6 +350,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --prefix=$M_TARGET \
   --with-native-system-header-dir=$M_TARGET/include \
   --libexecdir=$M_TARGET/lib \
+  --enable-bootstrap \
   --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
   --disable-libssp \
   --disable-rpath \
@@ -368,7 +369,17 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-lto \
   --enable-checking=release \
   --with-pkgversion="GCC with MCF thread model"
-make -j$MJOBS
+  --with-boot-ldflags="-static-libstdc++" \
+  --with-stage1-ldflags="-static-libstdc++"
+#make -j$MJOBS
+
+# https://gcc.gnu.org/onlinedocs/gccint/Makefile.html
+# https://bugs.archlinux.org/task/71777
+make -O STAGE1_CFLAGS="-O2" \
+        BOOT_CFLAGS="$CFLAGS" \
+        BOOT_LDFLAGS="$LDFLAGS" \
+        LDFLAGS_FOR_TARGET="$LDFLAGS" \
+        all
 make install
 
 cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/liblto_plugin.dll  $M_TARGET/lib/bfd-plugins
