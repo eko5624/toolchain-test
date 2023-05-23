@@ -401,8 +401,6 @@ cd $M_BUILD
 echo "building cmake"
 echo "======================="
 mkdir cmake-build
-cd $M_SOURCE/CMake-3.26.4
-./bootstrap
 cd cmake-build
 $M_SOURCE/CMake-3.26.4/configure \
   --host=$MINGW_TRIPLE \
