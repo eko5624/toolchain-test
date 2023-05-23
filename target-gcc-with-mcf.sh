@@ -395,8 +395,8 @@ $M_SOURCE/make-4.4.1/configure \
   --prefix=$M_TARGET
 make -j$MJOBS
 make install
-
 cp $M_TARGET/bin/make.exe $M_TARGET/bin/mingw32-make.exe
+cd $M_BUILD
 
 echo "building cmake"
 echo "======================="
