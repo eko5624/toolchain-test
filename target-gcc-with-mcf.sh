@@ -369,6 +369,8 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-shared \
   --enable-static \
   --enable-libatomic \
+  --enable-host-shared \
+  --enable-__cxa_atexit \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
   --with-tune=generic \
