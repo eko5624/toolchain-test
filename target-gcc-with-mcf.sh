@@ -74,6 +74,10 @@ git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
 wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
 tar xzf make-4.4.1.tar.gz
 
+#cmake
+wget -c -O cmake-3.26.4.tar.gz https://github.com/Kitware/CMake/archive/refs/tags/v3.26.4.tar.gz
+tar xzf cmake-3.26.4.tar.gz
+
 echo "building gendef"
 echo "======================="
 cd $M_BUILD
@@ -344,6 +348,8 @@ export lt_cv_deplibs_check_method='pass_all'
 # In addition adaint.c does `#include <accctrl.h>` which pulls in msxml.h, hacky hack:
 CPPFLAGS+=" -DCOM_NO_WINDOWS_H"
 
+CXXFLAGS="-Wno-int-conversion"
+LDFLAGS="-pthread"
 $M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
@@ -359,6 +365,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-languages=c,c++ \
   --disable-nls \
   --disable-werror \
+  --disable-symvers \
   --enable-shared \
   --enable-static \
   --enable-libatomic \
@@ -369,14 +376,9 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-fully-dynamic-string \
   --enable-lto \
   --enable-checking=release \
-  --with-pkgversion="GCC with MCF thread model" \
-  --with-boot-ldflags="-static-libstdc++" \
-  --with-stage1-ldflags="-static-libstdc++"
-#make -j$MJOBS
-
-# https://gcc.gnu.org/onlinedocs/gccint/Makefile.html
-# https://bugs.archlinux.org/task/71777
-make -O STAGE1_CFLAGS="-O2" all
+  --without-included-gettext \
+  --with-pkgversion="GCC with MCF thread model"
+make -j$MJOBS
 make install
 
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
@@ -394,5 +396,19 @@ make -j$MJOBS
 make install
 
 cp $M_TARGET/bin/make.exe $M_TARGET/bin/mingw32-make.exe
+
+echo "building cmake"
+echo "======================="
+mkdir cmake-build
+cd $M_SOURCE/cmake-3.26.4
+./bootstrap
+cd cmake-build
+$M_SOURCE/cmake-3.26.4/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_TARGET
+make -j$MJOBS
+make install
+
 
 
