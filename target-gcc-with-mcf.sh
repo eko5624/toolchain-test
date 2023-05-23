@@ -401,10 +401,10 @@ cd $M_BUILD
 echo "building cmake"
 echo "======================="
 mkdir cmake-build
-cd $M_SOURCE/cmake-3.26.4
+cd $M_SOURCE/CMake-3.26.4
 ./bootstrap
 cd cmake-build
-$M_SOURCE/cmake-3.26.4/configure \
+$M_SOURCE/CMake-3.26.4/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET
