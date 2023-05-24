@@ -192,7 +192,7 @@ $M_SOURCE/binutils-2.40/configure \
   --enable-64-bit-bfd \
   --enable-install-libiberty \
   --enable-plugins \
-  --enable-lto \
+  --disable-lto \
   --enable-ld \
   --disable-nls \
   --disable-werror \
@@ -424,13 +424,14 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-rpath \
   --disable-multilib \
   --enable-languages=c,c++ \
+  --enable-version-specific-runtime-libs \
+  --enable-decimal-float=yes \
   --disable-nls \
   --disable-werror \
   --disable-symvers \
   --enable-shared \
   --enable-static \
   --enable-libatomic \
-  --enable-host-shared \
   --enable-__cxa_atexit \
   --disable-libstdcxx-pch \
   --disable-symvers \
