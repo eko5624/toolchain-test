@@ -121,7 +121,7 @@ $M_SOURCE/binutils-2.40/configure \
   --with-gmp=$M_BUILD/for_cross \
   --with-isl=$M_BUILD/for_cross \
   --enable-static \
-  --disable-shared
+  --disable-shared \
   --disable-multilib \
   --disable-nls \
   --disable-lto \
