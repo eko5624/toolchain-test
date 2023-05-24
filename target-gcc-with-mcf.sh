@@ -48,6 +48,10 @@ tar xjf binutils-2.40.tar.bz2
 wget -c -O gcc-13.1.0.tar.xz https://ftp.gnu.org/gnu/gcc/gcc-13.1.0/gcc-13.1.0.tar.xz
 xz -c -d gcc-13.1.0.tar.xz | tar xf -
 
+#gdb
+wget -c -O gdb-13.1.tar.xz https://ftp.gnu.org/gnu/gdb/gdb-13.1.tar.xz
+xz -c -d gdb-13.1.tar.xz | tar xf -
+
 #gmp
 wget -c -O gmp-6.2.1.tar.bz2 https://ftp.gnu.org/gnu/gmp/gmp-6.2.1.tar.bz2
 tar xjf gmp-6.2.1.tar.bz2
@@ -383,6 +387,24 @@ make -j$MJOBS
 make install
 cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/*plugin*.dll $M_TARGET/lib/bfd-plugins/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
+cd $M_BUILD
+
+echo "building gdb"
+echo "======================="
+mkdir gdb-build
+cd gdb-build
+$M_SOURCE/gdb-13.1/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --disable-nls \
+	--with-gmp=$M_BUILD/for_target \
+	--with-libgmp-prefix=$M_BUILD/for_target \
+	--with-mpfr=$M_BUILD/for_target \
+	--with-mpc=$M_BUILD/for_target \
+	--disable-werror \
+	--prefix=$M_TARGET
+make -j$MJOBS all-gdb
+make install-gdb
 cd $M_BUILD
 
 echo "building make"
