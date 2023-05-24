@@ -48,6 +48,10 @@ tar xjf binutils-2.40.tar.bz2
 wget -c -O gcc-13.1.0.tar.xz https://ftp.gnu.org/gnu/gcc/gcc-13.1.0/gcc-13.1.0.tar.xz
 xz -c -d gcc-13.1.0.tar.xz | tar xf -
 
+#libiconv
+wget -c -O libiconv-1.17.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.17.tar.gz
+tar xzf libiconv-1.17.tar.gz
+
 #gdb
 wget -c -O gdb-13.1.tar.xz https://ftp.gnu.org/gnu/gdb/gdb-13.1.tar.xz
 xz -c -d gdb-13.1.tar.xz | tar xf -
@@ -78,9 +82,166 @@ git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
 wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
 tar xzf make-4.4.1.tar.gz
 
+#m4
+wget -c -O m4-1.4.19.tar.xz https://ftp.gnu.org/gnu/m4/m4-1.4.19.tar.xz
+xz -c -d m4-1.4.19.tar.xz | tar xf -
+
+#libtool
+wget -c -O libtool-2.4.7.tar.xz https://ftp.gnu.org/gnu/libtool/libtool-2.4.7.tar.xz
+xz -c -d libtool-2.4.7.tar.xz | tar xf -
+
 #cmake
 wget -c -O cmake-3.26.4.tar.gz https://github.com/Kitware/CMake/archive/refs/tags/v3.26.4.tar.gz
 tar xzf cmake-3.26.4.tar.gz
+
+echo "building gmp"
+echo "======================="
+mkdir gmp-build
+cd gmp-build
+$M_SOURCE/gmp-6.2.1/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_target \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building mpfr"
+echo "======================="
+mkdir mpfr-build
+cd mpfr-build
+$M_SOURCE/mpfr-4.2.0/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_target \
+  --with-gmp=$M_BUILD/for_target \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building MPC"
+echo "======================="
+mkdir mpc-build
+cd mpc-build
+$M_SOURCE/mpc-1.3.1/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_target \
+  --with-gmp=$M_BUILD/for_target \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building isl"
+echo "======================="
+mkdir isl-build
+cd isl-build
+$M_SOURCE/isl-0.24/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_target \
+  --with-gmp-prefix=$M_BUILD/for_target \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building binutils"
+echo "======================="
+mkdir binutils-build
+cd binutils-build
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0002-check-for-unusual-file-harder.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0010-bfd-Increase-_bfd_coff_max_nscns-to-65279.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0110-binutils-mingw-gnu-print.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/2001-ld-option-to-move-default-bases-under-4GB.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/2003-Restore-old-behaviour-of-windres-so-that-options-con.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/reproducible-import-libraries.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/specify-timestamp.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/libiberty-unlink-handle-windows-nul.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/bfd-real-fopen-handle-windows-nul.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/3001-try-fix-compare_section-abort.patch
+
+cd $M_SOURCE/binutils-2.40
+patch -p1 -i $M_BUILD/binutils-build/0002-check-for-unusual-file-harder.patch
+patch -p1 -i $M_BUILD/binutils-build/0010-bfd-Increase-_bfd_coff_max_nscns-to-65279.patch
+patch -p1 -i $M_BUILD/binutils-build/0110-binutils-mingw-gnu-print.patch
+patch -p1 -i $M_BUILD/binutils-build/2001-ld-option-to-move-default-bases-under-4GB.patch
+patch -R -p1 -i $M_BUILD/binutils-build/2003-Restore-old-behaviour-of-windres-so-that-options-con.patch
+patch -p2 -i $M_BUILD/binutils-build/reproducible-import-libraries.patch
+patch -p2 -i $M_BUILD/binutils-build/specify-timestamp.patch
+patch -p1 -i $M_BUILD/binutils-build/libiberty-unlink-handle-windows-nul.patch
+patch -p1 -i $M_BUILD/binutils-build/bfd-real-fopen-handle-windows-nul.patch
+patch -p1 -i $M_BUILD/binutils-build/3001-try-fix-compare_section-abort.patch
+
+$M_SOURCE/binutils-2.40/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_TARGET \
+  --with-sysroot=$M_TARGET \
+  --with-mpc=$M_BUILD/for_target \
+  --with-mpfr=$M_BUILD/for_target \
+  --with-gmp=$M_BUILD/for_target \
+  --with-isl=$M_BUILD/for_target \
+  --enable-64-bit-bfd \
+  --enable-install-libiberty \
+  --enable-plugins \
+  --enable-lto \
+  --enable-ld \
+  --disable-nls \
+  --disable-werror \
+  --disable-shared
+make -j$MJOBS
+make install
+rm $M_TARGET/lib/bfd-plugins/libdep.a
+cd $M_BUILD
+
+echo "building m4"
+echo "======================="
+mkdir m4-build
+cd m4-build
+$M_SOURCE/m4-1.4.19/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_TARGET \
+  --enable-threads=windows \
+  --enable-c++
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building libtool"
+echo "======================="
+mkdir libtool-build
+cd libtool-build
+$M_SOURCE/libtool-2.4.7/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_TARGET \
+  --with-gnu-ld \
+  --enable-ltdl-install \
+  --enable-shared \
+  --disable-static
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building libmangle"
+echo "======================="
+mkdir libmangle-build
+cd libmangle-build
+$M_SOURCE/mingw-w64/mingw-w64-libraries/libmangle/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_TARGET \
+make -j$MJOBS
+make install
+cd $M_BUILD
 
 echo "building gendef"
 echo "======================="
@@ -120,50 +281,6 @@ make install
 rm $M_TARGET/include/pthread_signal.h
 rm $M_TARGET/include/pthread_time.h
 rm $M_TARGET/include/pthread_unistd.h
-cd $M_BUILD
-
-echo "building binutils"
-echo "======================="
-mkdir binutils-build
-cd binutils-build
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0002-check-for-unusual-file-harder.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0010-bfd-Increase-_bfd_coff_max_nscns-to-65279.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0110-binutils-mingw-gnu-print.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/2001-ld-option-to-move-default-bases-under-4GB.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/2003-Restore-old-behaviour-of-windres-so-that-options-con.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/reproducible-import-libraries.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/specify-timestamp.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/libiberty-unlink-handle-windows-nul.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/bfd-real-fopen-handle-windows-nul.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/3001-try-fix-compare_section-abort.patch
-
-cd $M_SOURCE/binutils-2.40
-patch -p1 -i $M_BUILD/binutils-build/0002-check-for-unusual-file-harder.patch
-patch -p1 -i $M_BUILD/binutils-build/0010-bfd-Increase-_bfd_coff_max_nscns-to-65279.patch
-patch -p1 -i $M_BUILD/binutils-build/0110-binutils-mingw-gnu-print.patch
-patch -p1 -i $M_BUILD/binutils-build/2001-ld-option-to-move-default-bases-under-4GB.patch
-patch -R -p1 -i $M_BUILD/binutils-build/2003-Restore-old-behaviour-of-windres-so-that-options-con.patch
-patch -p2 -i $M_BUILD/binutils-build/reproducible-import-libraries.patch
-patch -p2 -i $M_BUILD/binutils-build/specify-timestamp.patch
-patch -p1 -i $M_BUILD/binutils-build/libiberty-unlink-handle-windows-nul.patch
-patch -p1 -i $M_BUILD/binutils-build/bfd-real-fopen-handle-windows-nul.patch
-patch -p1 -i $M_BUILD/binutils-build/3001-try-fix-compare_section-abort.patch
-
-$M_SOURCE/binutils-2.40/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
-  --with-sysroot=$M_TARGET \
-  --enable-64-bit-bfd \
-  --enable-install-libiberty \
-  --enable-plugins \
-  --enable-lto \
-  --disable-nls \
-  --disable-werror \
-  --disable-shared
-make -j$MJOBS
-make install
-rm $M_TARGET/lib/bfd-plugins/libdep.a
 cd $M_BUILD
 
 echo "building mingw-w64-crt"
@@ -232,65 +349,6 @@ $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --prefix=$M_TARGET \
   --enable-lib64 \
   --disable-lib32
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building gmp"
-echo "======================="
-mkdir gmp-build
-cd gmp-build
-$M_SOURCE/gmp-6.2.1/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_BUILD/for_target \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building mpfr"
-echo "======================="
-mkdir mpfr-build
-cd mpfr-build
-$M_SOURCE/mpfr-4.2.0/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_BUILD/for_target \
-  --with-gmp=$M_BUILD/for_target \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building MPC"
-echo "======================="
-mkdir mpc-build
-cd mpc-build
-$M_SOURCE/mpc-1.3.1/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_BUILD/for_target \
-  --with-gmp=$M_BUILD/for_target \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building isl"
-echo "======================="
-mkdir isl-build
-cd isl-build
-$M_SOURCE/isl-0.24/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_BUILD/for_target \
-  --with-gmp-prefix=$M_BUILD/for_target \
-  --enable-static \
-  --disable-shared
 make -j$MJOBS
 make install
 cd $M_BUILD
@@ -375,11 +433,17 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-host-shared \
   --enable-__cxa_atexit \
   --disable-libstdcxx-pch \
+  --disable-symvers \
   --disable-win32-registry \
   --with-tune=generic \
   --enable-threads=mcf \
   --enable-fully-dynamic-string \
   --enable-lto \
+  --enable-tls \
+  --with-gnu-ld \
+  --with-gnu-as \
+  --without-newlib \
+  --with-libiconv \
   --enable-checking=release \
   --without-included-gettext \
   --with-pkgversion="GCC with MCF thread model"
@@ -388,6 +452,22 @@ make install
 cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/*plugin*.dll $M_TARGET/lib/bfd-plugins/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cd $M_BUILD
+
+echo "building libiconv"
+echo "======================="
+mkdir libiconv-build
+cd libiconv-build
+$M_SOURCE/libiconv-1.17/configure \
+  --prefix=$M_CROSS \ 
+  --build=x86_64-pc-linux-gnu \
+  --host=$MINGW_TRIPLE \
+  --enable-extra-encodings \
+  --enable-static \
+  --disable-shared \
+  --disable-nls \
+  --with-gnu-ld
+make -j$MJOBS
+make install
 
 echo "building gdb"
 echo "======================="
