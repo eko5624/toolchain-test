@@ -128,8 +128,6 @@ $M_SOURCE/binutils-2.40/configure \
   --enable-ld
 make -j$MJOBS
 make install
-cd $M_CROSS
-ln -s $MINGW_TRIPLE mingw
 cd $M_BUILD
 
 echo "building mingw-w64-headers"
@@ -144,6 +142,8 @@ $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --with-default-msvcrt=ucrt
 make -j$MJOBS
 make install
+cd $M_CROSS
+ln -s $MINGW_TRIPLE mingw
 cd $M_BUILD
 
 echo "building gcc-initial"
@@ -153,6 +153,7 @@ cd gcc-build
 $M_SOURCE/gcc-13.1.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
+  --libdir=$M_CROSS/lib \
   --with-sysroot=$M_CROSS \
   --disable-multilib \
   --disable-libssp \
@@ -162,6 +163,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-libatomic \
   --disable-libquadmath \
   --enable-languages=c,c++ \
+  --enable-tls \
   --disable-nls \
   --disable-shared \
   --disable-win32-registry \
@@ -271,6 +273,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-libssp \
   --disable-lto \
   --enable-languages=c,c++ \
+  --enable-tls \
   --disable-shared \
   --enable-static \
   --disable-win32-registry \
