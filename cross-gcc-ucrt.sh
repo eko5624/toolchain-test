@@ -139,8 +139,8 @@ cd gcc-build
 $M_SOURCE/gcc-13.1.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
-  --libdir=$M_CROSS/lib \
   --with-sysroot=$M_CROSS \
+  --without-headers \
   --disable-multilib \
   --disable-libssp \
   --disable-libgomp \
@@ -265,7 +265,6 @@ cd gcc-build
 $M_SOURCE/gcc-13.1.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
-  --libdir=$M_CROSS/lib \
   --with-sysroot=$M_CROSS \
   --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_cross \
   --disable-multilib \
