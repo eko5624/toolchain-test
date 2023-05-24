@@ -157,12 +157,16 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-sysroot=$M_CROSS \
   --disable-multilib \
   --disable-libssp \
+  --disable-libmudflap \
   --disable-libgomp \
   --disable-libgcc \
   --disable-libstdc++-v3 \
   --disable-libatomic \
+  --disable-libvtv \
   --disable-libquadmath \
   --enable-languages=c,c++ \
+  --enable-version-specific-runtime-libs \
+  --enable-decimal-float=yes \
   --enable-tls \
   --disable-nls \
   --disable-shared \
@@ -271,8 +275,11 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-multilib \
   --disable-nls \
   --disable-libssp \
+  --disable-libmudflap \
   --disable-lto \
   --enable-languages=c,c++ \
+  --enable-version-specific-runtime-libs \
+  --enable-decimal-float=yes \
   --enable-tls \
   --disable-shared \
   --enable-static \
