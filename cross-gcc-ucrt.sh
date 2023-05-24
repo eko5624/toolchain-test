@@ -124,8 +124,6 @@ $M_SOURCE/binutils-2.40/configure \
   --disable-shared
   --disable-multilib \
   --disable-nls \
-  --disable-win32-registry \
-  --without-included-gettext \
   --disable-lto \
   --enable-ld
 make -j$MJOBS
@@ -155,7 +153,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-shared \
   --disable-win32-registry \
   --disable-libstdcxx-pch \
-  --with-arch=x86-64 \
   --with-tune=generic \
   --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_cross \
   --enable-threads=posix \
