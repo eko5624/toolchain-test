@@ -204,9 +204,8 @@ cd $M_BUILD
 mkdir widl-build
 cd widl-build
 $M_SOURCE/mingw-w64/mingw-w64-tools/widl/configure \
-  --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
-  --prefix=$M_TARGET
+  --prefix=$M_CROSS
 make -j$MJOBS
 make install
 cd $M_BUILD
@@ -216,10 +215,7 @@ echo "======================="
 cd $M_BUILD
 mkdir genidl-build
 cd genidl-build
-$M_SOURCE/mingw-w64/mingw-w64-tools/genidl/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_TARGET
+$M_SOURCE/mingw-w64/mingw-w64-tools/genidl/configure --prefix=$M_CROSS
 make -j$MJOBS
 make install
 cd $M_BUILD
