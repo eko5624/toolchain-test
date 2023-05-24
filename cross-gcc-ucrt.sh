@@ -132,6 +132,20 @@ cd $M_CROSS
 ln -s $MINGW_TRIPLE mingw
 cd $M_BUILD
 
+echo "building mingw-w64-headers"
+echo "======================="
+mkdir headers-build
+cd headers-build
+$M_SOURCE/mingw-w64/mingw-w64-headers/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_CROSS/$MINGW_TRIPLE \
+  --enable-sdk=all \
+  --enable-idl \
+  --with-default-msvcrt=ucrt
+make -j$MJOBS
+make install
+cd $M_BUILD
+
 echo "building gcc-initial"
 echo "======================="
 mkdir gcc-build
@@ -140,7 +154,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
   --with-sysroot=$M_CROSS \
-  --without-headers \
   --disable-multilib \
   --disable-libssp \
   --disable-libgomp \
@@ -165,20 +178,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-lto \
   --enable-checking=release \
   --disable-sjlj-exceptions
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building mingw-w64-headers"
-echo "======================="
-mkdir headers-build
-cd headers-build
-$M_SOURCE/mingw-w64/mingw-w64-headers/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE \
-  --enable-sdk=all \
-  --enable-idl \
-  --with-default-msvcrt=ucrt
 make -j$MJOBS
 make install
 cd $M_BUILD
