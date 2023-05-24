@@ -398,16 +398,5 @@ make install
 cp $M_TARGET/bin/make.exe $M_TARGET/bin/mingw32-make.exe
 cd $M_BUILD
 
-echo "building cmake"
-echo "======================="
-mkdir cmake-build
-cd cmake-build
-$M_SOURCE/CMake-3.26.4/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_TARGET
-make -j$MJOBS
-make install
-
 
 
