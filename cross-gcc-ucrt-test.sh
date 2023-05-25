@@ -70,6 +70,7 @@ $M_SOURCE/binutils-2.40/configure \
   --disable-shared \
   --disable-win32-registry \
   --without-included-gettext \
+  --enable-ld \
   --enable-lto \
   --enable-plugins \
   --enable-threads
@@ -162,7 +163,9 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-tune=generic \
   --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_cross \
   --enable-threads=posix \
+  --enable-version-specific-runtime-libs \
   --enable-fully-dynamic-string \
+  --enable-libgomp \
   --with-gnu-ld \
   --with-gnu-as \
   --with-libiconv \
