@@ -422,30 +422,29 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-libssp \
   --disable-rpath \
   --disable-multilib \
-  --enable-languages=c,c++ \
-  --enable-version-specific-runtime-libs \
-  --enable-decimal-float=yes \
   --disable-nls \
   --disable-werror \
   --disable-symvers \
+  --disable-libstdcxx-pch \
+  --disable-win32-registry \
+  --enable-languages=c,c++ \
+  --enable-version-specific-runtime-libs \
+  --enable-decimal-float=yes \
   --enable-shared \
   --enable-static \
   --enable-libatomic \
   --enable-__cxa_atexit \
-  --disable-libstdcxx-pch \
-  --disable-symvers \
-  --disable-win32-registry \
-  --with-tune=generic \
   --enable-threads=mcf \
   --enable-fully-dynamic-string \
+  --enable-checking=release \
   --enable-lto \
   --enable-libgomp \
+  --with-tune=generic \
   --with-gnu-ld \
   --with-gnu-as \
   --without-newlib \
   --with-libiconv \
   --with-system-zlib \
-  --enable-checking=release \
   --without-included-gettext \
   --with-pkgversion="GCC with MCF thread model"
 make -j$MJOBS
