@@ -120,12 +120,14 @@ $M_SOURCE/binutils-2.40/configure \
   --with-mpfr=$M_BUILD/for_cross \
   --with-gmp=$M_BUILD/for_cross \
   --with-isl=$M_BUILD/for_cross \
-  --enable-static \
-  --disable-shared \
   --disable-multilib \
   --disable-nls \
-  --disable-lto \
-  --enable-ld
+  --disable-shared \
+  --disable-win32-registry \
+  --without-included-gettext \
+  --enable-lto \
+  --enable-plugins \
+  --enable-threads
 make -j$MJOBS
 make install
 cd $M_BUILD
@@ -156,18 +158,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --libdir=$M_CROSS/lib \
   --with-sysroot=$M_CROSS \
   --disable-multilib \
-  --disable-libssp \
-  --disable-libmudflap \
-  --disable-libgomp \
-  --disable-libgcc \
-  --disable-libstdc++-v3 \
-  --disable-libatomic \
-  --disable-libvtv \
-  --disable-libquadmath \
   --enable-languages=c,c++ \
-  --enable-version-specific-runtime-libs \
-  --enable-decimal-float=yes \
-  --enable-tls \
   --disable-nls \
   --disable-shared \
   --disable-win32-registry \
@@ -266,32 +257,28 @@ cd gcc-build
 $M_SOURCE/gcc-13.1.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_CROSS \
+  --libdir=$M_CROSS/lib \
   --with-sysroot=$M_CROSS \
-  --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_cross \
   --disable-multilib \
-  --disable-nls \
-  --disable-libssp \
-  --disable-libmudflap \
-  --disable-lto \
   --enable-languages=c,c++ \
-  --enable-version-specific-runtime-libs \
-  --enable-decimal-float=yes \
-  --enable-tls \
+  --disable-nls \
   --disable-shared \
-  --enable-static \
   --disable-win32-registry \
   --disable-libstdcxx-pch \
-  --disable-symvers \
-  --with-arch=x86-64 \
   --with-tune=generic \
+  --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_cross \
   --enable-threads=posix \
   --enable-fully-dynamic-string \
   --with-gnu-ld \
   --with-gnu-as \
+  --with-libiconv \
+  --with-system-zlib \
   --without-included-gettext \
   --without-newlib \
+  --disable-lto \
   --enable-checking=release \
   --disable-sjlj-exceptions
+
 make -j$MJOBS
 make install
 cd $M_BUILD
