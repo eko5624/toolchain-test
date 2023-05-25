@@ -43,16 +43,6 @@ xz -c -d gcc-13.1.0.tar.xz | tar xf -
 #mingw-w64
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
-echo "building gendef"
-echo "======================="
-cd $M_BUILD
-mkdir gendef-build
-cd gendef-build
-$M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure --prefix=$M_CROSS
-make -j$MJOBS
-make install
-cd $M_BUILD
-
 echo "building binutils"
 echo "======================="
 mkdir binutils-build
@@ -95,7 +85,7 @@ make -j$MJOBS
 make install
 cd $M_BUILD
 
-echo "building gcc"
+echo "building gcc-initial"
 echo "======================="
 mkdir gcc-build
 cd gcc-build
@@ -119,6 +109,16 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-sjlj-exceptions
 make -j$MJOBS all-gcc
 make install-gcc
+cd $M_BUILD
+
+echo "building gendef"
+echo "======================="
+cd $M_BUILD
+mkdir gendef-build
+cd gendef-build
+$M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure --prefix=$M_CROSS
+make -j$MJOBS
+make install
 cd $M_BUILD
 
 echo "building mingw-w64-crt"
@@ -153,7 +153,7 @@ make -j$MJOBS
 make install
 cd $M_BUILD
 
-echo "installing gcc final"
+echo "installing gcc-final"
 echo "======================="
 cd gcc-build
 make -j$MJOBS
