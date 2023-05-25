@@ -172,7 +172,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-libiconv \
   --with-system-zlib \
   --without-included-gettext \
-  --disable-lto \
+  --enable-lto \
   --enable-checking=release \
   --disable-sjlj-exceptions
 make -j$MJOBS all-gcc
@@ -254,30 +254,6 @@ cd $M_BUILD
 echo "building gcc-final"
 echo "======================="
 cd gcc-build
-$M_SOURCE/gcc-13.1.0/configure \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_CROSS \
-  --libdir=$M_CROSS/lib \
-  --with-sysroot=$M_CROSS \
-  --disable-multilib \
-  --enable-languages=c,c++ \
-  --disable-nls \
-  --disable-shared \
-  --disable-win32-registry \
-  --disable-libstdcxx-pch \
-  --with-tune=generic \
-  --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_cross \
-  --enable-threads=posix \
-  --enable-fully-dynamic-string \
-  --with-gnu-ld \
-  --with-gnu-as \
-  --with-libiconv \
-  --with-system-zlib \
-  --without-included-gettext \
-  --without-newlib \
-  --enable-lto \
-  --enable-checking=release \
-  --disable-sjlj-exceptions
 make -j$MJOBS
 make install
 cd $M_BUILD
@@ -293,8 +269,7 @@ $M_SOURCE/libiconv-1.17/configure \
   --enable-extra-encodings \
   --enable-static \
   --disable-shared \
-  --disable-nls \
-  --with-gnu-ld
+  --disable-nls
 make -j$MJOBS
 make install
 
