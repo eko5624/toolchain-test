@@ -57,6 +57,42 @@ tar xjf isl-0.24.tar.bz2
 #mingw-w64
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
+echo "building binutils"
+echo "======================="
+mkdir binutils-build
+cd binutils-build
+$M_SOURCE/binutils-2.40/configure \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_CROSS \
+  --with-sysroot=$M_CROSS \
+  --disable-multilib \
+  --disable-nls \
+  --disable-shared \
+  --disable-win32-registry \
+  --without-included-gettext \
+  --enable-lto \
+  --enable-plugins \
+  --enable-threads
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building mingw-w64-headers"
+echo "======================="
+mkdir headers-build
+cd headers-build
+$M_SOURCE/mingw-w64/mingw-w64-headers/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_CROSS/$MINGW_TRIPLE \
+  --enable-sdk=all \
+  --enable-idl \
+  --with-default-msvcrt=ucrt
+make -j$MJOBS
+make install
+cd $M_CROSS
+ln -s $MINGW_TRIPLE mingw
+cd $M_BUILD
+
 echo "building gmp"
 echo "======================="
 mkdir gmp-build
@@ -108,46 +144,6 @@ make -j$MJOBS
 make install
 cd $M_BUILD
 
-echo "building binutils"
-echo "======================="
-mkdir binutils-build
-cd binutils-build
-$M_SOURCE/binutils-2.40/configure \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_CROSS \
-  --with-sysroot=$M_CROSS \
-  --with-mpc=$M_BUILD/for_cross \
-  --with-mpfr=$M_BUILD/for_cross \
-  --with-gmp=$M_BUILD/for_cross \
-  --with-isl=$M_BUILD/for_cross \
-  --disable-multilib \
-  --disable-nls \
-  --disable-shared \
-  --disable-win32-registry \
-  --without-included-gettext \
-  --enable-lto \
-  --enable-plugins \
-  --enable-threads
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building mingw-w64-headers"
-echo "======================="
-mkdir headers-build
-cd headers-build
-$M_SOURCE/mingw-w64/mingw-w64-headers/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE \
-  --enable-sdk=all \
-  --enable-idl \
-  --with-default-msvcrt=ucrt
-make -j$MJOBS
-make install
-cd $M_CROSS
-ln -s $MINGW_TRIPLE mingw
-cd $M_BUILD
-
 echo "building gcc-initial"
 echo "======================="
 mkdir gcc-build
@@ -189,39 +185,31 @@ make -j$MJOBS
 make install
 cd $M_BUILD
 
-echo "building widl"
-echo "======================="
-cd $M_BUILD
-mkdir widl-build
-cd widl-build
-$M_SOURCE/mingw-w64/mingw-w64-tools/widl/configure \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_CROSS
-make -j$MJOBS
-make install
-cd $M_BUILD
+#echo "building widl"
+#echo "======================="
+#cd $M_BUILD
+#mkdir widl-build
+#cd widl-build
+#$M_SOURCE/mingw-w64/mingw-w64-tools/widl/configure \
+#  --target=$MINGW_TRIPLE \
+#  --prefix=$M_CROSS
+#make -j$MJOBS
+#make install
+#cd $M_BUILD
 
-echo "building genidl"
-echo "======================="
-cd $M_BUILD
-mkdir genidl-build
-cd genidl-build
-$M_SOURCE/mingw-w64/mingw-w64-tools/genidl/configure --prefix=$M_CROSS
-make -j$MJOBS
-make install
-cd $M_BUILD
+#echo "building genidl"
+#echo "======================="
+#cd $M_BUILD
+#mkdir genidl-build
+#cd genidl-build
+#$M_SOURCE/mingw-w64/mingw-w64-tools/genidl/configure --prefix=$M_CROSS
+#make -j$MJOBS
+#make install
+#cd $M_BUILD
 
 echo "building mingw-w64-crt"
 echo "======================="
 cd $M_SOURCE/mingw-w64/mingw-w64-crt
-
-export CC=$M_CROSS/bin/$MINGW_TRIPLE-gcc
-export CXX=$M_CROSS/bin/$MINGW_TRIPLE-g++
-export AR=$M_CROSS/bin/$MINGW_TRIPLE-ar
-export RANLIB=$M_CROSS/bin/$MINGW_TRIPLE-ranlib
-export AS=$M_CROSS/bin/$MINGW_TRIPLE-as
-export DLLTOOL=$M_CROSS/bin/$MINGW_TRIPLE-dlltool
-
 autoreconf -ivf
 mkdir crt-build
 cd crt-build
