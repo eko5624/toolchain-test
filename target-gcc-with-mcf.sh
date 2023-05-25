@@ -98,65 +98,6 @@ tar xzf zlib-1.2.13.tar.gz
 wget -c -O cmake-3.26.4.tar.gz https://github.com/Kitware/CMake/archive/refs/tags/v3.26.4.tar.gz
 tar xzf cmake-3.26.4.tar.gz
 
-echo "building gmp"
-echo "======================="
-mkdir gmp-build
-cd gmp-build
-$M_SOURCE/gmp-6.2.1/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_BUILD/for_target \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building mpfr"
-echo "======================="
-mkdir mpfr-build
-cd mpfr-build
-$M_SOURCE/mpfr-4.2.0/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_BUILD/for_target \
-  --with-gmp=$M_BUILD/for_target \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building MPC"
-echo "======================="
-mkdir mpc-build
-cd mpc-build
-$M_SOURCE/mpc-1.3.1/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_BUILD/for_target \
-  --with-gmp=$M_BUILD/for_target \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building isl"
-echo "======================="
-mkdir isl-build
-cd isl-build
-$M_SOURCE/isl-0.24/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_BUILD/for_target \
-  --with-gmp-prefix=$M_BUILD/for_target \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
 echo "building binutils"
 echo "======================="
 mkdir binutils-build
@@ -189,10 +130,6 @@ $M_SOURCE/binutils-2.40/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
   --with-sysroot=$M_TARGET \
-  --with-mpc=$M_BUILD/for_target \
-  --with-mpfr=$M_BUILD/for_target \
-  --with-gmp=$M_BUILD/for_target \
-  --with-isl=$M_BUILD/for_target \
   --enable-64-bit-bfd \
   --enable-install-libiberty \
   --enable-plugins \
@@ -358,6 +295,65 @@ make -j$MJOBS
 make install
 cd $M_BUILD
 
+echo "building gmp"
+echo "======================="
+mkdir gmp-build
+cd gmp-build
+$M_SOURCE/gmp-6.2.1/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_target \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building mpfr"
+echo "======================="
+mkdir mpfr-build
+cd mpfr-build
+$M_SOURCE/mpfr-4.2.0/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_target \
+  --with-gmp=$M_BUILD/for_target \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building MPC"
+echo "======================="
+mkdir mpc-build
+cd mpc-build
+$M_SOURCE/mpc-1.3.1/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_target \
+  --with-gmp=$M_BUILD/for_target \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building isl"
+echo "======================="
+mkdir isl-build
+cd isl-build
+$M_SOURCE/isl-0.24/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_target \
+  --with-gmp-prefix=$M_BUILD/for_target \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
 echo "building zlib"
 echo "======================="
 mkdir zlib-build
@@ -369,7 +365,7 @@ CHOST=$MINGW_TRIPLE $M_SOURCE/zlib-1.2.13/configure \
   --static
 make -j$MJOBS
 make install
-cd $M_BUILD  
+cd $M_BUILD
   
 echo "building gcc"
 echo "======================="
@@ -490,23 +486,23 @@ $M_SOURCE/libiconv-1.17/configure \
 make -j$MJOBS
 make install
 
-echo "building gdb"
-echo "======================="
-mkdir gdb-build
-cd gdb-build
-$M_SOURCE/gdb-13.1/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --disable-nls \
-	--with-gmp=$M_BUILD/for_target \
-	--with-libgmp-prefix=$M_BUILD/for_target \
-	--with-mpfr=$M_BUILD/for_target \
-	--with-mpc=$M_BUILD/for_target \
-	--disable-werror \
-	--prefix=$M_TARGET
-make -j$MJOBS all-gdb
-make install-gdb
-cd $M_BUILD
+#echo "building gdb"
+#echo "======================="
+#mkdir gdb-build
+#cd gdb-build
+#$M_SOURCE/gdb-13.1/configure \
+#  --host=$MINGW_TRIPLE \
+#  --target=$MINGW_TRIPLE \
+#  --disable-nls \
+#	--with-gmp=$M_BUILD/for_target \
+#	--with-libgmp-prefix=$M_BUILD/for_target \
+#	--with-mpfr=$M_BUILD/for_target \
+#	--with-mpc=$M_BUILD/for_target \
+#	--disable-werror \
+#	--prefix=$M_TARGET
+#make -j$MJOBS all-gdb
+#make install-gdb
+#cd $M_BUILD
 
 echo "building make"
 echo "======================="
