@@ -90,6 +90,10 @@ xz -c -d m4-1.4.19.tar.xz | tar xf -
 wget -c -O libtool-2.4.7.tar.xz https://ftp.gnu.org/gnu/libtool/libtool-2.4.7.tar.xz
 xz -c -d libtool-2.4.7.tar.xz | tar xf -
 
+#zlib
+wget -c -O zlib-1.2.13.tar.gz https://github.com/madler/zlib/archive/refs/tags/v1.2.13.tar.gz
+xz -c -d zlib-1.2.13.tar.xz | tar xf -
+
 #cmake
 wget -c -O cmake-3.26.4.tar.gz https://github.com/Kitware/CMake/archive/refs/tags/v3.26.4.tar.gz
 tar xzf cmake-3.26.4.tar.gz
@@ -354,6 +358,19 @@ make -j$MJOBS
 make install
 cd $M_BUILD
 
+echo "building zlib"
+echo "======================="
+mkdir zlib-build
+cd zlib-build
+curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
+patch -d $M_SOURCE/zlib-1.2.13 -p1 < $M_BUILD/zlib-build/zlib-1-win32-static.patch
+CHOST=$MINGW_TRIPLE $M_SOURCE/zlib-1.2.13/configure \
+  --prefix=$M_TARGET \
+  --static
+make -j$MJOBS
+make install
+cd $M_BUILD  
+  
 echo "building gcc"
 echo "======================="
 mkdir gcc-build
@@ -444,6 +461,8 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-gnu-as \
   --without-newlib \
   --with-libiconv \
+  --with-zlib-include=$$M_TARGET/include \
+  --with-zlib-lib=$M_TARGET/lib \
   --without-included-gettext \
   --with-pkgversion="GCC with MCF thread model"
 make -j$MJOBS
