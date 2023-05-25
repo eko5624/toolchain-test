@@ -70,7 +70,6 @@ $M_SOURCE/binutils-2.40/configure \
   --disable-shared \
   --disable-win32-registry \
   --without-included-gettext \
-  --enable-ld \
   --enable-lto \
   --enable-plugins \
   --enable-threads
@@ -154,22 +153,16 @@ $M_SOURCE/gcc-13.1.0/configure \
   --prefix=$M_CROSS \
   --libdir=$M_CROSS/lib \
   --with-sysroot=$M_CROSS \
+  --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_cross \
   --disable-multilib \
   --enable-languages=c,c++ \
   --disable-nls \
   --disable-shared \
   --disable-win32-registry \
   --disable-libstdcxx-pch \
+  --with-arch=x86-64 \
   --with-tune=generic \
-  --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_cross \
   --enable-threads=posix \
-  --enable-version-specific-runtime-libs \
-  --enable-fully-dynamic-string \
-  --enable-libgomp \
-  --with-gnu-ld \
-  --with-gnu-as \
-  --with-libiconv \
-  --with-system-zlib \
   --without-included-gettext \
   --enable-lto \
   --enable-checking=release \
