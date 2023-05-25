@@ -92,7 +92,7 @@ xz -c -d libtool-2.4.7.tar.xz | tar xf -
 
 #zlib
 wget -c -O zlib-1.2.13.tar.gz https://github.com/madler/zlib/archive/refs/tags/v1.2.13.tar.gz
-xz -c -d zlib-1.2.13.tar.xz | tar xf -
+tar xzf zlib-1.2.13.tar.gz
 
 #cmake
 wget -c -O cmake-3.26.4.tar.gz https://github.com/Kitware/CMake/archive/refs/tags/v3.26.4.tar.gz
@@ -461,7 +461,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-gnu-as \
   --without-newlib \
   --with-libiconv \
-  --with-zlib-include=$$M_TARGET/include \
+  --with-zlib-include=$M_TARGET/include \
   --with-zlib-lib=$M_TARGET/lib \
   --without-included-gettext \
   --with-pkgversion="GCC with MCF thread model"
