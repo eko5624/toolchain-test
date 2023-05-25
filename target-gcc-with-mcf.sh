@@ -460,7 +460,10 @@ echo "======================="
 mkdir libiconv-build
 cd libiconv-build
 $M_SOURCE/libiconv-1.17/configure \
-  --prefix=$M_TARGET \ 
+  --build=x86_64-pc-linux-gnu \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_TARGET \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --enable-extra-encodings \
