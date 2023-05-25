@@ -444,7 +444,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-gnu-as \
   --without-newlib \
   --with-libiconv \
-  --with-system-zlib \
   --without-included-gettext \
   --with-pkgversion="GCC with MCF thread model"
 make -j$MJOBS
