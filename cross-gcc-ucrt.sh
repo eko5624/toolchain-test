@@ -263,8 +263,7 @@ echo "======================="
 mkdir libiconv-build
 cd libiconv-build
 $M_SOURCE/libiconv-1.17/configure \
-  --prefix=$M_CROSS \ 
-  --build=x86_64-pc-linux-gnu \
+  --prefix=$M_CROSS \
   --host=$MINGW_TRIPLE \
   --enable-extra-encodings \
   --enable-static \
