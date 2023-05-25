@@ -202,47 +202,47 @@ make install
 rm $M_TARGET/lib/bfd-plugins/libdep.a
 cd $M_BUILD
 
-echo "building m4"
-echo "======================="
-mkdir m4-build
-cd m4-build
-$M_SOURCE/m4-1.4.19/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
-  --enable-threads=windows \
-  --enable-c++
-make -j$MJOBS
-make install
-cd $M_BUILD
+#echo "building m4"
+#echo "======================="
+#mkdir m4-build
+#cd m4-build
+#$M_SOURCE/m4-1.4.19/configure \
+#  --host=$MINGW_TRIPLE \
+#  --target=$MINGW_TRIPLE \
+#  --prefix=$M_TARGET \
+#  --enable-threads=windows \
+#  --enable-c++
+#make -j$MJOBS
+#make install
+#cd $M_BUILD
 
-echo "building libtool"
-echo "======================="
-mkdir libtool-build
-cd libtool-build
-$M_SOURCE/libtool-2.4.7/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
-  --with-gnu-ld \
-  --enable-ltdl-install \
-  --enable-shared \
-  --disable-static
-make -j$MJOBS
-make install
-cd $M_BUILD
+#echo "building libtool"
+#echo "======================="
+#mkdir libtool-build
+#cd libtool-build
+#$M_SOURCE/libtool-2.4.7/configure \
+#  --host=$MINGW_TRIPLE \
+#  --target=$MINGW_TRIPLE \
+#  --prefix=$M_TARGET \
+#  --with-gnu-ld \
+#  --enable-ltdl-install \
+#  --enable-shared \
+#  --disable-static
+#make -j$MJOBS
+#make install
+#cd $M_BUILD
 
-echo "building libmangle"
-echo "======================="
-mkdir libmangle-build
-cd libmangle-build
-$M_SOURCE/mingw-w64/mingw-w64-libraries/libmangle/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_TARGET
-make -j$MJOBS
-make install
-cd $M_BUILD
+#echo "building libmangle"
+#echo "======================="
+#mkdir libmangle-build
+#cd libmangle-build
+#$M_SOURCE/mingw-w64/mingw-w64-libraries/libmangle/configure \
+#  --host=$MINGW_TRIPLE \
+#  --target=$MINGW_TRIPLE \
+#  --prefix=$M_TARGET
+#make -j$MJOBS
+#make install
+#cd $M_BUILD
 
 echo "building gendef"
 echo "======================="
@@ -411,8 +411,6 @@ export lt_cv_deplibs_check_method='pass_all'
 # In addition adaint.c does `#include <accctrl.h>` which pulls in msxml.h, hacky hack:
 CPPFLAGS+=" -DCOM_NO_WINDOWS_H"
 
-CXXFLAGS="-Wno-int-conversion"
-LDFLAGS="-pthread"
 $M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
@@ -441,11 +439,12 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-threads=mcf \
   --enable-fully-dynamic-string \
   --enable-lto \
-  --enable-tls \
+  --enable-libgomp \
   --with-gnu-ld \
   --with-gnu-as \
   --without-newlib \
   --with-libiconv \
+  --with-system-zlib \
   --enable-checking=release \
   --without-included-gettext \
   --with-pkgversion="GCC with MCF thread model"
