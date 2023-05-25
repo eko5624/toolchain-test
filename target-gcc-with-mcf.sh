@@ -238,7 +238,8 @@ mkdir libmangle-build
 cd libmangle-build
 $M_SOURCE/mingw-w64/mingw-w64-libraries/libmangle/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_TARGET
 make -j$MJOBS
 make install
 cd $M_BUILD
