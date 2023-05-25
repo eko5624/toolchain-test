@@ -176,7 +176,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-checking=release \
   --disable-sjlj-exceptions
 make -j$MJOBS all-gcc
-make install-gcc
+make install-strip-gcc
 cd $M_BUILD
 
 echo "building gendef"
@@ -270,6 +270,6 @@ $M_SOURCE/libiconv-1.17/configure \
   --disable-shared \
   --disable-nls
 make -j$MJOBS
-make install
+make install-strip
 
 
