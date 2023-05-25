@@ -275,7 +275,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-system-zlib \
   --without-included-gettext \
   --without-newlib \
-  --disable-lto \
+  --enable-lto \
   --enable-checking=release \
   --disable-sjlj-exceptions
 
