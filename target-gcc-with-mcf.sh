@@ -100,6 +100,7 @@ tar xzf cmake-3.26.4.tar.gz
 
 echo "building binutils"
 echo "======================="
+cd $M_BUILD
 mkdir binutils-build
 cd binutils-build
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0002-check-for-unusual-file-harder.patch
