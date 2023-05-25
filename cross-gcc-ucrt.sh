@@ -175,8 +175,8 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-lto \
   --enable-checking=release \
   --disable-sjlj-exceptions
-make -j$MJOBS
-make install
+make -j$MJOBS all-gcc
+make install-gcc
 cd $M_BUILD
 
 echo "building gendef"
@@ -278,7 +278,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-lto \
   --enable-checking=release \
   --disable-sjlj-exceptions
-
 make -j$MJOBS
 make install
 cd $M_BUILD
