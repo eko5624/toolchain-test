@@ -471,7 +471,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-pkgversion="GCC with MCF thread model"
 make -j$MJOBS
 make install
-cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/*plugin*.dll $M_TARGET/lib/bfd-plugins/
+#cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/*plugin*.dll $M_TARGET/lib/bfd-plugins/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cd $M_BUILD
 
