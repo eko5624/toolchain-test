@@ -290,7 +290,7 @@ $M_SOURCE/mcfgthread/configure \
   --disable-pch
 make -j$MJOBS
 make install
-cp $M_TARGET/$MINGW_TRIPLE/libmcfgthread-1.dll $M_TARGET/bin
+cp $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
 cd $M_BUILD
 
 echo "building winpthreads"
@@ -304,7 +304,7 @@ $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --disable-lib32
 make -j$MJOBS
 make install
-cp $M_TARGET/$MINGW_TRIPLE/libwinpthread-1.dll $M_TARGET/bin
+cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin
 cd $M_BUILD
 
 echo "building gmp"
