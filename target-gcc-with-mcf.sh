@@ -220,7 +220,7 @@ cd $M_SOURCE/mingw-w64/mingw-w64-headers
 touch include/windows.*.h include/wincrypt.h include/prsht.h
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --prefix=$M_TARGET \
   --enable-sdk=all \
   --with-default-win32-winnt=0x603 \
   --with-default-msvcrt=ucrt \
@@ -228,11 +228,11 @@ $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --without-widl
 make -j$MJOBS
 make install
-rm $M_TARGET/$MINGW_TRIPLE/include/pthread_signal.h
-rm $M_TARGET/$MINGW_TRIPLE/include/pthread_time.h
-rm $M_TARGET/$MINGW_TRIPLE/include/pthread_unistd.h
-cd $M_TARGET
-ln -s $MINGW_TRIPLE mingw
+rm $M_TARGET/include/pthread_signal.h
+rm $M_TARGET/include/pthread_time.h
+rm $M_TARGET/include/pthread_unistd.h
+#cd $M_TARGET
+#ln -s $MINGW_TRIPLE mingw
 cd $M_BUILD
 
 echo "building mingw-w64-crt"
@@ -261,7 +261,7 @@ git apply $M_BUILD/crt-build/0001-Allow-to-use-bessel-and-complex-functions-with
 cd $M_BUILD/crt-build
 $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --prefix=$M_TARGET \
   --with-default-msvcrt=ucrt \
   --enable-wildcard \
   --disable-dependency-tracking \
@@ -271,8 +271,8 @@ make -j$MJOBS
 make install
 # Create empty dummy archives, to avoid failing when the compiler driver
 # adds -lssp -lssh_nonshared when linking.
-ar rcs $M_TARGET/$MINGW_TRIPLE/lib/libssp.a
-ar rcs $M_TARGET/$MINGW_TRIPLE/lib/libssp_nonshared.a
+ar rcs $M_TARGET/lib/libssp.a
+ar rcs $M_TARGET/lib/libssp_nonshared.a
 cd $M_BUILD
 
 echo "building mcfgthread"
@@ -286,11 +286,11 @@ cd mcfgthread-build
 export CFLAGS+=' -Os -g'
 $M_SOURCE/mcfgthread/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --prefix=$M_TARGET \
   --disable-pch
 make -j$MJOBS
 make install
-cp $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
+#cp $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
 cd $M_BUILD
 
 echo "building winpthreads"
@@ -305,12 +305,12 @@ autoreconf -vfi
 cd winpthreads-build
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --prefix=$M_TARGET \
   --enable-static \
   --enable-shared \
 make -j$MJOBS
 make install
-cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin
+#cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin
 cd $M_BUILD
 
 echo "building gmp"
@@ -379,7 +379,7 @@ cd zlib-build
 curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
 patch -d $M_SOURCE/zlib-1.2.13 -p1 < $M_BUILD/zlib-build/zlib-1-win32-static.patch
 CHOST=$MINGW_TRIPLE $M_SOURCE/zlib-1.2.13/configure \
-  --prefix=$M_TARGET \
+  --prefix=$M_TARGET/zlib \
   --static
 make -j$MJOBS
 make install
@@ -429,12 +429,12 @@ patch -R -Nbp1 -i $M_BUILD/gcc-build/1c118c9970600117700cc12284587e0238de6bbe.pa
 
 # do not expect ${prefix}/mingw symlink - this should be superceded by
 # 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
-#sed -i 's/${prefix}\/mingw\//${prefix}\//g' configure
+sed -i 's/${prefix}\/mingw\//${prefix}\//g' configure
 
 # change hardcoded /mingw prefix to the real prefix .. isn't this rubbish?
 # it might work at build time and could be important there but beyond that?!
-#export MINGW_NATIVE_PREFIX=$M_TARGET
-#sed -i "s#\\/mingw\\/#${MINGW_NATIVE_PREFIX//\//\\/}\\/#g" gcc/config/i386/mingw32.h
+export MINGW_NATIVE_PREFIX=$M_TARGET
+sed -i "s#\\/mingw\\/#${MINGW_NATIVE_PREFIX//\//\\/}\\/#g" gcc/config/i386/mingw32.h
 
 # so libgomp DLL gets built despide static libdl
 export lt_cv_deplibs_check_method='pass_all'
@@ -447,6 +447,8 @@ $M_SOURCE/gcc-13.1.0/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
+  --with-native-system-header-dir=$M_TARGET/include \
+  --libexecdir=$M_TARGET/lib \
   --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
   --disable-libssp \
   --disable-rpath \
@@ -460,9 +462,10 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-shared \
   --enable-static \
   --enable-libatomic \
-  --enable-__cxa_atexit \
   --enable-threads=mcf \
   --enable-fully-dynamic-string \
+  --enable-libstdcxx-filesystem-ts \
+  --enable-libstdcxx-time \
   --enable-checking=release \
   --enable-lto \
   --enable-libgomp \
@@ -471,14 +474,15 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-gnu-as \
   --without-newlib \
   --with-libiconv \
-  --with-zlib-include=$M_TARGET/include \
-  --with-zlib-lib=$M_TARGET/lib \
+  --with-zlib-include=$M_TARGET/zlib/include \
+  --with-zlib-lib=$M_TARGET/zlib/lib \
   --without-included-gettext \
   --with-pkgversion="GCC with MCF thread model"
 make -j$MJOBS
 make install
-#cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/*plugin*.dll $M_TARGET/lib/bfd-plugins/
+cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/*plugin*.dll $M_TARGET/lib/bfd-plugins/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
+cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
 cd $M_BUILD
 
 echo "building libiconv"
