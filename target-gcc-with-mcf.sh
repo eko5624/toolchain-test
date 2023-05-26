@@ -290,6 +290,7 @@ $M_SOURCE/mcfgthread/configure \
   --disable-pch
 make -j$MJOBS
 make install
+cp $M_TARGET/$MINGW_TRIPLE/libmcfgthread-1.dll $M_TARGET/bin
 cd $M_BUILD
 
 echo "building winpthreads"
@@ -303,6 +304,7 @@ $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --disable-lib32
 make -j$MJOBS
 make install
+cp $M_TARGET/$MINGW_TRIPLE/libwinpthread-1.dll $M_TARGET/bin
 cd $M_BUILD
 
 echo "building gmp"
@@ -439,7 +441,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
-  --with-sysroot=$M_TARGET \
   --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
   --disable-libssp \
   --disable-rpath \
