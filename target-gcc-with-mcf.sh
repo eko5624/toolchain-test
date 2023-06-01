@@ -450,6 +450,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-native-system-header-dir=$M_TARGET/include \
   --libexecdir=$M_TARGET/lib \
   --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
+  --disable-bootstrap \
   --disable-libssp \
   --disable-rpath \
   --disable-multilib \
@@ -458,6 +459,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-symvers \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
+  --disable-sjlj-exceptions \
   --enable-languages=c,c++ \
   --enable-shared \
   --enable-static \
@@ -466,14 +468,15 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-fully-dynamic-string \
   --enable-libstdcxx-filesystem-ts \
   --enable-libstdcxx-time \
+  --enable-graphite \
   --enable-checking=release \
   --enable-lto \
   --enable-libgomp \
   --with-tune=generic \
   --with-gnu-ld \
   --with-gnu-as \
-  --without-newlib \
   --with-libiconv \
+  --with-boot-ldflags="$LDFLAGS -Wl,--disable-dynamicbase -static-libstdc++ -static-libgcc" \
   --with-zlib-include=$M_TARGET/zlib/include \
   --with-zlib-lib=$M_TARGET/zlib/lib \
   --without-included-gettext \
