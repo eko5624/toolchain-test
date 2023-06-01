@@ -472,6 +472,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-checking=release \
   --enable-lto \
   --enable-libgomp \
+  --enable-version-specific-runtime-libs \
   --with-tune=generic \
   --with-gnu-ld \
   --with-gnu-as \
