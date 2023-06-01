@@ -54,14 +54,10 @@ jobs:
 
       - name: Release
         continue-on-error: true
-        uses: softprops/action-gh-release@master
-        with:
-          tag_name: toolchain
-          name: toolchain
-          files: |
-            gcc-with*.7z
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          chmod +x ./release-package.sh
+          ./release-package.sh gcc-with-mcf-ucrt-test.7z
+          
 
       - name: Saving target gcc cache
         uses: actions/cache/save@main
