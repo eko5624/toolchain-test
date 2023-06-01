@@ -240,6 +240,96 @@ make -j$MJOBS
 make install
 cd $M_BUILD
 
+echo "building gcc-initial"
+echo "======================="
+mkdir gcc-build
+cd gcc-build
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0002-Relocate-libintl.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0005-Windows-Don-t-ignore-native-system-header-dir.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0006-Windows-New-feature-to-allow-overriding.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0007-Build-EXTRA_GNATTOOLS-for-Ada.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0008-Prettify-linking-no-undefined.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0011-Enable-shared-gnat-implib.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0012-Handle-spaces-in-path-for-default-manifest.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0014-gcc-9-branch-clone_function_name_1-Retain-any-stdcall-suffix.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0020-libgomp-Don-t-hard-code-MS-printf-attributes.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0021-PR14940-Allow-a-PCH-to-be-mapped-to-a-different-addr.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0140-gcc-diagnostic-color.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0200-add-m-no-align-vector-insn-option-for-i386.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0300-override-builtin-printf-format.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0400-gcc-Make-stupid-AT-T-syntax-not-default.patch
+curl -OL https://github.com/gcc-mirror/gcc/commit/1c118c9970600117700cc12284587e0238de6bbe.patch
+
+cd $M_SOURCE/gcc-13.1.0
+patch -Nbp1 -i $M_BUILD/gcc-build/0002-Relocate-libintl.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0005-Windows-Don-t-ignore-native-system-header-dir.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0006-Windows-New-feature-to-allow-overriding.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0007-Build-EXTRA_GNATTOOLS-for-Ada.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0008-Prettify-linking-no-undefined.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0011-Enable-shared-gnat-implib.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0012-Handle-spaces-in-path-for-default-manifest.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0014-gcc-9-branch-clone_function_name_1-Retain-any-stdcall-suffix.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0020-libgomp-Don-t-hard-code-MS-printf-attributes.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0021-PR14940-Allow-a-PCH-to-be-mapped-to-a-different-addr.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0140-gcc-diagnostic-color.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0200-add-m-no-align-vector-insn-option-for-i386.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0300-override-builtin-printf-format.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0400-gcc-Make-stupid-AT-T-syntax-not-default.patch
+
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=109670#c7
+# https://github.com/gcc-mirror/gcc/commit/1c118c9970600117700cc12284587e0238de6bbe
+patch -R -Nbp1 -i $M_BUILD/gcc-build/1c118c9970600117700cc12284587e0238de6bbe.patch
+
+# do not expect ${prefix}/mingw symlink - this should be superceded by
+# 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
+sed -i 's/${prefix}\/mingw\//${prefix}\//g' configure
+
+# change hardcoded /mingw prefix to the real prefix .. isn't this rubbish?
+# it might work at build time and could be important there but beyond that?!
+export MINGW_NATIVE_PREFIX=$M_TARGET
+sed -i "s#\\/mingw\\/#${MINGW_NATIVE_PREFIX//\//\\/}\\/#g" gcc/config/i386/mingw32.h
+
+# so libgomp DLL gets built despide static libdl
+export lt_cv_deplibs_check_method='pass_all'
+
+# In addition adaint.c does `#include <accctrl.h>` which pulls in msxml.h, hacky hack:
+CPPFLAGS+=" -DCOM_NO_WINDOWS_H"
+
+$M_SOURCE/gcc-13.1.0/configure \
+  --build=x86_64-pc-linux-gnu \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_TARGET \
+  --with-native-system-header-dir=$M_TARGET/include \
+  --libexecdir=$M_TARGET/lib \
+  --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
+  --disable-bootstrap \
+  --disable-libssp \
+  --disable-rpath \
+  --disable-multilib \
+  --disable-nls \
+  --disable-werror \
+  --disable-symvers \
+  --disable-libstdcxx-pch \
+  --disable-win32-registry \
+  --disable-sjlj-exceptions \
+  --enable-languages=c,c++ \
+  --enable-shared \
+  --enable-static \
+  --enable-threads=mcf \
+  --enable-checking=release \
+  --enable-lto \
+  --with-tune=generic \
+  --with-gnu-ld \
+  --with-gnu-as \
+  --with-libiconv \
+  --without-included-gettext
+make -j$MJOBS all-gcc
+make install-gcc
+cd $M_BUILD
+
 echo "building mingw-w64-crt"
 echo "======================="
 mkdir crt-build
@@ -331,102 +421,9 @@ make -j$MJOBS
 make install
 cd $M_BUILD
 
-echo "building gcc"
+echo "building gcc-final"
 echo "======================="
-mkdir gcc-build
 cd gcc-build
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0002-Relocate-libintl.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0005-Windows-Don-t-ignore-native-system-header-dir.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0006-Windows-New-feature-to-allow-overriding.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0007-Build-EXTRA_GNATTOOLS-for-Ada.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0008-Prettify-linking-no-undefined.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0011-Enable-shared-gnat-implib.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0012-Handle-spaces-in-path-for-default-manifest.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0014-gcc-9-branch-clone_function_name_1-Retain-any-stdcall-suffix.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0020-libgomp-Don-t-hard-code-MS-printf-attributes.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0021-PR14940-Allow-a-PCH-to-be-mapped-to-a-different-addr.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0140-gcc-diagnostic-color.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0200-add-m-no-align-vector-insn-option-for-i386.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0300-override-builtin-printf-format.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0400-gcc-Make-stupid-AT-T-syntax-not-default.patch
-curl -OL https://github.com/gcc-mirror/gcc/commit/1c118c9970600117700cc12284587e0238de6bbe.patch
-
-cd $M_SOURCE/gcc-13.1.0
-patch -Nbp1 -i $M_BUILD/gcc-build/0002-Relocate-libintl.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0005-Windows-Don-t-ignore-native-system-header-dir.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0006-Windows-New-feature-to-allow-overriding.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0007-Build-EXTRA_GNATTOOLS-for-Ada.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0008-Prettify-linking-no-undefined.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0011-Enable-shared-gnat-implib.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0012-Handle-spaces-in-path-for-default-manifest.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0014-gcc-9-branch-clone_function_name_1-Retain-any-stdcall-suffix.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0020-libgomp-Don-t-hard-code-MS-printf-attributes.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0021-PR14940-Allow-a-PCH-to-be-mapped-to-a-different-addr.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0140-gcc-diagnostic-color.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0200-add-m-no-align-vector-insn-option-for-i386.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0300-override-builtin-printf-format.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0400-gcc-Make-stupid-AT-T-syntax-not-default.patch
-
-# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=109670#c7
-# https://github.com/gcc-mirror/gcc/commit/1c118c9970600117700cc12284587e0238de6bbe
-patch -R -Nbp1 -i $M_BUILD/gcc-build/1c118c9970600117700cc12284587e0238de6bbe.patch
-
-# do not expect ${prefix}/mingw symlink - this should be superceded by
-# 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
-sed -i 's/${prefix}\/mingw\//${prefix}\//g' configure
-
-# change hardcoded /mingw prefix to the real prefix .. isn't this rubbish?
-# it might work at build time and could be important there but beyond that?!
-export MINGW_NATIVE_PREFIX=$M_TARGET
-sed -i "s#\\/mingw\\/#${MINGW_NATIVE_PREFIX//\//\\/}\\/#g" gcc/config/i386/mingw32.h
-
-# so libgomp DLL gets built despide static libdl
-export lt_cv_deplibs_check_method='pass_all'
-
-# In addition adaint.c does `#include <accctrl.h>` which pulls in msxml.h, hacky hack:
-CPPFLAGS+=" -DCOM_NO_WINDOWS_H"
-
-$M_SOURCE/gcc-13.1.0/configure \
-  --build=x86_64-pc-linux-gnu \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
-  --with-native-system-header-dir=$M_TARGET/include \
-  --libexecdir=$M_TARGET/lib \
-  --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
-  --disable-libssp \
-  --disable-rpath \
-  --disable-multilib \
-  --disable-nls \
-  --disable-werror \
-  --disable-symvers \
-  --disable-libstdcxx-pch \
-  --disable-win32-registry \
-  --disable-sjlj-exceptions \
-  --disable-bootstrap \
-  --enable-languages=c,c++ \
-  --enable-shared \
-  --enable-static \
-  --enable-libatomic \
-  --enable-threads=mcf \
-  --enable-fully-dynamic-string \
-  --enable-libstdcxx-filesystem-ts \
-  --enable-libstdcxx-time \
-  --enable-checking=release \
-  --enable-graphite \
-  --enable-lto \
-  --enable-libgomp \
-  --with-tune=generic \
-  --with-gnu-ld \
-  --with-gnu-as \
-  --with-libiconv \
-  --with-zlib-include=$M_TARGET/zlib/include \
-  --with-zlib-lib=$M_TARGET/zlib/lib \
-  --with-boot-ldflags="$LDFLAGS -Wl,--disable-dynamicbase -static-libstdc++ -static-libgcc" \
-  --without-included-gettext \
-  --with-pkgversion="GCC with MCF thread model"
 make -j$MJOBS
 make install
 cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/*plugin*.dll $M_TARGET/lib/bfd-plugins/
@@ -466,4 +463,3 @@ make -j$MJOBS
 make install
 cp $M_TARGET/bin/make.exe $M_TARGET/bin/mingw32-make.exe
 cd $M_BUILD
-
