@@ -419,7 +419,7 @@ make -j$MJOBS
 make install
 cd $M_BUILD
 
-echo "building gcc"
+echo "building gcc-final"
 echo "======================="
 cd $M_BUILD/gcc-build
 
