@@ -423,7 +423,9 @@ cd $M_BUILD
 
 echo "building gcc-final"
 echo "======================="
-cd $M_BUILD/gcc-build
+rm -rf gcc-build
+mkdir gcc-build
+cd gcc-build
 
 $M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
