@@ -246,6 +246,13 @@ $M_SOURCE/gcc-13.1.0/configure \
   --libexecdir=$M_TARGET/lib \
   --disable-bootstrap \
   --disable-libssp \
+  --disable-libmudflap \
+  --disable-libgomp \
+  --disable-libgcc \
+  --disable-libstdc++-v3 \
+  --disable-libatomic \
+  --disable-libvtv \
+  --disable-libquadmath \
   --disable-rpath \
   --disable-multilib \
   --disable-nls \
