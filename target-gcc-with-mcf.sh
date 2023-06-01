@@ -180,6 +180,66 @@ rm $M_TARGET/include/pthread_unistd.h
 #ln -s $MINGW_TRIPLE mingw
 cd $M_BUILD
 
+
+echo "building gmp"
+echo "======================="
+mkdir gmp-build
+cd gmp-build
+$M_SOURCE/gmp-6.2.1/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_target \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building mpfr"
+echo "======================="
+mkdir mpfr-build
+cd mpfr-build
+$M_SOURCE/mpfr-4.2.0/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_target \
+  --with-gmp=$M_BUILD/for_target \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building MPC"
+echo "======================="
+mkdir mpc-build
+cd mpc-build
+$M_SOURCE/mpc-1.3.1/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_target \
+  --with-gmp=$M_BUILD/for_target \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building isl"
+echo "======================="
+mkdir isl-build
+cd isl-build
+$M_SOURCE/isl-0.24/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_target \
+  --with-gmp-prefix=$M_BUILD/for_target \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
 echo "building gcc-initial"
 echo "======================="
 mkdir gcc-build
@@ -244,15 +304,9 @@ $M_SOURCE/gcc-13.1.0/configure \
   --prefix=$M_TARGET \
   --with-native-system-header-dir=$M_TARGET/include \
   --libexecdir=$M_TARGET/lib \
+  --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
   --disable-bootstrap \
   --disable-libssp \
-  --disable-libmudflap \
-  --disable-libgomp \
-  --disable-libgcc \
-  --disable-libstdc++-v3 \
-  --disable-libatomic \
-  --disable-libvtv \
-  --disable-libquadmath \
   --disable-rpath \
   --disable-multilib \
   --disable-nls \
@@ -352,65 +406,6 @@ $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
 make -j$MJOBS
 make install
 #cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin
-cd $M_BUILD
-
-echo "building gmp"
-echo "======================="
-mkdir gmp-build
-cd gmp-build
-$M_SOURCE/gmp-6.2.1/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_BUILD/for_target \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building mpfr"
-echo "======================="
-mkdir mpfr-build
-cd mpfr-build
-$M_SOURCE/mpfr-4.2.0/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_BUILD/for_target \
-  --with-gmp=$M_BUILD/for_target \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building MPC"
-echo "======================="
-mkdir mpc-build
-cd mpc-build
-$M_SOURCE/mpc-1.3.1/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_BUILD/for_target \
-  --with-gmp=$M_BUILD/for_target \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building isl"
-echo "======================="
-mkdir isl-build
-cd isl-build
-$M_SOURCE/isl-0.24/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_BUILD/for_target \
-  --with-gmp-prefix=$M_BUILD/for_target \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
 cd $M_BUILD
 
 echo "building zlib"
