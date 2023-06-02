@@ -45,8 +45,9 @@ wget -c -O binutils-2.40.tar.bz2 http://ftp.gnu.org/gnu/binutils/binutils-2.40.t
 tar xjf binutils-2.40.tar.bz2
 
 #gcc
-wget -c -O gcc-13.1.0.tar.xz https://ftp.gnu.org/gnu/gcc/gcc-13.1.0/gcc-13.1.0.tar.xz
-xz -c -d gcc-13.1.0.tar.xz | tar xf -
+#wget -c -O gcc-13.1.0.tar.xz https://ftp.gnu.org/gnu/gcc/gcc-13.1.0/gcc-13.1.0.tar.xz
+#xz -c -d gcc-13.1.0.tar.xz | tar xf -
+git clone https://github.com/gcc-mirror/gcc.git --branch master --depth 1
 
 #libiconv
 wget -c -O libiconv-1.17.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.17.tar.gz
@@ -355,7 +356,7 @@ curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0400-gcc-Make-stupid-AT-T-syntax-not-default.patch
 curl -OL https://github.com/gcc-mirror/gcc/commit/1c118c9970600117700cc12284587e0238de6bbe.patch
 
-cd $M_SOURCE/gcc-13.1.0
+cd $M_SOURCE/gcc
 git reset --hard
 git clean -fdx
 patch -Nbp1 -i $M_BUILD/gcc-build/0002-Relocate-libintl.patch
@@ -394,7 +395,7 @@ export lt_cv_deplibs_check_method='pass_all'
 CPPFLAGS+=" -DCOM_NO_WINDOWS_H"
 
 cd $M_BUILD/gcc-build
-$M_SOURCE/gcc-13.1.0/configure \
+$M_SOURCE/gcc/configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
