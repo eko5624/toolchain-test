@@ -131,6 +131,7 @@ patch -p1 -i $M_BUILD/binutils-build/libiberty-unlink-handle-windows-nul.patch
 patch -p1 -i $M_BUILD/binutils-build/bfd-real-fopen-handle-windows-nul.patch
 patch -p1 -i $M_BUILD/binutils-build/3001-try-fix-compare_section-abort.patch
 
+cd $M_BUILD/binutils-build
 $M_SOURCE/binutils-2.40/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
@@ -163,6 +164,7 @@ git clean -fdx
 git apply $M_BUILD/headers-build/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
 cd $M_SOURCE/mingw-w64/mingw-w64-headers
 touch include/windows.*.h include/wincrypt.h include/prsht.h
+cd $M_BUILD/headers-build
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
@@ -286,6 +288,7 @@ cd $M_SOURCE/mcfgthread
 git reset --hard
 git clean -fdx
 autoreconf -ivf
+cd $M_BUILD
 mkdir mcfgthread-build
 cd mcfgthread-build
 export CFLAGS+=' -Os -g'
