@@ -341,7 +341,7 @@ $M_SOURCE/gcc/configure \
   --without-included-gettext \
   --with-pkgversion="GCC with MCF thread model"
 make -j$MJOBS all-gcc
-make install-gcc
+make install-strip-gcc
 cd $M_BUILD
 
 echo "building gendef"
