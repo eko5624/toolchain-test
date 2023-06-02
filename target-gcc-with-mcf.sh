@@ -342,6 +342,7 @@ $M_SOURCE/gcc/configure \
   --with-pkgversion="GCC with MCF thread model"
 make -j$MJOBS all-gcc
 make install-gcc
+cd $M_BUILD
 
 echo "building mingw-w64-crt"
 echo "======================="
