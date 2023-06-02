@@ -316,6 +316,7 @@ $M_SOURCE/gcc/configure \
   --disable-nls \
   --disable-werror \
   --disable-symvers \
+  --disable-libstdcxx-debug \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
   --disable-sjlj-exceptions \
