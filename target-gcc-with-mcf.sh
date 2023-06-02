@@ -10,7 +10,7 @@ MJOBS=$(grep -c processor /proc/cpuinfo)
 #CFLAGS="-pipe -O2"
 MINGW_TRIPLE="x86_64-w64-mingw32"
 
-export CFLAGS
+#export CFLAGS
 #export CXXFLAGS=$CFLAGS
 export MINGW_TRIPLE
 
