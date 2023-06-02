@@ -183,7 +183,6 @@ rm $M_TARGET/include/pthread_unistd.h
 #ln -s $MINGW_TRIPLE mingw
 cd $M_BUILD
 
-
 echo "building gmp"
 echo "======================="
 mkdir gmp-build
