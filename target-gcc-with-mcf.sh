@@ -438,7 +438,7 @@ $M_SOURCE/gcc/configure \
   --with-pkgversion="GCC with MCF thread model"
 make -j$MJOBS -O STAGE1_CFLAGS="-O2" all
 make install
-cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/*plugin*.dll $M_TARGET/lib/bfd-plugins/
+#cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.1/*plugin*.dll $M_TARGET/lib/bfd-plugins/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
 cd $M_BUILD
