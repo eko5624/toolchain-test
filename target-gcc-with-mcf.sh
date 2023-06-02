@@ -412,7 +412,7 @@ $M_SOURCE/gcc/configure \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
   --disable-sjlj-exceptions \
-  --enable-bootstrap \
+  --disable-bootstrap \
   --enable-languages=c,c++ \
   --enable-shared \
   --enable-static \
@@ -432,13 +432,12 @@ $M_SOURCE/gcc/configure \
   --with-libiconv \
   --with-zlib-include=$M_TARGET/zlib/include \
   --with-zlib-lib=$M_TARGET/zlib/lib \
-  --with-boot-ldflags="-static-libstdc++" \
-  --with-stage1-ldflags="-static-libstdc++" \
+  --with-boot-ldflags="$LDFLAGS -Wl,--disable-dynamicbase -static-libstdc++ -static-libgcc" \
   --without-included-gettext \
   --with-pkgversion="GCC with MCF thread model"
 make -j$MJOBS -O STAGE1_CFLAGS="-O2" all
 make install
-#cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.1/*plugin*.dll $M_TARGET/lib/bfd-plugins/
+cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.1/*plugin*.dll $M_TARGET/lib/bfd-plugins/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
 cd $M_BUILD
