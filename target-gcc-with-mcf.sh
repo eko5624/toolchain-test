@@ -340,8 +340,8 @@ $M_SOURCE/gcc/configure \
   --with-boot-ldflags="$LDFLAGS -Wl,--disable-dynamicbase -static-libstdc++ -static-libgcc" \
   --without-included-gettext \
   --with-pkgversion="GCC with MCF thread model"
-make -j$MJOBS all-gcc
-make install-strip-gcc
+make -j$MJOBS all-gcc all-target-libgcc all-target-libstdc++-v3
+make install-gcc install-target-libgcc install-target-libstdc++-v3
 cd $M_BUILD
 
 echo "building gendef"
