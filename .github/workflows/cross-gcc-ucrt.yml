@@ -54,14 +54,11 @@ jobs:
 
       - name: Release
         continue-on-error: true
-        uses: softprops/action-gh-release@master
-        with:
-          tag_name: toolchain
-          name: toolchain
-          files: |
-            cross-gcc-ucrt*.zip
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }} 
+        run: |
+          chmod +x ./release-package.sh
+          ./release-package.sh cross-gcc-ucrt-13.1.0.zip
 
       - name: Saving gcc cache
         uses: actions/cache/save@main
