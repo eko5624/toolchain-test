@@ -163,6 +163,7 @@ echo "building mcfgthread"
 echo "======================="
 cd $M_SOURCE/mcfgthread
 autoreconf -ivf
+cd $M_BUILD
 mkdir mcfgthread-build
 cd mcfgthread-build
 $M_SOURCE/mcfgthread/configure \
