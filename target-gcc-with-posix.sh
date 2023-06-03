@@ -60,10 +60,6 @@ tar xjf mpfr-4.2.0.tar.bz2
 wget -c -O mpc-1.3.1.tar.gz https://ftp.gnu.org/gnu/mpc/mpc-1.3.1.tar.gz
 tar xzf mpc-1.3.1.tar.gz
 
-#isl
-wget -c -O isl-0.24.tar.bz2 https://gcc.gnu.org/pub/gcc/infrastructure/isl-0.24.tar.bz2
-tar xjf isl-0.24.tar.bz2
-
 #mingw-w64
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
@@ -86,67 +82,6 @@ $M_SOURCE/binutils-2.40/configure \
   --disable-nls \
   --disable-werror \
   --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building mingw-w64-headers"
-echo "======================="
-mkdir headers-build
-cd headers-build
-$M_SOURCE/mingw-w64/mingw-w64-headers/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
-  --enable-sdk=all \
-  --with-default-msvcrt=ucrt \
-  --enable-idl \
-  --without-widl
-make -j$MJOBS
-make install
-cd $M_TARGET
-ln -s $MINGW_TRIPLE mingw
-cd $M_BUILD
-
-echo "building mingw-w64-crt"
-echo "======================="
-cd $M_SOURCE/mingw-w64/mingw-w64-crt
-autoreconf -ivf
-mkdir crt-build
-cd crt-build
-$M_SOURCE/mingw-w64/mingw-w64-crt/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
-  --with-default-msvcrt=ucrt \
-  --enable-wildcard \
-  --disable-dependency-tracking \
-  --enable-lib64 \
-  --disable-lib32
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building gendef"
-echo "======================="
-cd $M_BUILD
-mkdir gendef-build
-cd gendef-build
-$M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_TARGET
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building winpthreads"
-echo "======================="
-mkdir winpthreads-build
-cd winpthreads-build
-$M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
-  --enable-shared \
-  --enable-static
 make -j$MJOBS
 make install
 cd $M_BUILD
@@ -195,17 +130,65 @@ make -j$MJOBS
 make install
 cd $M_BUILD
 
-echo "building isl"
+echo "building mingw-w64-headers"
 echo "======================="
-mkdir isl-build
-cd isl-build
-$M_SOURCE/isl-0.24/configure \
+mkdir headers-build
+cd headers-build
+$M_SOURCE/mingw-w64/mingw-w64-headers/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --enable-sdk=all \
+  --with-default-msvcrt=ucrt \
+  --enable-idl \
+  --without-widl
+make -j$MJOBS
+make install
+cd $M_TARGET
+ln -s $MINGW_TRIPLE mingw
+cd $M_BUILD
+
+echo "building mingw-w64-crt"
+echo "======================="
+cd $M_SOURCE/mingw-w64/mingw-w64-crt
+autoreconf -ivf
+mkdir crt-build
+cd crt-build
+$M_SOURCE/mingw-w64/mingw-w64-crt/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --with-sysroot=$M_TARGET \
+  --with-default-msvcrt=ucrt \
+  --enable-wildcard \
+  --disable-dependency-tracking \
+  --enable-lib64 \
+  --disable-lib32
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building gendef"
+echo "======================="
+cd $M_BUILD
+mkdir gendef-build
+cd gendef-build
+$M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
-  --prefix=$M_BUILD/for_target \
-  --with-gmp-prefix=$M_BUILD/for_target \
-  --enable-static \
-  --disable-shared
+  --prefix=$M_TARGET
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building winpthreads"
+echo "======================="
+mkdir winpthreads-build
+cd winpthreads-build
+$M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --with-sysroot=$M_TARGET \
+  --enable-shared \
+  --enable-static
 make -j$MJOBS
 make install
 cd $M_BUILD
@@ -220,7 +203,8 @@ $M_SOURCE/gcc-13.1.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
   --with-sysroot=$M_TARGET \
-  --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
+  --with-native-system-header-dir=/include \
+  --with-{gmp,mpfr,mpc}=$M_BUILD/for_target \
   --with-pic \
   --disable-multilib \
   --enable-languages=c,c++ \
