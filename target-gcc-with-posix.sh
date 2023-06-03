@@ -60,6 +60,10 @@ tar xjf mpfr-4.2.0.tar.bz2
 wget -c -O mpc-1.3.1.tar.gz https://ftp.gnu.org/gnu/mpc/mpc-1.3.1.tar.gz
 tar xzf mpc-1.3.1.tar.gz
 
+#isl
+wget -c -O isl-0.24.tar.bz2 https://gcc.gnu.org/pub/gcc/infrastructure/isl-0.24.tar.bz2
+tar xjf isl-0.24.tar.bz2
+
 #mingw-w64
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
@@ -130,6 +134,21 @@ make -j$MJOBS
 make install
 cd $M_BUILD
 
+echo "building isl"
+echo "======================="
+mkdir isl-build
+cd isl-build
+$M_SOURCE/isl-0.24/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_target \
+  --with-gmp-prefix=$M_BUILD/for_target \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
 echo "building mingw-w64-headers"
 echo "======================="
 mkdir headers-build
@@ -143,16 +162,16 @@ $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --without-widl
 make -j$MJOBS
 make install
-#cd $M_TARGET
-#ln -s $MINGW_TRIPLE mingw
+cd $M_TARGET
+ln -s $MINGW_TRIPLE mingw
 cd $M_BUILD
 
 echo "building mingw-w64-crt"
 echo "======================="
+mkdir crt-build
 cd $M_SOURCE/mingw-w64/mingw-w64-crt
 autoreconf -ivf
-mkdir crt-build
-cd crt-build
+cd $M_BUILD/crt-build
 $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/$MINGW_TRIPLE \
@@ -204,7 +223,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --prefix=$M_TARGET \
   --with-sysroot=$M_TARGET \
   --with-native-system-header-dir=/include \
-  --with-{gmp,mpfr,mpc}=$M_BUILD/for_target \
+  --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
   --with-pic \
   --disable-multilib \
   --enable-languages=c,c++ \
