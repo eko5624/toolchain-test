@@ -43,6 +43,9 @@ xz -c -d gcc-13.1.0.tar.xz | tar xf -
 #mingw-w64
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
+#mcfgthread
+git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
+
 echo "building binutils"
 echo "======================="
 mkdir binutils-build
@@ -134,6 +137,20 @@ $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --with-default-msvcrt=ucrt \
   --enable-lib64 \
   --disable-lib32
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building mcfgthread"
+echo "======================="
+cd $M_SOURCE/mcfgthread
+autoreconf -ivf
+mkdir mcfgthread-build
+cd mcfgthread-build
+$M_SOURCE/mcfgthread/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_CROSS/$MINGW_TRIPLE \
+  --disable-pch
 make -j$MJOBS
 make install
 cd $M_BUILD
