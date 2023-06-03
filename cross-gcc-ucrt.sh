@@ -105,7 +105,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-libstdcxx-pch \
   --with-arch=x86-64 \
   --with-tune=generic \
-  --enable-threads=mcf \
+  --enable-threads=posix \
   --without-included-gettext \
   --enable-lto \
   --enable-checking=release \
@@ -138,24 +138,6 @@ $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --with-default-msvcrt=ucrt \
   --enable-lib64 \
   --disable-lib32
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building mcfgthread"
-echo "======================="
-cd $M_SOURCE/mcfgthread
-git reset --hard
-git clean -fdx
-autoreconf -ivf
-cd $M_BUILD
-mkdir mcfgthread-build
-cd mcfgthread-build
-export CFLAGS+=' -Os -g'
-$M_SOURCE/mcfgthread/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE \
-  --disable-pch
 make -j$MJOBS
 make install
 cd $M_BUILD
