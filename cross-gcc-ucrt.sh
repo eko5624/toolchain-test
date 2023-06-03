@@ -7,11 +7,11 @@ TOP_DIR=$(pwd)
 # Env Var NUMJOBS overrides automatic detection
 MJOBS=$(grep -c processor /proc/cpuinfo)
 
-#CFLAGS="-pipe -O2"
+CFLAGS="-pipe -O2"
 MINGW_TRIPLE="x86_64-w64-mingw32"
 export MINGW_TRIPLE
-#export CFLAGS
-#export CXXFLAGS=$CFLAGS
+export CFLAGS
+export CXXFLAGS=$CFLAGS
 
 export M_ROOT=$(pwd)
 export M_SOURCE=$M_ROOT/source
@@ -48,6 +48,7 @@ git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
 
 echo "building binutils"
 echo "======================="
+cd $M_BUILD
 mkdir binutils-build
 cd binutils-build
 $M_SOURCE/binutils-2.40/configure \
@@ -111,12 +112,11 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-checking=release \
   --disable-sjlj-exceptions
 make -j$MJOBS all-gcc
-make install-gcc
+make install-strip-gcc
 cd $M_BUILD
 
 echo "building gendef"
 echo "======================="
-cd $M_BUILD
 mkdir gendef-build
 cd gendef-build
 $M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure --prefix=$M_CROSS
