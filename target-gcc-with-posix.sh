@@ -222,8 +222,8 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-pkgversion="GCC with posix thread model"
 make -j$MJOBS
 make install
-cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
-cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
+#cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
+#cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cd $M_BUILD
 
