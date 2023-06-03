@@ -128,6 +128,7 @@ echo "building mingw-w64-crt"
 echo "======================="
 cd $M_SOURCE/mingw-w64/mingw-w64-crt
 autoreconf -ivf
+cd $M_BUILD 
 mkdir crt-build
 cd crt-build
 $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
