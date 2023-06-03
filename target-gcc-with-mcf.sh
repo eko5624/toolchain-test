@@ -195,7 +195,7 @@ cp config.{guess,sub} ../stash
 patch -p2 -i $M_BUILD/gmp-build/do-not-use-dllimport.diff
 autoreconf -fiv
 cp -f ../stash/config.{guess,sub} .
-cd gmp-build
+cd $M_BUILD/gmp-build
 $M_SOURCE/gmp-6.2.1/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
@@ -216,7 +216,7 @@ curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64
 cd $M_SOURCE/mpfr-4.2.0
 patch -p1 -i $M_BUILD/mpfr-build/patches.diff
 autoreconf -fiv
-cd mpfr-build
+cd $M_BUILD/mpfr-build
 $M_SOURCE/mpfr-4.2.0/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
@@ -325,7 +325,7 @@ autoreconf -ivf
 cd $M_BUILD
 mkdir mcfgthread-build
 cd mcfgthread-build
-export CFLAGS+=' -Os -g'
+CFLAGS+=' -Os -g'
 $M_SOURCE/mcfgthread/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
