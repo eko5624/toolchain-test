@@ -102,7 +102,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-libstdcxx-pch \
   --with-arch=x86-64 \
   --with-tune=generic \
-  --enable-threads=posix \
+  --enable-threads=mcf \
   --without-included-gettext \
   --enable-lto \
   --enable-checking=release \
