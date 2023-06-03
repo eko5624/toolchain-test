@@ -143,8 +143,8 @@ $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --without-widl
 make -j$MJOBS
 make install
-cd $M_TARGET
-ln -s $MINGW_TRIPLE mingw
+#cd $M_TARGET
+#ln -s $MINGW_TRIPLE mingw
 cd $M_BUILD
 
 echo "building mingw-w64-crt"
