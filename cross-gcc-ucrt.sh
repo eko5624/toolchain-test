@@ -145,10 +145,13 @@ cd $M_BUILD
 echo "building mcfgthread"
 echo "======================="
 cd $M_SOURCE/mcfgthread
+git reset --hard
+git clean -fdx
 autoreconf -ivf
 cd $M_BUILD
 mkdir mcfgthread-build
 cd mcfgthread-build
+export CFLAGS+=' -Os -g'
 $M_SOURCE/mcfgthread/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE \
