@@ -74,16 +74,18 @@ git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
 wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
 tar xzf make-4.4.1.tar.gz
 
-
-echo "building gendef"
+echo "building binutils"
 echo "======================="
-cd $M_BUILD
-mkdir gendef-build
-cd gendef-build
-$M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure \
+mkdir binutils-build
+cd binutils-build
+$M_SOURCE/binutils-2.40/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
-  --prefix=$M_TARGET
+  --prefix=$M_TARGET \
+  --with-sysroot=$M_TARGET \
+  --disable-nls \
+  --disable-werror \
+  --disable-shared
 make -j$MJOBS
 make install
 cd $M_BUILD
@@ -105,22 +107,6 @@ cd $M_TARGET
 ln -s $MINGW_TRIPLE mingw
 cd $M_BUILD
 
-echo "building binutils"
-echo "======================="
-mkdir binutils-build
-cd binutils-build
-$M_SOURCE/binutils-2.40/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
-  --with-sysroot=$M_TARGET \
-  --disable-nls \
-  --disable-werror \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
 echo "building mingw-w64-crt"
 echo "======================="
 cd $M_SOURCE/mingw-w64/mingw-w64-crt
@@ -135,6 +121,78 @@ $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --disable-dependency-tracking \
   --enable-lib64 \
   --disable-lib32
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building gendef"
+echo "======================="
+cd $M_BUILD
+mkdir gendef-build
+cd gendef-build
+$M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_TARGET
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building gmp"
+echo "======================="
+mkdir gmp-build
+cd gmp-build
+$M_SOURCE/gmp-6.2.1/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_target \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building mpfr"
+echo "======================="
+mkdir mpfr-build
+cd mpfr-build
+$M_SOURCE/mpfr-4.2.0/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_target \
+  --with-gmp=$M_BUILD/for_target \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building MPC"
+echo "======================="
+mkdir mpc-build
+cd mpc-build
+$M_SOURCE/mpc-1.3.1/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_target \
+  --with-gmp=$M_BUILD/for_target \
+  --enable-static \
+  --disable-shared
+make -j$MJOBS
+make install
+cd $M_BUILD
+
+echo "building isl"
+echo "======================="
+mkdir isl-build
+cd isl-build
+$M_SOURCE/isl-0.24/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_BUILD/for_target \
+  --with-gmp-prefix=$M_BUILD/for_target \
+  --enable-static \
+  --disable-shared
 make -j$MJOBS
 make install
 cd $M_BUILD
@@ -221,23 +279,26 @@ $M_SOURCE/gcc-13.1.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
   --with-sysroot=$M_TARGET \
+  --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
+  --with-pic \
   --disable-multilib \
   --enable-languages=c,c++ \
-  --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
+  --enable-libgomp \
+  --enable-version-specific-runtime-libs \
+  --enable-mingw-wildcard \
   --disable-nls \
   --disable-werror \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
+  --disable-dependency-tracking \
   --enable-shared \
   --enable-static \
-  --with-tune=generic \
   --enable-threads=posix \
-  --enable-lto \
-  --enable-checking=release \
   --with-pkgversion="GCC with posix thread model"
 make -j$MJOBS
 make install
 cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
+cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cd $M_BUILD
 
