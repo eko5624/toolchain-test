@@ -138,65 +138,6 @@ make -j$MJOBS
 make install
 cd $M_BUILD
 
-echo "building gmp"
-echo "======================="
-mkdir gmp-build
-cd gmp-build
-$M_SOURCE/gmp-6.2.1/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_BUILD/for_target \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building mpfr"
-echo "======================="
-mkdir mpfr-build
-cd mpfr-build
-$M_SOURCE/mpfr-4.2.0/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_BUILD/for_target \
-  --with-gmp=$M_BUILD/for_target \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building MPC"
-echo "======================="
-mkdir mpc-build
-cd mpc-build
-$M_SOURCE/mpc-1.3.1/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_BUILD/for_target \
-  --with-gmp=$M_BUILD/for_target \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
-echo "building isl"
-echo "======================="
-mkdir isl-build
-cd isl-build
-$M_SOURCE/isl-0.24/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_BUILD/for_target \
-  --with-gmp-prefix=$M_BUILD/for_target \
-  --enable-static \
-  --disable-shared
-make -j$MJOBS
-make install
-cd $M_BUILD
-
 echo "building winpthreads"
 echo "======================="
 mkdir winpthreads-build
