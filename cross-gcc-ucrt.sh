@@ -11,7 +11,7 @@ MJOBS=$(grep -c processor /proc/cpuinfo)
 MINGW_TRIPLE="x86_64-w64-mingw32"
 export MINGW_TRIPLE
 #export CFLAGS
-export CXXFLAGS=$CFLAGS
+#export CXXFLAGS=$CFLAGS
 
 export M_ROOT=$(pwd)
 export M_SOURCE=$M_ROOT/source
