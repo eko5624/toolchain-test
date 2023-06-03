@@ -222,8 +222,8 @@ $M_SOURCE/mpfr-4.2.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_BUILD/for_target \
   --with-gmp=$M_BUILD/for_target \
-  --disable-static \
-  --enable-shared
+  --enable-static \
+  --disable-shared
 make -j$MJOBS
 make install
 cd $M_BUILD
@@ -238,8 +238,8 @@ $M_SOURCE/mpc-1.3.1/configure \
   --prefix=$M_BUILD/for_target \
   --with-gmp=$M_BUILD/for_target \
   --with-mpfr=$M_BUILD/for_target \
-  --disable-static \
-  --enable-shared
+  --enable-static \
+  --disable-shared
 make -j$MJOBS
 make install
 cd $M_BUILD
@@ -259,7 +259,7 @@ $M_SOURCE/isl-0.24/configure \
   --prefix=$M_BUILD/for_target \
   --with-gmp-prefix=$M_BUILD/for_target \
   --enable-static \
-  --enable-shared
+  --disable-shared
 make -j$MJOBS
 make install
 cd $M_BUILD
