@@ -145,6 +145,7 @@ echo "building mcfgthread"
 echo "======================="
 cd $M_SOURCE/mcfgthread
 autoreconf -ivf
+cd $M_BUILD
 mkdir mcfgthread-build
 cd mcfgthread-build
 $M_SOURCE/mcfgthread/configure \
@@ -163,9 +164,7 @@ $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE \
   --disable-shared \
-  --enable-static \
-  --enable-lib64 \
-  --disable-lib32
+  --enable-static
 make -j$MJOBS
 make install
 cd $M_BUILD
