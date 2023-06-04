@@ -224,20 +224,47 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-sysroot=$M_TARGET \
   --with-native-system-header-dir=/include \
   --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
-  --with-pic \
-  --disable-multilib \
-  --enable-languages=c,c++ \
-  --enable-libgomp \
-  --enable-version-specific-runtime-libs \
-  --enable-mingw-wildcard \
-  --disable-nls \
-  --disable-werror \
-  --disable-libstdcxx-pch \
-  --disable-win32-registry \
-  --disable-dependency-tracking \
-  --enable-shared \
-  --enable-static \
+  --enable-offload-targets=nvptx-none \
+  --with-tune=generic \
+  --enable-checking=release \
   --enable-threads=posix \
+  --disable-sjlj-exceptions \
+  --disable-libunwind-exceptions \
+  --disable-serial-configure \
+  --disable-bootstrap \
+  --enable-host-shared \
+  --enable-plugin \
+  --disable-default-ssp \
+  --disable-rpath \
+  --disable-libstdcxx-debug \
+  --disable-version-specific-runtime-libs \
+  --with-stabs \
+  --disable-symvers \
+  --enable-languages=c,c++ \
+  --disable-gold \
+  --disable-nls \
+  --disable-stage1-checking \
+  --disable-win32-registry \
+  --disable-multilib \
+  --enable-ld \
+  --enable-libquadmath \
+  --enable-libada \
+  --enable-libssp \
+  --enable-libstdcxx \
+  --enable-lto \
+  --enable-fully-dynamic-string \
+  --enable-libgomp \
+  --enable-graphite \
+  --enable-mingw-wildcard \
+  --enable-libstdcxx-time \
+  --enable-libstdcxx-pch \
+  --disable-libstdcxx-backtrace \
+  --enable-install-libiberty \
+  --enable-__cxa_atexit \
+  --without-included-gettext \
+  --with-diagnostics-color=auto \
+  --enable-clocale=generic \
+  --with-libiconv \
   --with-pkgversion="GCC with posix thread model"
 make -j$MJOBS
 make install
