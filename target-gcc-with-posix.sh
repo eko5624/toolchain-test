@@ -240,12 +240,13 @@ mkdir libdl-build
 cd libdl-build
 $M_SOURCE/dlfcn-win32/configure \
   --prefix=$M_TARGET/libdl \
+  --cross-prefix=x86_64-w64-mingw32-
   --libdir=$M_TARGET/libdl/lib \
   --incdir=$M_TARGET/libdl/include/libdl-win32 \
   --disable-shared \
   --enable-static \
   --enable-stripping \
-  --disable-wine
+  --enable-wine
 make -j$MJOBS
 make install
 
