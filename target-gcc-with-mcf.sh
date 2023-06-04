@@ -45,9 +45,9 @@ wget -c -O binutils-2.40.tar.bz2 http://ftp.gnu.org/gnu/binutils/binutils-2.40.t
 tar xjf binutils-2.40.tar.bz2
 
 #gcc
-#wget -c -O gcc-13.1.0.tar.xz https://ftp.gnu.org/gnu/gcc/gcc-13.1.0/gcc-13.1.0.tar.xz
-#xz -c -d gcc-13.1.0.tar.xz | tar xf -
-git clone https://github.com/gcc-mirror/gcc.git --branch master --depth 1
+wget -c -O gcc-13.1.0.tar.xz https://ftp.gnu.org/gnu/gcc/gcc-13.1.0/gcc-13.1.0.tar.xz
+xz -c -d gcc-13.1.0.tar.xz | tar xf -
+#git clone https://github.com/gcc-mirror/gcc.git --branch master --depth 1
 
 #libiconv
 wget -c -O libiconv-1.17.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.17.tar.gz
@@ -376,7 +376,7 @@ curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0300-override-builtin-printf-format.patch
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0400-gcc-Make-stupid-AT-T-syntax-not-default.patch
 
-cd $M_SOURCE/gcc
+cd $M_SOURCE/gcc-13.1.0
 #git reset --hard
 #git clean -fdx
 patch -Nbp1 -i $M_BUILD/gcc-build/0002-Relocate-libintl.patch
@@ -414,7 +414,7 @@ CPPFLAGS+=" -DCOM_NO_WINDOWS_H"
 cd $M_BUILD/gcc-build 
 CXXFLAGS=-Wno-int-conversion 
 LDFLAGS='-pthread  -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
-$M_SOURCE/gcc/configure \
+$M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
@@ -464,7 +464,7 @@ $M_SOURCE/gcc/configure \
   --with-pkgversion="GCC with MCF thread model"
 make -j$MJOBS
 make install
-cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/14.0.0/*plugin*.dll $M_TARGET/lib/bfd-plugins/
+cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/*plugin*.dll $M_TARGET/lib/bfd-plugins/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
 cd $M_BUILD
