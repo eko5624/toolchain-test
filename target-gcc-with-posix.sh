@@ -7,11 +7,11 @@ TOP_DIR=$(pwd)
 # Env Var NUMJOBS overrides automatic detection
 MJOBS=$(grep -c processor /proc/cpuinfo)
 
-CFLAGS="-pipe -O2"
+#CFLAGS="-pipe -O2"
 MINGW_TRIPLE="x86_64-w64-mingw32"
 
-export CFLAGS
-export CXXFLAGS=$CFLAGS
+#export CFLAGS
+#export CXXFLAGS=$CFLAGS
 export MINGW_TRIPLE
 
 export M_ROOT=$(pwd)
@@ -239,7 +239,6 @@ EOF
 mkdir libdl-build
 cd libdl-build
 $M_SOURCE/dlfcn-win32/configure \
-  --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/libdl \
   --libdir=$M_TARGET/libdl/lib \
   --incdir=$M_TARGET/libdl/include/libdl-win32 \
