@@ -217,8 +217,8 @@ cd $M_BUILD
 
 echo "building dlfcn-win32"
 echo "======================="
-mkdir make-libdl
-cd make-libdl
+mkdir libdl-build
+cd libdl-build
 $M_SOURCE/dlfcn-win32/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
