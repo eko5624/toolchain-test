@@ -458,6 +458,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-graphite \
   --enable-lto \
   --enable-libgomp \
+  --enable-clocale=generic \
   --with-libiconv \
   --with-tune=generic \
   --without-included-gettext \
