@@ -240,6 +240,7 @@ mkdir libdl-build
 cd libdl-build
 $M_SOURCE/dlfcn-win32/configure \
   --prefix=$M_TARGET/libdl \
+  --target=$MINGW_TRIPLE \
   --cc=$CC \
   --libdir=$M_TARGET/libdl/lib \
   --incdir=$M_TARGET/libdl/include/libdl-win32 \
