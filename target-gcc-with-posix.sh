@@ -70,6 +70,9 @@ git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 #mcfgthread
 git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
 
+#libdl (dlfcn-win32)
+https://github.com/dlfcn-win32/dlfcn-win32 --branch master --depth 1
+
 #make
 wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
 tar xzf make-4.4.1.tar.gz
@@ -212,10 +215,62 @@ make -j$MJOBS
 make install
 cd $M_BUILD
 
+echo "building dlfcn-win32"
+echo "======================="
+mkdir make-libdl
+cd make-libdl
+$M_SOURCE/dlfcn-win32/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_TARGET/libdl \
+  --libdir=$M_TARGET/libdl/lib \
+  --incdir=$M_TARGET/libdl/include/libdl-win32 \
+  --disable-shared \
+  --enable-static \
+  --enable-stripping \
+  --disable-wine
+make -j$MJOBS
+make install
+
+#echo "building zlib"
+#echo "======================="
+#mkdir zlib-build
+#cd zlib-build
+#curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
+#patch -d $M_SOURCE/zlib-1.2.13 -p1 < $M_BUILD/zlib-build/zlib-1-win32-static.patch
+#CHOST=$MINGW_TRIPLE $M_SOURCE/zlib-1.2.13/configure \
+#  --prefix=$M_TARGET/zlib \
+#  --static
+#make -j$MJOBS
+#make install
+#cd $M_BUILD
+
+#echo "building libiconv"
+#echo "======================="
+#mkdir libiconv-build
+#cd libiconv-build
+#$M_SOURCE/libiconv-1.17/configure \
+#  --build=x86_64-pc-linux-gnu \
+#  --host=$MINGW_TRIPLE \
+#  --target=$MINGW_TRIPLE \
+#  --prefix=$M_TARGET \
+#  --host=$MINGW_TRIPLE \
+#  --target=$MINGW_TRIPLE \
+#  --enable-extra-encodings \
+#  --enable-static \
+#  --disable-shared \
+#  --disable-nls \
+#  --with-gnu-ld
+#make -j$MJOBS
+#make install
+
 echo "building gcc"
 echo "======================="
 mkdir gcc-build
 cd gcc-build
+CFLAGS='-I$M_TARGET/libdl/include/libdl-win32 -Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' 
+CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' 
+LDFLAGS='-pthread  -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
 $M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
