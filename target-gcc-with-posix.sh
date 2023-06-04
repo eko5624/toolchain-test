@@ -233,7 +233,7 @@ installed=yes
 shouldnotlink=no
 dlopen=''
 dlpreopen=''
-libdir='$INSTALLPREFIX/lib'
+libdir='$M_TARGET/libdl/lib'
 EOF
 
 mkdir libdl-build
