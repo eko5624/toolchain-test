@@ -370,15 +370,15 @@ curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0014-gcc-9-branch-clone_function_name_1-Retain-any-stdcall-suffix.patch
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0020-libgomp-Don-t-hard-code-MS-printf-attributes.patch
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0021-PR14940-Allow-a-PCH-to-be-mapped-to-a-different-addr.patch
+curl -OL https://raw.githubusercontent.com/eko5624/mcfgthread/master/mingw-w64-gcc/0022-fix-radix-sort-on-32bit-platforms.patch
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0140-gcc-diagnostic-color.patch
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0200-add-m-no-align-vector-insn-option-for-i386.patch
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0300-override-builtin-printf-format.patch
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0400-gcc-Make-stupid-AT-T-syntax-not-default.patch
-curl -OL https://github.com/gcc-mirror/gcc/commit/1c118c9970600117700cc12284587e0238de6bbe.patch
 
 cd $M_SOURCE/gcc
-git reset --hard
-git clean -fdx
+#git reset --hard
+#git clean -fdx
 patch -Nbp1 -i $M_BUILD/gcc-build/0002-Relocate-libintl.patch
 patch -Nbp1 -i $M_BUILD/gcc-build/0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch
 patch -Nbp1 -i $M_BUILD/gcc-build/0005-Windows-Don-t-ignore-native-system-header-dir.patch
@@ -394,10 +394,7 @@ patch -Nbp1 -i $M_BUILD/gcc-build/0140-gcc-diagnostic-color.patch
 patch -Nbp1 -i $M_BUILD/gcc-build/0200-add-m-no-align-vector-insn-option-for-i386.patch
 patch -Nbp1 -i $M_BUILD/gcc-build/0300-override-builtin-printf-format.patch
 patch -Nbp1 -i $M_BUILD/gcc-build/0400-gcc-Make-stupid-AT-T-syntax-not-default.patch
-
-# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=109670#c7
-# https://github.com/gcc-mirror/gcc/commit/1c118c9970600117700cc12284587e0238de6bbe
-patch -R -Nbp1 -i $M_BUILD/gcc-build/1c118c9970600117700cc12284587e0238de6bbe.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0022-fix-radix-sort-on-32bit-platforms.patch
 
 # do not expect ${prefix}/mingw symlink - this should be superceded by
 # 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
