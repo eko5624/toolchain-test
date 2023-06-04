@@ -246,7 +246,7 @@ $M_SOURCE/dlfcn-win32/configure \
   --disable-shared \
   --enable-static \
   --enable-stripping \
-  --enable-wine
+  --disable-wine
 make -j$MJOBS
 make install
 
