@@ -274,7 +274,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --prefix=$M_TARGET \
   --with-sysroot=$M_TARGET \
   --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
-  --enable-offload-targets=nvptx-none \
   --with-tune=generic \
   --enable-checking=release \
   --enable-threads=posix \
@@ -283,7 +282,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-serial-configure \
   --disable-bootstrap \
   --enable-host-shared \
-  --enable-plugin \
   --disable-default-ssp \
   --disable-rpath \
   --disable-libstdcxx-debug \
@@ -298,7 +296,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-multilib \
   --enable-ld \
   --enable-libquadmath \
-  --enable-libada \
   --enable-libssp \
   --enable-libstdcxx \
   --enable-lto \
