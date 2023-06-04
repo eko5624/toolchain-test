@@ -239,9 +239,7 @@ EOF
 mkdir libdl-build
 cd libdl-build
 $M_SOURCE/dlfcn-win32/configure \
-  --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET/libdl \
   --libdir=$M_TARGET/libdl/lib \
   --incdir=$M_TARGET/libdl/include/libdl-win32 \
