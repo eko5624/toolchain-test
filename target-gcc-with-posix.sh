@@ -222,7 +222,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
   --with-sysroot=$M_TARGET \
-  --with-native-system-header-dir=/include \
   --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
   --enable-offload-targets=nvptx-none \
   --with-tune=generic \
