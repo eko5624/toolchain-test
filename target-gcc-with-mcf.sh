@@ -524,7 +524,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-libquadmath \
   --enable-libssp \
   --enable-libstdcxx \
-  --enable-plugin \
   --enable-languages=c,c++ \
   --enable-shared \
   --enable-static \
