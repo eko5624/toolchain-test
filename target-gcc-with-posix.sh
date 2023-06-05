@@ -7,8 +7,11 @@ TOP_DIR=$(pwd)
 # Env Var NUMJOBS overrides automatic detection
 MJOBS=$(grep -c processor /proc/cpuinfo)
 
+CFLAGS="-pipe -O2"
 MINGW_TRIPLE="x86_64-w64-mingw32"
 export MINGW_TRIPLE
+export CFLAGS
+export CXXFLAGS=$CFLAGS
 
 export M_ROOT=$(pwd)
 export M_SOURCE=$M_ROOT/source
@@ -269,8 +272,8 @@ echo "building gcc"
 echo "======================="
 mkdir gcc-build
 cd gcc-build
-CFLAGS='-I$TOP_DIR/opt/include -Wno-int-conversion -pipe -O2' 
-CXXFLAGS='-Wno-int-conversion -pipe -O2' 
+CFLAGS+=" -I$TOP_DIR/opt/include -Wno-int-conversion" 
+CXXFLAGS+=" -Wno-int-conversion" 
 LDFLAGS=-pthread
 $M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
@@ -317,6 +320,8 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-diagnostics-color=auto \
   --enable-clocale=generic \
   --with-libiconv \
+  --with-boot-ldflags="-static-libstdc++" \
+  --with-stage1-ldflags="-static-libstdc++" \
   --with-pkgversion="GCC with posix thread model"
 make -j$MJOBS
 make install
