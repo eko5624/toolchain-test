@@ -11,6 +11,7 @@ CFLAGS="-pipe -O2"
 MINGW_TRIPLE="x86_64-w64-mingw32"
 
 export CFLAGS
+export CXXFLAGS=$CFLAGS
 export MINGW_TRIPLE
 
 export M_ROOT=$(pwd)
@@ -428,7 +429,7 @@ CPPFLAGS+=" -DCOM_NO_WINDOWS_H"
 
 cd $M_BUILD/gcc-build 
 CFLAGS+=" -I$TOP_DIR/opt/include -Wno-int-conversion"
-CXXFLAGS='-Wno-int-conversion -pipe -O2' 
+CXXFLAGS+=" -Wno-int-conversion"
 LDFLAGS=-pthread
 $M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
