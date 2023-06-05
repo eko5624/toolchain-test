@@ -430,7 +430,7 @@ export lt_cv_deplibs_check_method='pass_all'
 
 # In addition adaint.c does `#include <accctrl.h>` which pulls in msxml.h, hacky hack:
 CPPFLAGS+=" -DCOM_NO_WINDOWS_H"
-cd gcc-build
+cd $M_BUILD/gcc-build
 CFLAGS+=" -I$TOP_DIR/opt/include -Wno-int-conversion" 
 CXXFLAGS+=" -Wno-int-conversion" 
 LDFLAGS=-pthread
