@@ -94,6 +94,7 @@ tar xzf make-4.4.1.tar.gz
 
 echo "building binutils"
 echo "======================="
+cd $M_BUILD
 mkdir binutils-build
 cd binutils-build
 $M_SOURCE/binutils-2.40/configure \
@@ -106,10 +107,10 @@ $M_SOURCE/binutils-2.40/configure \
   --disable-shared
 make -j$MJOBS
 make install
-cd $M_BUILD
 
 echo "building gmp"
 echo "======================="
+cd $M_BUILD
 mkdir gmp-build
 cd gmp-build
 $M_SOURCE/gmp-6.2.1/configure \
@@ -120,10 +121,10 @@ $M_SOURCE/gmp-6.2.1/configure \
   --disable-shared
 make -j$MJOBS
 make install
-cd $M_BUILD
 
 echo "building mpfr"
 echo "======================="
+cd $M_BUILD
 mkdir mpfr-build
 cd mpfr-build
 $M_SOURCE/mpfr-4.2.0/configure \
@@ -135,10 +136,10 @@ $M_SOURCE/mpfr-4.2.0/configure \
   --disable-shared
 make -j$MJOBS
 make install
-cd $M_BUILD
 
 echo "building MPC"
 echo "======================="
+cd $M_BUILD
 mkdir mpc-build
 cd mpc-build
 $M_SOURCE/mpc-1.3.1/configure \
@@ -150,10 +151,10 @@ $M_SOURCE/mpc-1.3.1/configure \
   --disable-shared
 make -j$MJOBS
 make install
-cd $M_BUILD
 
 echo "building isl"
 echo "======================="
+cd $M_BUILD
 mkdir isl-build
 cd isl-build
 $M_SOURCE/isl-0.24/configure \
@@ -165,10 +166,10 @@ $M_SOURCE/isl-0.24/configure \
   --disable-shared
 make -j$MJOBS
 make install
-cd $M_BUILD
 
 echo "building mingw-w64-headers"
 echo "======================="
+cd $M_BUILD
 mkdir headers-build
 cd headers-build
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
@@ -182,10 +183,10 @@ make -j$MJOBS
 make install
 cd $M_TARGET
 ln -s $MINGW_TRIPLE mingw
-cd $M_BUILD
 
 echo "building mingw-w64-crt"
 echo "======================="
+cd $M_BUILD
 mkdir crt-build
 cd $M_SOURCE/mingw-w64/mingw-w64-crt
 autoreconf -ivf
@@ -201,7 +202,6 @@ $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --disable-lib32
 make -j$MJOBS
 make install
-cd $M_BUILD
 
 echo "building gendef"
 echo "======================="
@@ -214,10 +214,10 @@ $M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure \
   --prefix=$M_TARGET
 make -j$MJOBS
 make install
-cd $M_BUILD
 
 echo "building winpthreads"
 echo "======================="
+cd $M_BUILD
 mkdir winpthreads-build
 cd winpthreads-build
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
@@ -228,10 +228,10 @@ $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --enable-static
 make -j$MJOBS
 make install
-cd $M_BUILD
 
-#echo "building dlfcn-win32"
-#echo "======================="
+echo "building dlfcn-win32"
+echo "======================="
+cd $M_BUILD
 mkdir libdl-build
 cmake -G Ninja -H$M_SOURCE/dlfcn-win32 -B$M_BUILD/libdl-build \
   -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
@@ -241,10 +241,10 @@ cmake -G Ninja -H$M_SOURCE/dlfcn-win32 -B$M_BUILD/libdl-build \
   -DBUILD_TESTS=OFF
 ninja -j$MJOBS -C $M_BUILD/libdl-build
 ninja install -C $M_BUILD/libdl-build
-cd $M_BUILD
 
 echo "building zlib"
 echo "======================="
+cd $M_BUILD
 mkdir zlib-build
 cd zlib-build
 curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
@@ -254,10 +254,10 @@ CHOST=$MINGW_TRIPLE $M_SOURCE/zlib-1.2.13/configure \
   --static
 make -j$MJOBS
 make install
-cd $M_BUILD
 
 echo "building zstd"
 echo "======================="
+cd $M_BUILD
 mkdir zstd-build
 cd zstd-build
 curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-zstd/zstd-1.4.0-fileio-mingw.patch
@@ -270,10 +270,10 @@ cmake -G Ninja -H$M_SOURCE/zstd-1.5.5 -B$M_BUILD/zstd-build \
   -DZSTD_PROGRAMS_LINK_SHARED=ON
 ninja -j$MJOBS -C $M_BUILD/zstd-build
 ninja install -C $M_BUILD/zstd-build
-cd $M_BUILD
 
 echo "building gperf"
 echo "======================="
+cd $M_BUILD
 mkdir gperf-build
 cd gperf-build
 $M_SOURCE/gperf-3.1/configure \
@@ -282,10 +282,10 @@ $M_SOURCE/gperf-3.1/configure \
   --prefix=$M_TARGET
 make -j$MJOBS
 make install
-cd $M_BUILD
 
 echo "building libiconv"
 echo "======================="
+cd $M_BUILD
 mkdir libiconv-build
 cd libiconv-build
 curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/0002-fix-cr-for-awk-in-configure.all.patch
@@ -330,6 +330,7 @@ EOF
 
 echo "building gcc"
 echo "======================="
+cd $M_BUILD
 mkdir gcc-build
 cd gcc-build
 CFLAGS+=" -I$TOP_DIR/opt/include -Wno-int-conversion" 
@@ -387,10 +388,10 @@ make -j$MJOBS
 make install
 cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
-cd $M_BUILD
 
 echo "building make"
 echo "======================="
+cd $M_BUILD
 mkdir make-build
 cd make-build
 $M_SOURCE/make-4.4.1/configure \
