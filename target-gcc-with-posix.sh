@@ -262,9 +262,10 @@ mkdir zstd-build
 cd zstd-build
 curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-zstd/zstd-1.4.0-fileio-mingw.patch
 patch -d $M_SOURCE/zstd-1.5.5 -Np1 < zstd-1.4.0-fileio-mingw.patch
-cmake -G Ninja -H$M_SOURCE/zstd-1.5.5 -B$M_BUILD/zstd-build \
+cmake -G Ninja -H$M_SOURCE/zstd-1.5.5/build/cmake -B$M_BUILD/zstd-build \
   -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
+  -DCMAKE_BUILD_TYPE=Release \
   -DZSTD_BUILD_CONTRIB=ON \
   -DBUILD_TESTING=OFF \
   -DZSTD_PROGRAMS_LINK_SHARED=ON
