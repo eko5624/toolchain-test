@@ -7,11 +7,10 @@ TOP_DIR=$(pwd)
 # Env Var NUMJOBS overrides automatic detection
 MJOBS=$(grep -c processor /proc/cpuinfo)
 
-#CFLAGS="-pipe -O2"
+CFLAGS="-pipe -O2"
 MINGW_TRIPLE="x86_64-w64-mingw32"
 
-#export CFLAGS
-#export CXXFLAGS=$CFLAGS
+export CFLAGS
 export MINGW_TRIPLE
 
 export M_ROOT=$(pwd)
@@ -78,6 +77,9 @@ git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
 #mcfgthread
 git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
+
+#libdl (dlfcn-win32)
+git clone https://github.com/dlfcn-win32/dlfcn-win32 --branch master --depth 1
 
 #make
 wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
@@ -355,6 +357,19 @@ make install
 #cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin
 cd $M_BUILD
 
+echo "building dlfcn-win32"
+echo "======================="
+mkdir libdl-build
+cmake -G Ninja -H$M_SOURCE/dlfcn-win32 -B$M_BUILD/libdl-build \
+  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
+  -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
+  -DBUILD_SHARED_LIBS=OFF \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DBUILD_TESTS=OFF
+ninja -j$MJOBS -C $M_BUILD/libdl-build
+ninja install -C $M_BUILD/libdl-build
+cd $M_BUILD
+
 echo "building gcc"
 echo "======================="
 mkdir gcc-build
@@ -412,8 +427,9 @@ export lt_cv_deplibs_check_method='pass_all'
 CPPFLAGS+=" -DCOM_NO_WINDOWS_H"
 
 cd $M_BUILD/gcc-build 
-CXXFLAGS=-Wno-int-conversion 
-LDFLAGS='-pthread  -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
+CFLAGS+=" -I$TOP_DIR/opt/include -Wno-int-conversion"
+CXXFLAGS='-Wno-int-conversion -pipe -O2' 
+LDFLAGS=-pthread
 $M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
@@ -442,7 +458,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-install-libiberty \
   --enable-ld \
   --enable-libquadmath \
-  --enable-libssp \
+  --disable-libssp \
   --enable-libstdcxx \
   --enable-plugin \
   --enable-languages=c,c++ \
