@@ -316,6 +316,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-sysroot=$M_TARGET \
   --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
   --with-tune=generic \
+  --with-arch=nocona \
   --enable-checking=release \
   --enable-threads=posix \
   --disable-sjlj-exceptions \
