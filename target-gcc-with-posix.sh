@@ -97,16 +97,83 @@ echo "======================="
 cd $M_BUILD
 mkdir binutils-build
 cd binutils-build
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0002-check-for-unusual-file-harder.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0003-opcodes-i386-dis-Use-Intel-syntax-by-default.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0010-bfd-Increase-_bfd_coff_max_nscns-to-65279.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0110-binutils-mingw-gnu-print.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0410-windres-handle-spaces.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0500-fix-weak-undef-symbols-after-image-base-change.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/2001-ld-option-to-move-default-bases-under-4GB.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/2003-Restore-old-behaviour-of-windres-so-that-options-con.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/3001-try-fix-compare_section-abort.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/bfd-real-fopen-handle-windows-nul.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/decorated-symbols-in-import-libs.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/libiberty-unlink-handle-windows-nul.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/reproducible-import-libraries.patch
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/specify-timestamp.patch
+
+cd $M_SOURCE/binutils-2.40
+patch -p1 -i $M_BUILD/binutils-build/0002-check-for-unusual-file-harder.patch
+patch -p1 -i $M_BUILD/binutils-build/0010-bfd-Increase-_bfd_coff_max_nscns-to-65279.patch
+patch -p1 -i $M_BUILD/binutils-build/0110-binutils-mingw-gnu-print.patch
+patch -p1 -i $M_BUILD/binutils-build/0003-opcodes-i386-dis-Use-Intel-syntax-by-default.patch
+patch -p1 -i $M_BUILD/binutils-build/2001-ld-option-to-move-default-bases-under-4GB.patch
+patch -R -p1 -i $M_BUILD/binutils-build/2003-Restore-old-behaviour-of-windres-so-that-options-con.patch
+patch -p2 -i $M_BUILD/binutils-build/reproducible-import-libraries.patch
+patch -p2 -i $M_BUILD/binutils-build/specify-timestamp.patch
+patch -p1 -i $M_BUILD/binutils-build/libiberty-unlink-handle-windows-nul.patch
+patch -p1 -i $M_BUILD/binutils-build/bfd-real-fopen-handle-windows-nul.patch
+patch -p1 -i $M_BUILD/binutils-build/3001-try-fix-compare_section-abort.patch
+
+cd $M_BUILD/binutils-build
 $M_SOURCE/binutils-2.40/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
   --with-sysroot=$M_TARGET \
-  --disable-nls \
+  --enable-64-bit-bfd \
+  --enable-install-libiberty \
+  --enable-plugins \
+  --enable-lto \
+  --enable-nls \
+  --disable-rpath \
+  --disable-multilib \
   --disable-werror \
-  --disable-shared
+  --disable-shared \
+  --enable-deterministic-archives
 make -j$MJOBS
 make install
+rm $M_TARGET/lib/bfd-plugins/libdep.a
+
+echo "building mingw-w64-headers"
+echo "======================="
+cd $M_BUILD
+mkdir headers-build
+cd headers-build
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-headers-git/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
+
+cd $M_SOURCE/mingw-w64
+git reset --hard
+git clean -fdx
+git apply $M_BUILD/headers-build/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
+cd $M_SOURCE/mingw-w64/mingw-w64-headers
+touch include/windows.*.h include/wincrypt.h include/prsht.h
+cd $M_BUILD/headers-build
+$M_SOURCE/mingw-w64/mingw-w64-headers/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --enable-sdk=all \
+  --with-default-win32-winnt=0x603 \
+  --with-default-msvcrt=ucrt \
+  --enable-idl \
+  --without-widl
+make -j$MJOBS
+make install
+rm $M_TARGET/$MINGW_TRIPLE/include/pthread_signal.h
+rm $M_TARGET/$MINGW_TRIPLE/include/pthread_time.h
+rm $M_TARGET/$MINGW_TRIPLE/include/pthread_unistd.h
+cd $M_TARGET
+ln -s $MINGW_TRIPLE mingw
 
 echo "building gmp"
 echo "======================="
@@ -167,34 +234,21 @@ $M_SOURCE/isl-0.24/configure \
 make -j$MJOBS
 make install
 
-echo "building mingw-w64-headers"
-echo "======================="
-cd $M_BUILD
-mkdir headers-build
-cd headers-build
-$M_SOURCE/mingw-w64/mingw-w64-headers/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
-  --enable-sdk=all \
-  --with-default-msvcrt=ucrt \
-  --enable-idl \
-  --without-widl
-make -j$MJOBS
-make install
-cd $M_TARGET
-ln -s $MINGW_TRIPLE mingw
-
 echo "building mingw-w64-crt"
 echo "======================="
 cd $M_BUILD
 mkdir crt-build
-cd $M_SOURCE/mingw-w64/mingw-w64-crt
-autoreconf -ivf
+cd crt-build
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
+cd $M_SOURCE/mingw-w64
+git reset --hard
+git clean -fdx
+git apply $M_BUILD/crt-build/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
+
 cd $M_BUILD/crt-build
 $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/$MINGW_TRIPLE \
-  --with-sysroot=$M_TARGET \
   --with-default-msvcrt=ucrt \
   --enable-wildcard \
   --disable-dependency-tracking \
@@ -202,6 +256,10 @@ $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --disable-lib32
 make -j$MJOBS
 make install
+# Create empty dummy archives, to avoid failing when the compiler driver
+# adds -lssp -lssh_nonshared when linking.
+ar rcs $M_TARGET/$MINGW_TRIPLE/lib/libssp.a
+ar rcs $M_TARGET/$MINGW_TRIPLE/lib/libssp_nonshared.a
 
 echo "building gendef"
 echo "======================="
@@ -220,10 +278,17 @@ echo "======================="
 cd $M_BUILD
 mkdir winpthreads-build
 cd winpthreads-build
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-winpthreads-git/0001-Define-__-de-register_frame_info-in-fake-libgcc_s.patch
+cd $M_SOURCE/mingw-w64
+git apply $M_BUILD/winpthreads-build/0001-Define-__-de-register_frame_info-in-fake-libgcc_s.patch
+cd $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads
+autoreconf -vfi
+cd $M_BUILD/winpthreads-build
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/$MINGW_TRIPLE \
-  --with-sysroot=$M_TARGET
+  --disable-shared \
+  --enable-static
 make -j$MJOBS
 make install
 mv $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
@@ -304,6 +369,46 @@ echo "======================="
 cd $M_BUILD
 mkdir gcc-build
 cd gcc-build
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-gcc/0002-Relocate-libintl.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-gcc/0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-gcc/0006-Windows-New-feature-to-allow-overriding.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-gcc/0007-Build-EXTRA_GNATTOOLS-for-Ada.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-gcc/0008-Prettify-linking-no-undefined.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-gcc/0011-Enable-shared-gnat-implib.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-gcc/0012-Handle-spaces-in-path-for-default-manifest.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-gcc/0014-gcc-9-branch-clone_function_name_1-Retain-any-stdcall-suffix.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-gcc/0020-libgomp-Don-t-hard-code-MS-printf-attributes.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-gcc/0021-PR14940-Allow-a-PCH-to-be-mapped-to-a-different-addr.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-gcc/0022-fix-radix-sort-on-32bit-platforms.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-gcc/0140-gcc-diagnostic-color.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-gcc/0200-add-m-no-align-vector-insn-option-for-i386.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-gcc/0300-override-builtin-printf-format.patch
+
+cd $M_SOURCE/gcc-13.1.0
+#git reset --hard
+#git clean -fdx
+patch -Nbp1 -i $M_BUILD/gcc-build/0002-Relocate-libintl.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0003-Windows-Follow-Posix-dir-exists-semantics-more-close.patch
+#patch -Nbp1 -i $M_BUILD/gcc-build/0005-Windows-Don-t-ignore-native-system-header-dir.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0006-Windows-New-feature-to-allow-overriding.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0007-Build-EXTRA_GNATTOOLS-for-Ada.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0008-Prettify-linking-no-undefined.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0011-Enable-shared-gnat-implib.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0012-Handle-spaces-in-path-for-default-manifest.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0014-gcc-9-branch-clone_function_name_1-Retain-any-stdcall-suffix.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0020-libgomp-Don-t-hard-code-MS-printf-attributes.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0021-PR14940-Allow-a-PCH-to-be-mapped-to-a-different-addr.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0140-gcc-diagnostic-color.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0200-add-m-no-align-vector-insn-option-for-i386.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0300-override-builtin-printf-format.patch
+patch -Nbp1 -i $M_BUILD/gcc-build/0022-fix-radix-sort-on-32bit-platforms.patch
+
+# so libgomp DLL gets built despide static libdl
+export lt_cv_deplibs_check_method='pass_all'
+
+# In addition adaint.c does `#include <accctrl.h>` which pulls in msxml.h, hacky hack:
+CPPFLAGS+=" -DCOM_NO_WINDOWS_H"
+cd gcc-build
 CFLAGS+=" -I$TOP_DIR/opt/include -Wno-int-conversion" 
 CXXFLAGS+=" -Wno-int-conversion" 
 LDFLAGS=-pthread
@@ -327,8 +432,9 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-rpath \
   --disable-libstdcxx-debug \
   --disable-version-specific-runtime-libs \
-  --with-stabs \
   --disable-symvers \
+  --enable-shared \
+  --enable-static \
   --enable-languages=c,c++ \
   --disable-gold \
   --disable-nls \
@@ -336,16 +442,15 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-win32-registry \
   --disable-multilib \
   --enable-ld \
+  --enable-libatomic \
   --enable-libquadmath \
-  --enable-libssp \
-  --enable-libstdcxx \
   --enable-lto \
   --enable-fully-dynamic-string \
   --enable-libgomp \
   --enable-graphite \
   --enable-mingw-wildcard \
   --enable-libstdcxx-time \
-  --enable-libstdcxx-pch \
+  --disable-libstdcxx-pch \
   --disable-libstdcxx-backtrace \
   --enable-install-libiberty \
   --enable-__cxa_atexit \
