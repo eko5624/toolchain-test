@@ -9,7 +9,6 @@ MJOBS=$(grep -c processor /proc/cpuinfo)
 
 CFLAGS="-pipe -O2"
 MINGW_TRIPLE="x86_64-w64-mingw32"
-
 export CFLAGS
 export CXXFLAGS=$CFLAGS
 export MINGW_TRIPLE
@@ -82,6 +81,18 @@ git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
 #libdl (dlfcn-win32)
 git clone https://github.com/dlfcn-win32/dlfcn-win32 --branch master --depth 1
 
+#zlib
+wget -c -O zlib-1.2.13.tar.gz https://github.com/madler/zlib/archive/refs/tags/v1.2.13.tar.gz
+tar xzf zlib-1.2.13.tar.gz
+
+#zstd
+wget -c -O zstd-1.5.5.tar.gz https://github.com/facebook/zstd/archive/refs/tags/v1.5.5.tar.gz
+tar xzf zlib-1.5.5.tar.gz
+
+#gperf
+wget -c -O gperf-3.1.tar.gz https://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz
+tar xzf gperf-3.1.tar.gz
+
 #make
 wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
 tar xzf make-4.4.1.tar.gz
@@ -93,10 +104,6 @@ xz -c -d m4-1.4.19.tar.xz | tar xf -
 #libtool
 wget -c -O libtool-2.4.7.tar.xz https://ftp.gnu.org/gnu/libtool/libtool-2.4.7.tar.xz
 xz -c -d libtool-2.4.7.tar.xz | tar xf -
-
-#zlib
-wget -c -O zlib-1.2.13.tar.gz https://github.com/madler/zlib/archive/refs/tags/v1.2.13.tar.gz
-tar xzf zlib-1.2.13.tar.gz
 
 #cmake
 wget -c -O cmake-3.26.4.tar.gz https://github.com/Kitware/CMake/archive/refs/tags/v3.26.4.tar.gz
@@ -154,10 +161,10 @@ $M_SOURCE/binutils-2.40/configure \
 make -j$MJOBS
 make install
 rm $M_TARGET/lib/bfd-plugins/libdep.a
-cd $M_BUILD
 
 echo "building mingw-w64-headers"
 echo "======================="
+cd $M_BUILD
 mkdir headers-build
 cd headers-build
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-headers-git/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
@@ -184,10 +191,10 @@ rm $M_TARGET/include/pthread_time.h
 rm $M_TARGET/include/pthread_unistd.h
 #cd $M_TARGET
 #ln -s $MINGW_TRIPLE mingw
-cd $M_BUILD
 
 echo "building gmp"
 echo "======================="
+cd $M_BUILD
 mkdir gmp-build
 cd gmp-build
 curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-gmp/do-not-use-dllimport.diff
@@ -209,10 +216,10 @@ $M_SOURCE/gmp-6.2.1/configure \
   --disable-shared
 make -j$MJOBS
 make install
-cd $M_BUILD
 
 echo "building mpfr"
 echo "======================="
+cd $M_BUILD
 mkdir mpfr-build
 cd mpfr-build
 curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-mpfr/patches.diff
@@ -229,10 +236,10 @@ $M_SOURCE/mpfr-4.2.0/configure \
   --disable-shared
 make -j$MJOBS
 make install
-cd $M_BUILD
 
 echo "building MPC"
 echo "======================="
+cd $M_BUILD
 mkdir mpc-build
 cd mpc-build
 $M_SOURCE/mpc-1.3.1/configure \
@@ -245,10 +252,10 @@ $M_SOURCE/mpc-1.3.1/configure \
   --disable-shared
 make -j$MJOBS
 make install
-cd $M_BUILD
 
 echo "building isl"
 echo "======================="
+cd $M_BUILD
 mkdir isl-build
 cd isl-build
 curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-isl/isl-0.14.1-no-undefined.patch
@@ -265,12 +272,11 @@ $M_SOURCE/isl-0.24/configure \
   --disable-shared
 make -j$MJOBS
 make install
-cd $M_BUILD
 
 echo "building mingw-w64-crt"
 echo "======================="
+cd $M_BUILD
 mkdir crt-build
-
 cd crt-build
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-crt-git/9001-crt-Mark-atexit-as-DATA-because-it-s-always-overridd.patch
@@ -305,10 +311,10 @@ make install
 # adds -lssp -lssh_nonshared when linking.
 ar rcs $M_TARGET/lib/libssp.a
 ar rcs $M_TARGET/lib/libssp_nonshared.a
-cd $M_BUILD
 
 echo "building gendef"
 echo "======================="
+cd $M_BUILD
 mkdir gendef-build
 cd gendef-build
 $M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure \
@@ -317,7 +323,6 @@ $M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure \
   --prefix=$M_TARGET
 make -j$MJOBS
 make install
-cd $M_BUILD
 
 echo "building mcfgthread"
 echo "======================="
@@ -336,10 +341,10 @@ $M_SOURCE/mcfgthread/configure \
 make -j$MJOBS
 make install
 #cp $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
-cd $M_BUILD
 
 echo "building winpthreads"
 echo "======================="
+cd $M_BUILD
 mkdir winpthreads-build
 cd winpthreads-build
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-winpthreads-git/0001-Define-__-de-register_frame_info-in-fake-libgcc_s.patch
@@ -351,15 +356,15 @@ cd $M_BUILD/winpthreads-build
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
-  --enable-static \
-  --enable-shared
+  --disable-shared \
+  --enable-static
 make -j$MJOBS
 make install
 #cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin
-cd $M_BUILD
 
 echo "building dlfcn-win32"
 echo "======================="
+cd $M_BUILD
 mkdir libdl-build
 cmake -G Ninja -H$M_SOURCE/dlfcn-win32 -B$M_BUILD/libdl-build \
   -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
@@ -369,10 +374,96 @@ cmake -G Ninja -H$M_SOURCE/dlfcn-win32 -B$M_BUILD/libdl-build \
   -DBUILD_TESTS=OFF
 ninja -j$MJOBS -C $M_BUILD/libdl-build
 ninja install -C $M_BUILD/libdl-build
+
+echo "building zlib"
+echo "======================="
 cd $M_BUILD
+mkdir zlib-build
+cd zlib-build
+curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
+patch -d $M_SOURCE/zlib-1.2.13 -p1 < $M_BUILD/zlib-build/zlib-1-win32-static.patch
+CHOST=$MINGW_TRIPLE $M_SOURCE/zlib-1.2.13/configure \
+  --prefix=$TOP_DIR/opt \
+  --static
+make -j$MJOBS
+make install
+
+echo "building zstd"
+echo "======================="
+cd $M_BUILD
+mkdir zstd-build
+cd zstd-build
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-zstd/zstd-1.4.0-fileio-mingw.patch
+patch -d $M_SOURCE/zstd-1.5.5 -Np1 < zstd-1.4.0-fileio-mingw.patch
+cmake -G Ninja -H$M_SOURCE/zstd-1.5.5 -B$M_BUILD/zstd-build \
+  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
+  -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
+  -DZSTD_BUILD_CONTRIB=ON \
+  -DBUILD_TESTING=OFF \
+  -DZSTD_PROGRAMS_LINK_SHARED=ON
+ninja -j$MJOBS -C $M_BUILD/zstd-build
+ninja install -C $M_BUILD/zstd-build
+
+echo "building gperf"
+echo "======================="
+cd $M_BUILD
+mkdir gperf-build
+cd gperf-build
+$M_SOURCE/gperf-3.1/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_TARGET
+make -j$MJOBS
+make install
+
+echo "building libiconv"
+echo "======================="
+cd $M_BUILD
+mkdir libiconv-build
+cd libiconv-build
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/0002-fix-cr-for-awk-in-configure.all.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/0003-add-cp65001-as-utf8-alias.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/0004-fix-makefile-devel-assuming-gcc.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/fix-pointer-buf.patch
+cd $M_SOURCE/libiconv-1.17
+patch -Nbp1 -i $M_BUILD/libiconv-build/0002-fix-cr-for-awk-in-configure.all.patch
+patch -Nbp1 -i $M_BUILD/libiconv-build/fix-pointer-buf.patch
+patch -Nbp1 -i $M_BUILD/libiconv-build/0003-add-cp65001-as-utf8-alias.patch
+patch -Nbp1 -i $M_BUILD/libiconv-build/0004-fix-makefile-devel-assuming-gcc.patch
+make -f Makefile.devel all
+cd $M_BUILD/libiconv-build
+$M_SOURCE/libiconv-1.17/configure \
+  --build=x86_64-pc-linux-gnu \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$TOP_DIR/opt \
+  --enable-static \
+  --enable-shared \
+  --enable-extra-encodings \
+  --enable-relocatable \
+  --disable-rpath \
+  --enable-silent-rules \
+  --enable-nls
+make -j$MJOBS
+make install
+
+cat <<EOF >$TOP_DIR/opt/lib/pkgconfig/iconv.pc
+prefix=$TOP_DIR/opt
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: iconv
+Description: libiconv
+URL: https://www.gnu.org/software/libiconv/
+Version: 1.17
+Libs: -L${libdir} -liconv
+Cflags: -I${includedir}
+EOF
 
 echo "building gcc"
 echo "======================="
+cd $M_BUILD
 mkdir gcc-build
 cd gcc-build
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-gcc/0002-Relocate-libintl.patch
@@ -459,7 +550,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-install-libiberty \
   --enable-ld \
   --enable-libquadmath \
-  --disable-libssp \
+  --enable-libssp \
   --enable-libstdcxx \
   --enable-plugin \
   --enable-languages=c,c++ \
@@ -479,6 +570,8 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-libiconv \
   --with-tune=generic \
   --without-included-gettext \
+  --with-boot-ldflags="-static-libstdc++" \
+  --with-stage1-ldflags="-static-libstdc++" \
   --with-pkgversion="GCC with MCF thread model"
 make -j$MJOBS
 make install
@@ -486,40 +579,6 @@ cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/*plugin*.dll $M_TARGET/lib/bfd-pl
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
 cd $M_BUILD
-#rm -rf $M_TARGET/zlib
-cd $M_BUILD
-
-#echo "building zlib"
-#echo "======================="
-#mkdir zlib-build
-#cd zlib-build
-#curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
-#patch -d $M_SOURCE/zlib-1.2.13 -p1 < $M_BUILD/zlib-build/zlib-1-win32-static.patch
-#CHOST=$MINGW_TRIPLE $M_SOURCE/zlib-1.2.13/configure \
-#  --prefix=$M_TARGET/zlib \
-#  --static
-#make -j$MJOBS
-#make install
-#cd $M_BUILD
-
-#echo "building libiconv"
-#echo "======================="
-#mkdir libiconv-build
-#cd libiconv-build
-#$M_SOURCE/libiconv-1.17/configure \
-#  --build=x86_64-pc-linux-gnu \
-#  --host=$MINGW_TRIPLE \
-#  --target=$MINGW_TRIPLE \
-#  --prefix=$M_TARGET \
-#  --host=$MINGW_TRIPLE \
-#  --target=$MINGW_TRIPLE \
-#  --enable-extra-encodings \
-#  --enable-static \
-#  --disable-shared \
-#  --disable-nls \
-#  --with-gnu-ld
-#make -j$MJOBS
-#make install
 
 echo "building make"
 echo "======================="
