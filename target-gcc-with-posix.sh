@@ -180,10 +180,21 @@ echo "======================="
 cd $M_BUILD
 mkdir gmp-build
 cd gmp-build
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-gmp/do-not-use-dllimport.diff
+cd $M_SOURCE/gmp-6.2.1
+[[ -d ../stash ]] && rm -rf ../stash
+mkdir ../stash
+cp config.{guess,sub} ../stash
+patch -p2 -i $M_BUILD/gmp-build/do-not-use-dllimport.diff
+autoreconf -fiv
+cp -f ../stash/config.{guess,sub} .
+cd $M_BUILD/gmp-build
 $M_SOURCE/gmp-6.2.1/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_BUILD/for_target \
+  --enable-fat \
+  --enable-cxx \
   --enable-static \
   --disable-shared
 make -j$MJOBS
@@ -194,6 +205,11 @@ echo "======================="
 cd $M_BUILD
 mkdir mpfr-build
 cd mpfr-build
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-mpfr/patches.diff
+cd $M_SOURCE/mpfr-4.2.0
+patch -p1 -i $M_BUILD/mpfr-build/patches.diff
+autoreconf -fiv
+cd $M_BUILD/mpfr-build
 $M_SOURCE/mpfr-4.2.0/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
@@ -214,6 +230,7 @@ $M_SOURCE/mpc-1.3.1/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_BUILD/for_target \
   --with-gmp=$M_BUILD/for_target \
+  --with-mpfr=$M_BUILD/for_target \
   --enable-static \
   --disable-shared
 make -j$MJOBS
@@ -224,6 +241,11 @@ echo "======================="
 cd $M_BUILD
 mkdir isl-build
 cd isl-build
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-isl/isl-0.14.1-no-undefined.patch
+cd $M_SOURCE/isl-0.24
+patch -p1 -i $M_BUILD/isl-build/isl-0.14.1-no-undefined.patch
+autoreconf -fi
+cd $M_BUILD/isl-build
 $M_SOURCE/isl-0.24/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
