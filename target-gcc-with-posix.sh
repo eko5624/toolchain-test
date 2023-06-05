@@ -320,7 +320,7 @@ echo "======================="
 cd $M_BUILD
 mkdir libdl-build
 cmake -G Ninja -H$M_SOURCE/dlfcn-win32 -B$M_BUILD/libdl-build \
-  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
+  -DCMAKE_INSTALL_PREFIX=$M_TARGET \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
   -DBUILD_SHARED_LIBS=OFF \
   -DCMAKE_BUILD_TYPE=Release \
@@ -336,7 +336,7 @@ cd zlib-build
 curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
 patch -d $M_SOURCE/zlib-1.2.13 -p1 < $M_BUILD/zlib-build/zlib-1-win32-static.patch
 CHOST=$MINGW_TRIPLE $M_SOURCE/zlib-1.2.13/configure \
-  --prefix=$TOP_DIR/opt \
+  --prefix=$M_TARGET \
   --static
 make -j$MJOBS
 make install
@@ -361,7 +361,7 @@ $M_SOURCE/libiconv-1.17/configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
-  --prefix=$TOP_DIR/opt \
+  --prefix=$M_TARGET \
   --enable-static \
   --enable-shared \
   --enable-extra-encodings \
@@ -372,7 +372,7 @@ $M_SOURCE/libiconv-1.17/configure \
 make -j$MJOBS
 make install
 
-cat <<EOF >$TOP_DIR/opt/lib/pkgconfig/iconv.pc
+cat <<EOF >$M_TARGET/lib/pkgconfig/iconv.pc
 prefix=$TOP_DIR/opt
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
@@ -485,7 +485,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-pkgversion="GCC with posix thread model"
 make -j$MJOBS
 make install
-mv $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
+#mv $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 
 echo "building make"
