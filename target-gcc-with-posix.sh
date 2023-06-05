@@ -76,6 +76,10 @@ git clone https://github.com/dlfcn-win32/dlfcn-win32 --branch master --depth 1
 wget -c -O zlib-1.2.13.tar.gz https://github.com/madler/zlib/archive/refs/tags/v1.2.13.tar.gz
 tar xzf zlib-1.2.13.tar.gz
 
+#zstd
+wget -c -O zstd-1.5.5.tar.gz https://github.com/facebook/zstd/archive/refs/tags/v1.5.5.tar.gz
+tar xzf zlib-1.5.5.tar.gz
+
 #libiconv
 wget -c -O libiconv-1.17.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.17.tar.gz
 tar xzf libiconv-1.17.tar.gz
@@ -225,7 +229,6 @@ cd $M_BUILD
 #echo "building dlfcn-win32"
 #echo "======================="
 mkdir libdl-build
-#$M_SOURCE/dlfcn-win32/configure \
 cmake -G Ninja -H$M_SOURCE/dlfcn-win32 -B$M_BUILD/libdl-build \
   -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
   -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
@@ -247,6 +250,22 @@ CHOST=$MINGW_TRIPLE $M_SOURCE/zlib-1.2.13/configure \
   --static
 make -j$MJOBS
 make install
+cd $M_BUILD
+
+echo "building zstd"
+echo "======================="
+mkdir zstd-build
+cd zstd-build
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-zstd/zstd-1.4.0-fileio-mingw.patch
+patch -d $M_SOURCE/zstd-1.5.5 -Np1 < zstd-1.4.0-fileio-mingw.patch
+cmake -G Ninja -H$M_SOURCE/zstd-1.5.5 -B$M_BUILD/zstd-build \
+  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
+  -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
+  -DZSTD_BUILD_CONTRIB=ON \
+  -DBUILD_TESTING=OFF \
+  -DZSTD_PROGRAMS_LINK_SHARED=ON
+ninja -j$MJOBS -C $M_BUILD/zstd-build
+ninja install -C $M_BUILD/zstd-build
 cd $M_BUILD
 
 echo "building libiconv"
