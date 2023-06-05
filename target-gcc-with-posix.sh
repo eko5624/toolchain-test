@@ -223,9 +223,7 @@ cd winpthreads-build
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/$MINGW_TRIPLE \
-  --with-sysroot=$M_TARGET \
-  --enable-shared \
-  --enable-static
+  --with-sysroot=$M_TARGET
 make -j$MJOBS
 make install
 mv $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
