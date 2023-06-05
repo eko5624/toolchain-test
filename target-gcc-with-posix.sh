@@ -7,11 +7,7 @@ TOP_DIR=$(pwd)
 # Env Var NUMJOBS overrides automatic detection
 MJOBS=$(grep -c processor /proc/cpuinfo)
 
-#CFLAGS="-pipe -O2"
 MINGW_TRIPLE="x86_64-w64-mingw32"
-
-#export CFLAGS
-#export CXXFLAGS=$CFLAGS
 export MINGW_TRIPLE
 
 export M_ROOT=$(pwd)
@@ -72,6 +68,14 @@ git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
 
 #libdl (dlfcn-win32)
 git clone https://github.com/dlfcn-win32/dlfcn-win32 --branch master --depth 1
+
+#zlib
+wget -c -O zlib-1.2.13.tar.gz https://github.com/madler/zlib/archive/refs/tags/v1.2.13.tar.gz
+tar xzf zlib-1.2.13.tar.gz
+
+#libiconv
+wget -c -O libiconv-1.17.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.17.tar.gz
+tar xzf libiconv-1.17.tar.gz
 
 #make
 wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
@@ -227,6 +231,7 @@ cmake -G Ninja -H$M_SOURCE/dlfcn-win32 -B$M_BUILD/libdl-build \
   -DBUILD_TESTS=OFF
 ninja -j$MJOBS -C $M_BUILD/libdl-build
 ninja install -C $M_BUILD/libdl-build
+cd $M_BUILD
 
 echo "building zlib"
 echo "======================="
@@ -264,9 +269,9 @@ echo "building gcc"
 echo "======================="
 mkdir gcc-build
 cd gcc-build
-CFLAGS='-I$TOP_DIR/opt/include -Wno-int-conversion  -march=nocona -msahf -mtune=generic -pipe -O2' 
-CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -pipe -O2' 
-LDFLAGS='-pthread  -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
+CFLAGS='-I$TOP_DIR/opt/include -Wno-int-conversion -pipe -O2' 
+CXXFLAGS='-Wno-int-conversion -pipe -O2' 
+LDFLAGS=-pthread
 $M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
@@ -315,7 +320,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-pkgversion="GCC with posix thread model"
 make -j$MJOBS
 make install
-#cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
+cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
 #cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cd $M_BUILD
