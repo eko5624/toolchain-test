@@ -87,7 +87,7 @@ tar xzf zlib-1.2.13.tar.gz
 
 #zstd
 wget -c -O zstd-1.5.5.tar.gz https://github.com/facebook/zstd/archive/refs/tags/v1.5.5.tar.gz
-tar xzf zlib-1.5.5.tar.gz
+tar xzf zstd-1.5.5.tar.gz
 
 #gperf
 wget -c -O gperf-3.1.tar.gz https://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz
