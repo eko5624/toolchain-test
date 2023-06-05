@@ -80,6 +80,10 @@ tar xzf zlib-1.2.13.tar.gz
 wget -c -O zstd-1.5.5.tar.gz https://github.com/facebook/zstd/archive/refs/tags/v1.5.5.tar.gz
 tar xzf zlib-1.5.5.tar.gz
 
+#gperf
+wget -c -O gperf-3.1.tar.gz https://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz
+tar xzf gperf-3.1.tar.gz
+
 #libiconv
 wget -c -O libiconv-1.17.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.17.tar.gz
 tar xzf libiconv-1.17.tar.gz
@@ -268,24 +272,61 @@ ninja -j$MJOBS -C $M_BUILD/zstd-build
 ninja install -C $M_BUILD/zstd-build
 cd $M_BUILD
 
+echo "building gperf"
+echo "======================="
+mkdir gperf-build
+cd gperf-build
+$M_SOURCE/gperf-3.1/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_TARGET
+make -j$MJOBS
+make install
+cd $M_BUILD
+
 echo "building libiconv"
 echo "======================="
 mkdir libiconv-build
 cd libiconv-build
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/0002-fix-cr-for-awk-in-configure.all.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/0003-add-cp65001-as-utf8-alias.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/0004-fix-makefile-devel-assuming-gcc.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/fix-pointer-buf.patch
+cd $M_SOURCE/libiconv-1.17
+patch -Nbp1 -i $M_BUILD/libiconv-build/0002-fix-cr-for-awk-in-configure.all.patch
+patch -Nbp1 -i $M_BUILD/libiconv-build/fix-pointer-buf.patch
+patch -Nbp1 -i $M_BUILD/libiconv-build/0003-add-cp65001-as-utf8-alias.patch
+patch -Nbp1 -i $M_BUILD/libiconv-build/0004-fix-makefile-devel-assuming-gcc.patch
+make -f Makefile.devel all
+cd $M_BUILD/libiconv-build
 $M_SOURCE/libiconv-1.17/configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$TOP_DIR/opt \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --enable-extra-encodings \
   --enable-static \
-  --disable-shared \
-  --disable-nls \
-  --with-gnu-ld
+  --enable-shared \
+  --enable-extra-encodings \
+  --enable-relocatable \
+  --disable-rpath \
+  --enable-silent-rules \
+  --enable-nls
 make -j$MJOBS
 make install
+
+cat <<EOF >$TOP_DIR/opt/lib/pkgconfig/iconv.pc
+prefix=$TOP_DIR/opt
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: iconv
+Description: libiconv
+URL: https://www.gnu.org/software/libiconv/
+Version: 1.17
+Libs: -L${libdir} -liconv
+Cflags: -I${includedir}
+EOF
 
 echo "building gcc"
 echo "======================="
@@ -345,7 +386,6 @@ $M_SOURCE/gcc-13.1.0/configure \
 make -j$MJOBS
 make install
 cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
-#cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cd $M_BUILD
 
