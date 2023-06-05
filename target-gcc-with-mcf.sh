@@ -388,34 +388,6 @@ CHOST=$MINGW_TRIPLE $M_SOURCE/zlib-1.2.13/configure \
 make -j$MJOBS
 make install
 
-echo "building zstd"
-echo "======================="
-cd $M_BUILD
-mkdir zstd-build
-cd zstd-build
-curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-zstd/zstd-1.4.0-fileio-mingw.patch
-patch -d $M_SOURCE/zstd-1.5.5 -Np1 < zstd-1.4.0-fileio-mingw.patch
-cmake -G Ninja -H$M_SOURCE/zstd-1.5.5 -B$M_BUILD/zstd-build \
-  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
-  -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
-  -DZSTD_BUILD_CONTRIB=ON \
-  -DBUILD_TESTING=OFF \
-  -DZSTD_PROGRAMS_LINK_SHARED=ON
-ninja -j$MJOBS -C $M_BUILD/zstd-build
-ninja install -C $M_BUILD/zstd-build
-
-echo "building gperf"
-echo "======================="
-cd $M_BUILD
-mkdir gperf-build
-cd gperf-build
-$M_SOURCE/gperf-3.1/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_TARGET
-make -j$MJOBS
-make install
-
 echo "building libiconv"
 echo "======================="
 cd $M_BUILD
@@ -569,6 +541,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-clocale=generic \
   --with-libiconv \
   --with-tune=generic \
+  --with-arch=nocona \
   --without-included-gettext \
   --with-boot-ldflags="-static-libstdc++" \
   --with-stage1-ldflags="-static-libstdc++" \
