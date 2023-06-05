@@ -209,7 +209,7 @@ $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/$MINGW_TRIPLE \
   --with-sysroot=$M_TARGET \
-  --enable-shared \
+  --disable-shared \
   --enable-static
 make -j$MJOBS
 make install
@@ -228,44 +228,44 @@ cmake -G Ninja -H$M_SOURCE/dlfcn-win32 -B$M_BUILD/libdl-build \
 ninja -j$MJOBS -C $M_BUILD/libdl-build
 ninja install -C $M_BUILD/libdl-build
 
-#echo "building zlib"
-#echo "======================="
-#mkdir zlib-build
-#cd zlib-build
-#curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
-#patch -d $M_SOURCE/zlib-1.2.13 -p1 < $M_BUILD/zlib-build/zlib-1-win32-static.patch
-#CHOST=$MINGW_TRIPLE $M_SOURCE/zlib-1.2.13/configure \
-#  --prefix=$M_TARGET/zlib \
-#  --static
-#make -j$MJOBS
-#make install
-#cd $M_BUILD
+echo "building zlib"
+echo "======================="
+mkdir zlib-build
+cd zlib-build
+curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
+patch -d $M_SOURCE/zlib-1.2.13 -p1 < $M_BUILD/zlib-build/zlib-1-win32-static.patch
+CHOST=$MINGW_TRIPLE $M_SOURCE/zlib-1.2.13/configure \
+  --prefix=$TOP_DIR/opt \
+  --static
+make -j$MJOBS
+make install
+cd $M_BUILD
 
-#echo "building libiconv"
-#echo "======================="
-#mkdir libiconv-build
-#cd libiconv-build
-#$M_SOURCE/libiconv-1.17/configure \
-#  --build=x86_64-pc-linux-gnu \
-#  --host=$MINGW_TRIPLE \
-#  --target=$MINGW_TRIPLE \
-#  --prefix=$M_TARGET \
-#  --host=$MINGW_TRIPLE \
-#  --target=$MINGW_TRIPLE \
-#  --enable-extra-encodings \
-#  --enable-static \
-#  --disable-shared \
-#  --disable-nls \
-#  --with-gnu-ld
-#make -j$MJOBS
-#make install
+echo "building libiconv"
+echo "======================="
+mkdir libiconv-build
+cd libiconv-build
+$M_SOURCE/libiconv-1.17/configure \
+  --build=x86_64-pc-linux-gnu \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$TOP_DIR/opt \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --enable-extra-encodings \
+  --enable-static \
+  --disable-shared \
+  --disable-nls \
+  --with-gnu-ld
+make -j$MJOBS
+make install
 
 echo "building gcc"
 echo "======================="
 mkdir gcc-build
 cd gcc-build
-CFLAGS='-I$TOP_DIR/opt/include -Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' 
-CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' 
+CFLAGS='-I$TOP_DIR/opt/include -Wno-int-conversion  -march=nocona -msahf -mtune=generic -pipe -O2' 
+CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -pipe -O2' 
 LDFLAGS='-pthread  -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
 $M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
