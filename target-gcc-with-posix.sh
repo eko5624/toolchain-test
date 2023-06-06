@@ -229,77 +229,6 @@ $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
 make -j$MJOBS
 make install
 
-echo "building dlfcn-win32"
-echo "======================="
-cd $M_BUILD
-mkdir libdl-build
-cmake -G Ninja -H$M_SOURCE/dlfcn-win32 -B$M_BUILD/libdl-build \
-  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
-  -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
-  -DBUILD_SHARED_LIBS=OFF \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DBUILD_TESTS=OFF
-ninja -j$MJOBS -C $M_BUILD/libdl-build
-ninja install -C $M_BUILD/libdl-build
-
-echo "building zlib"
-echo "======================="
-cd $M_BUILD
-mkdir zlib-build
-cd zlib-build
-curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
-patch -d $M_SOURCE/zlib-1.2.13 -p1 < $M_BUILD/zlib-build/zlib-1-win32-static.patch
-CHOST=$MINGW_TRIPLE $M_SOURCE/zlib-1.2.13/configure \
-  --prefix=$TOP_DIR/opt \
-  --static
-make -j$MJOBS
-make install
-
-echo "building libiconv"
-echo "======================="
-cd $M_BUILD
-mkdir libiconv-build
-cd libiconv-build
-curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/0002-fix-cr-for-awk-in-configure.all.patch
-curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/0003-add-cp65001-as-utf8-alias.patch
-curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/0004-fix-makefile-devel-assuming-gcc.patch
-curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/fix-pointer-buf.patch
-cd $M_SOURCE/libiconv-1.17
-patch -Nbp1 -i $M_BUILD/libiconv-build/0002-fix-cr-for-awk-in-configure.all.patch
-patch -Nbp1 -i $M_BUILD/libiconv-build/fix-pointer-buf.patch
-patch -Nbp1 -i $M_BUILD/libiconv-build/0003-add-cp65001-as-utf8-alias.patch
-patch -Nbp1 -i $M_BUILD/libiconv-build/0004-fix-makefile-devel-assuming-gcc.patch
-make -f Makefile.devel all
-cd $M_BUILD/libiconv-build
-$M_SOURCE/libiconv-1.17/configure \
-  --build=x86_64-pc-linux-gnu \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$TOP_DIR/opt \
-  --enable-static \
-  --enable-shared \
-  --enable-extra-encodings \
-  --enable-relocatable \
-  --disable-rpath \
-  --enable-silent-rules \
-  --enable-nls
-make -j$MJOBS
-make install
-
-cat <<EOF >$TOP_DIR/opt/lib/pkgconfig/iconv.pc
-prefix=$TOP_DIR/opt
-exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
-includedir=${prefix}/include
-
-Name: iconv
-Description: libiconv
-URL: https://www.gnu.org/software/libiconv/
-Version: 1.17
-Libs: -L${libdir} -liconv
-Cflags: -I${includedir}
-EOF
-
 echo "building gcc"
 echo "======================="
 cd $M_BUILD
@@ -315,51 +244,22 @@ $M_SOURCE/gcc-13.1.0/configure \
   --prefix=$M_TARGET \
   --with-sysroot=$M_TARGET \
   --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
-  --with-tune=generic \
-  --enable-checking=release \
-  --enable-threads=posix \
+  --with-pic \
+  --enable-static \
   --disable-shared \
-  --disable-sjlj-exceptions \
-  --disable-libunwind-exceptions \
-  --disable-serial-configure \
-  --disable-bootstrap \
-  --enable-host-shared \
-  --disable-default-ssp \
-  --disable-rpath \
-  --disable-libstdcxx-debug \
-  --disable-version-specific-runtime-libs \
-  --with-stabs \
-  --disable-symvers \
   --enable-languages=c,c++ \
-  --disable-gold \
-  --disable-nls \
-  --disable-stage1-checking \
-  --disable-win32-registry \
-  --disable-multilib \
-  --enable-ld \
-  --enable-libquadmath \
-  --enable-libssp \
-  --enable-libstdcxx \
-  --enable-lto \
-  --enable-fully-dynamic-string \
   --enable-libgomp \
-  --enable-graphite \
+  --enable-threads=posix \
+  --enable-version-specific-runtime-libs \
+  --disable-dependency-tracking \
+  --disable-multilib \
+  --disable-nls \
+  --disable-win32-registry \
   --enable-mingw-wildcard \
-  --enable-libstdcxx-time \
-  --enable-libstdcxx-pch \
-  --disable-libstdcxx-backtrace \
-  --enable-install-libiberty \
-  --enable-__cxa_atexit \
-  --without-included-gettext \
-  --with-diagnostics-color=auto \
-  --enable-clocale=generic \
-  --with-libiconv \
-  --with-boot-ldflags="-static-libstdc++" \
-  --with-stage1-ldflags="-static-libstdc++" \
   --with-pkgversion="GCC with posix thread model"
 make -j$MJOBS
 make install
-cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
+#cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
 
