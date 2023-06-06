@@ -223,7 +223,6 @@ cd winpthreads-build
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/$MINGW_TRIPLE \
-  --with-sysroot=$M_TARGET \
   --disable-shared \
   --enable-static
 make -j$MJOBS
@@ -234,7 +233,7 @@ echo "======================="
 cd $M_BUILD
 mkdir gcc-build
 cd gcc-build
-CFLAGS+=" -I$TOP_DIR/opt/include -Wno-int-conversion" 
+CFLAGS+=" -Wno-int-conversion" 
 CXXFLAGS+=" -Wno-int-conversion" 
 LDFLAGS=-pthread
 $M_SOURCE/gcc-13.1.0/configure \
@@ -243,17 +242,21 @@ $M_SOURCE/gcc-13.1.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
   --with-sysroot=$M_TARGET \
-  --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
-  --enable-static \
-  --disable-shared \
-  --enable-languages=c,c++ \
-  --enable-threads=posix \
-  --enable-version-specific-runtime-libs \
-  --disable-dependency-tracking \
   --disable-multilib \
+  --enable-languages=c,c++ \
+  --with-gmp=$M_BUILD/for_target \
+  --with-mpfr=$M_BUILD/for_target \
+  --with-mpc=$M_BUILD/for_target \
+  --with-isl=$M_BUILD/for_target \
   --disable-nls \
+  --disable-werror \
+  --disable-shared \
+  --disable-libstdcxx-pch \
   --disable-win32-registry \
-  --enable-mingw-wildcard \
+  --with-tune=generic \
+  --enable-threads=posix \
+  --enable-lto \
+  --enable-checking=release \
   --with-pkgversion="GCC with posix thread model"
 make -j$MJOBS
 make install
