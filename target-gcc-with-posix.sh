@@ -235,7 +235,7 @@ mkdir gcc-build
 cd gcc-build
 CFLAGS+=" -Wno-int-conversion" 
 CXXFLAGS+=" -Wno-int-conversion" 
-LDFLAGS=-pthread
+#LDFLAGS=-pthread
 $M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
