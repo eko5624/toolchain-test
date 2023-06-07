@@ -244,14 +244,24 @@ make install
 cp $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
 cd $M_BUILD
 
+echo "building dlfcn-win32"
+echo "======================="
+cd $M_BUILD
+mkdir libdl-build
+cmake -G Ninja -H$M_SOURCE/dlfcn-win32 -B$M_BUILD/libdl-build \
+  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
+  -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
+  -DBUILD_SHARED_LIBS=OFF \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DBUILD_TESTS=OFF
+ninja -j$MJOBS -C $M_BUILD/libdl-build
+ninja install -C $M_BUILD/libdl-build
+
 echo "building gcc"
 echo "======================="
 cd $M_BUILD
 mkdir gcc-build
 cd gcc-build
-CFLAGS+=" -Wno-int-conversion" 
-CXXFLAGS+=" -Wno-int-conversion" 
-LDFLAGS=-pthread
 $M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
@@ -274,7 +284,10 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-threads=mcf \
   --enable-lto \
   --enable-checking=release \
-  --with-pkgversion="GCC with MCF thread model"
+  --with-pkgversion="GCC with MCF thread model" \
+  CFLAGS='-I$TOP_DIR/opt/include -Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
+  CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
+  LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
 make -j$MJOBS
 make install
 #cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
