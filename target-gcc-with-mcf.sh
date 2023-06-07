@@ -185,6 +185,25 @@ make install
 cd $M_TARGET
 ln -s $MINGW_TRIPLE mingw
 
+echo "building mingw-w64-crt"
+echo "======================="
+cd $M_BUILD
+mkdir crt-build
+cd $M_SOURCE/mingw-w64/mingw-w64-crt
+autoreconf -ivf
+cd $M_BUILD/crt-build
+$M_SOURCE/mingw-w64/mingw-w64-crt/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --with-sysroot=$M_TARGET \
+  --with-default-msvcrt=ucrt \
+  --enable-wildcard \
+  --disable-dependency-tracking \
+  --enable-lib64 \
+  --disable-lib32
+make -j$MJOBS
+make install
+
 echo "building gendef"
 echo "======================="
 cd $M_BUILD
@@ -202,6 +221,7 @@ echo "======================="
 cd $M_BUILD
 mkdir winpthreads-build
 cd winpthreads-build
+cp -u $M_TARGET/$MINGW_TRIPLE/lib/{dllcrt2,crtbegin,crtend}.o ./
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/$MINGW_TRIPLE \
@@ -225,38 +245,6 @@ make -j$MJOBS
 make install
 cp $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
 cd $M_BUILD
-
-echo "building mingw-w64-crt"
-echo "======================="
-cd $M_BUILD
-mkdir crt-build
-cd $M_SOURCE/mingw-w64/mingw-w64-crt
-autoreconf -ivf
-cd $M_BUILD/crt-build
-$M_SOURCE/mingw-w64/mingw-w64-crt/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
-  --with-sysroot=$M_TARGET \
-  --with-default-msvcrt=ucrt \
-  --enable-wildcard \
-  --disable-dependency-tracking \
-  --enable-lib64 \
-  --disable-lib32
-make -j$MJOBS
-make install
-
-echo "building dlfcn-win32"
-echo "======================="
-cd $M_BUILD
-mkdir libdl-build
-cmake -G Ninja -H$M_SOURCE/dlfcn-win32 -B$M_BUILD/libdl-build \
-  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
-  -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
-  -DBUILD_SHARED_LIBS=OFF \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DBUILD_TESTS=OFF
-ninja -j$MJOBS -C $M_BUILD/libdl-build
-ninja install -C $M_BUILD/libdl-build
 
 echo "building gcc"
 echo "======================="
@@ -286,7 +274,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-lto \
   --enable-checking=release \
   --with-pkgversion="GCC with MCF thread model" \
-  CFLAGS='-I$TOP_DIR/opt/include -Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
+  CFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
   CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
   LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
 make -j$MJOBS
