@@ -244,14 +244,15 @@ $M_SOURCE/mcfgthread/configure \
 make -j$MJOBS
 make install
 cp $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
-cd $M_BUILD
 
 echo "building gcc"
 echo "======================="
-cd $M_BUILD
-mkdir gcc-build
+cd $M_SOURCE/gcc-13.1.0
+mkdir -p gcc-build/mingw-w64/mingw/lib
+cp -rf $M_TARGET/include gcc-build/mingw-w64/mingw
+cp -rf $M_TARGET/$MINGW_TRIPLE/lib/* gcc-build/mingw-w64/mingw/lib/ || cp -rf $M_TARGET/lib gcc-build/mingw-w64/mingw/
 cd gcc-build
-$M_SOURCE/gcc-13.1.0/configure \
+../configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
