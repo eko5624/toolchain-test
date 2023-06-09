@@ -100,7 +100,7 @@ cd binutils-build
 $M_SOURCE/binutils-2.40/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
+  --prefix=$TOP_DIR/binutils \
   --with-sysroot=$M_TARGET \
   --disable-nls \
   --disable-werror \
@@ -175,7 +175,7 @@ mkdir headers-build
 cd headers-build
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --prefix=$TOP_DIR/mingw-w64 \
   --enable-sdk=all \
   --with-default-msvcrt=ucrt \
   --enable-idl \
@@ -194,7 +194,7 @@ autoreconf -ivf
 cd $M_BUILD/crt-build
 $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --prefix=$TOP_DIR/mingw-w64 \
   --with-sysroot=$M_TARGET \
   --with-default-msvcrt=ucrt \
   --enable-wildcard \
@@ -212,7 +212,7 @@ cd gendef-build
 $M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
-  --prefix=$M_TARGET
+  --prefix=$TOP_DIR/mingw-w64
 make -j$MJOBS
 make install
 
@@ -224,7 +224,7 @@ cd winpthreads-build
 cp -u $M_TARGET/$MINGW_TRIPLE/lib/{dllcrt2,crtbegin,crtend}.o ./
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --prefix=$TOP_DIR/mingw-w64 \
   --disable-shared \
   --enable-static
 make -j$MJOBS
@@ -239,7 +239,7 @@ mkdir mcfgthread-build
 cd mcfgthread-build
 $M_SOURCE/mcfgthread/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --prefix=$TOP_DIR/mingw-w64 \
   --disable-pch
 make -j$MJOBS
 make install
@@ -249,15 +249,14 @@ echo "building gcc"
 echo "======================="
 cd $M_SOURCE/gcc-13.1.0
 mkdir -p gcc-build/mingw-w64/mingw/lib
-cp -rf $M_TARGET/include gcc-build/mingw-w64/mingw
-cp -rf $M_TARGET/$MINGW_TRIPLE/lib/* gcc-build/mingw-w64/mingw/lib/ || cp -rf $M_TARGET/lib gcc-build/mingw-w64/mingw/
+cp -rf $TOP_DIR/mingw-w64/include gcc-build/mingw-w64/mingw
+cp -rf $TOP_DIR/mingw-w64/$MINGW_TRIPLE/lib/* gcc-build/mingw-w64/mingw/lib/ || cp -rf $TOP_DIR/mingw-w64/lib gcc-build/mingw-w64/mingw/
 cd gcc-build
 ../configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
-  --with-sysroot=$M_TARGET \
   --disable-multilib \
   --disable-bootstrap \
   --enable-languages=c,c++ \
@@ -271,10 +270,13 @@ cd gcc-build
   --disable-libstdcxx-pch \
   --disable-win32-registry \
   --with-tune=generic \
+  --enable-mingw-wildcard \
+  --enable-__cxa_atexit \
   --enable-threads=mcf \
   --enable-lto \
   --enable-checking=release \
   --with-pkgversion="GCC with MCF thread model" \
+  --with-build-sysroot=$M_SOURCE/gcc-13.1.0/gcc-build/mingw-w64 \
   CFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
   CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
   LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
