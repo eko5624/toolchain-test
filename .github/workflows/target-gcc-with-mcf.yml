@@ -35,9 +35,7 @@ jobs:
       - name: Loading target gcc cache
         uses: actions/cache/restore@main
         with:
-          path: |
-            ${{ github.workspace }}/target
-            ${{ github.workspace }}/binutils
+          path: ${{ github.workspace }}/target
           key: target-gcc-${{ github.run_id }}
           restore-keys: |
             target-gcc-
@@ -54,18 +52,6 @@ jobs:
         run: |
           #rm -f target/mingw
           7z a target-gcc-with-mcf-ucrt.7z target/*
-          7z a binutils.7z binutils/*
-      
-      - name: Release binutils
-        continue-on-error: true
-        uses: softprops/action-gh-release@master
-        with:
-          tag_name: toolchain
-          name: toolchain
-          files: |
-            binutils.7z
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Release gcc
         continue-on-error: true
@@ -82,7 +68,5 @@ jobs:
         uses: actions/cache/save@main
         if: always()
         with:
-          path: |
-            ${{ github.workspace }}/target
-            ${{ github.workspace }}/binutils
+          path: ${{ github.workspace }}/target
           key: target-gcc-${{ github.run_id }}
