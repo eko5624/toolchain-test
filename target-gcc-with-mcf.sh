@@ -221,7 +221,7 @@ echo "======================="
 cd $M_BUILD
 mkdir winpthreads-build
 cd winpthreads-build
-cp -u $M_TARGET/$MINGW_TRIPLE/lib/{dllcrt2,crtbegin,crtend}.o ./
+cp -u $TOP_DIR/mingw-w64/$MINGW_TRIPLE/lib/{dllcrt2,crtbegin,crtend}.o ./
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$TOP_DIR/mingw-w64 \
