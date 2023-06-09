@@ -52,7 +52,7 @@ jobs:
         run: |
           #rm -f target/mingw
           7z a target-gcc-with-mcf-ucrt.7z target/*
-          7z a binutils.7z binutils/*
+          #7z a binutils.7z binutils/*
 
       - name: Release
         continue-on-error: true
