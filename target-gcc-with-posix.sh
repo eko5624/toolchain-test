@@ -7,11 +7,8 @@ TOP_DIR=$(pwd)
 # Env Var NUMJOBS overrides automatic detection
 MJOBS=$(grep -c processor /proc/cpuinfo)
 
-CFLAGS="-pipe -O2"
 MINGW_TRIPLE="x86_64-w64-mingw32"
 export MINGW_TRIPLE
-export CFLAGS
-export CXXFLAGS=$CFLAGS
 
 export M_ROOT=$(pwd)
 export M_SOURCE=$M_ROOT/source
@@ -104,7 +101,8 @@ $M_SOURCE/binutils-2.40/configure \
   --with-sysroot=$M_TARGET \
   --disable-nls \
   --disable-werror \
-  --disable-shared
+  --disable-shared \
+  --enable-lto
 make -j$MJOBS
 make install
 
@@ -258,7 +256,10 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-threads=posix \
   --enable-lto \
   --enable-checking=release \
-  --with-pkgversion="GCC with posix thread model"
+  --with-pkgversion="GCC with posix thread model" \
+  CFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
+  CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
+  LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
 make -j$MJOBS
 make install
 #cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
