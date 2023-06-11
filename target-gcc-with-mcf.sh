@@ -182,7 +182,7 @@ $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
   --enable-sdk=all \
-  --with-default-win32-winnt=0x603 \
+  --with-default-win32-winnt=0x601 \
   --with-default-msvcrt=ucrt \
   --enable-idl \
   --without-widl
@@ -464,34 +464,7 @@ sed -i 's/install_to_$(INSTALL_DEST) //' libiberty/Makefile.in
 #sed -i "/ac_cpp=/s/\$CPPFLAGS/\$CPPFLAGS -O2/" {libiberty,gcc}/configure
 
 # Cygwin patches
-patch -Nbp1 -i $M_BUILD/gcc-build/0001-Cygwin-avoid-installing-libffi-V2.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0002-Cygwin-use-SysV-ABI-on-x86_64.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0003-Cygwin-MinGW-Do-not-version-lto-plugins.patch
 patch -Nbp1 -i $M_BUILD/gcc-build/0004-Cygwin-add-dummy-pthread-tsaware-and-large-address-a.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0005-Cygwin-handle-dllimport-properly-in-medium-model-V2.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0006-Cygwin-MinGW-skip-test.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0007-Cygwin-define-RTS_CONTROL_ENABLE-and-DTR_CONTROL_ENA.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0008-Cygwin-fix-some-implicit-declaration-warnings.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0009-Cygwin-__cxa-atexit.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0010-Cygwin-prevent-modules-from-being-unloaded-before-th.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0011-Cygwin-libgomp-soname.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0012-Cygwin-g-time.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0013-Cygwin-newlib-ftm.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0014-Cygwin-define-STD_UNIX.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0015-libstdc-use-lt_host_flags-for-libstdc-.la.patc
-patch -Nbp1 -i $M_BUILD/gcc-build/0016-libstdc-regenerate-src-Makefile.in-for-lt_host_flags.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0017-libstdc-use-a-link-test-to-test-for-Wl-z-relro.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0018-libstdc-regenerate-configure.patch
- 
-# MINGW patches
-patch -Nbp1 -i $M_BUILD/gcc-build/0130-libstdc++-in-out.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0140-gcc-8.2.0-diagnostic-color.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0150-Handle-spaces-in-path-for-default-manifest.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0151-makedeps-properly-handle-win-paths.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0152-gcc-9-branch-clone_function_name_1-Retain-any-stdcall-suffix.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0153-libgomp-Don-t-hard-code-MS-printf-attributes.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0154-Windows-New-feature-to-allow-overriding.patch
-patch -Nbp1 -i $M_BUILD/gcc-build/0155-gcc-config-i386-mingw32.h-Ensure-lmsvcrt-precede-lke.patch
 
 # use built-in SSP with Cygwin 2.10
 # FIXME: --disable-libssp should suffice in GCC 8
