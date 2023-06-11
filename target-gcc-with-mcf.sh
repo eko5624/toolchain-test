@@ -504,8 +504,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-gnu-as \
   --with-gnu-ld \
   --with-pkgversion="GCC with MCF thread model" \
-  CFLAGS+=" -Wno-int-conversion" \
-  CXXFALGS+=" -Wno-int-conversion" \
   LDFLAGS=-pthread
 make -j$MJOBS all
 make install
