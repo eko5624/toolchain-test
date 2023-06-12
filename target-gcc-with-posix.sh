@@ -67,19 +67,19 @@ git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
 
 #libdl (dlfcn-win32)
-git clone https://github.com/dlfcn-win32/dlfcn-win32 --branch master --depth 1
+#git clone https://github.com/dlfcn-win32/dlfcn-win32 --branch master --depth 1
 
 #zlib
 wget -c -O zlib-1.2.13.tar.gz https://github.com/madler/zlib/archive/refs/tags/v1.2.13.tar.gz
 tar xzf zlib-1.2.13.tar.gz
 
 #zstd
-wget -c -O zstd-1.5.5.tar.gz https://github.com/facebook/zstd/archive/refs/tags/v1.5.5.tar.gz
-tar xzf zstd-1.5.5.tar.gz
+#wget -c -O zstd-1.5.5.tar.gz https://github.com/facebook/zstd/archive/refs/tags/v1.5.5.tar.gz
+#tar xzf zstd-1.5.5.tar.gz
 
 #gperf
-wget -c -O gperf-3.1.tar.gz https://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz
-tar xzf gperf-3.1.tar.gz
+#wget -c -O gperf-3.1.tar.gz https://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz
+#tar xzf gperf-3.1.tar.gz
 
 #libiconv
 wget -c -O libiconv-1.17.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.17.tar.gz
@@ -88,6 +88,10 @@ tar xzf libiconv-1.17.tar.gz
 #make
 wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
 tar xzf make-4.4.1.tar.gz
+
+#pkgconf
+wget -c -O pkgconf-1.9.5.tar.gz https://github.com/pkgconf/pkgconf/archive/refs/tags/pkgconf-1.9.5.tar.gz
+tar xzf pkgconf-1.9.5.tar.gz
 
 echo "building binutils"
 echo "======================="
@@ -269,6 +273,21 @@ cd $M_BUILD
 mkdir make-build
 cd make-build
 $M_SOURCE/make-4.4.1/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_TARGET
+make -j$MJOBS
+make install
+cp $M_TARGET/bin/make.exe $M_TARGET/bin/mingw32-make.exe
+cd $M_TARGET
+rm -f mingw
+
+echo "building pkgconf"
+echo "======================="
+cd $M_BUILD
+mkdir pkgconf-build
+cd pkgconf-build
+$M_SOURCE/pkgconf-1.9.5/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET
