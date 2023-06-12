@@ -14,8 +14,9 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
-          sudo pacman -Syu --noconfirm
-          sudo pacman -S --noconfirm --needed git gyp cvs mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf zip unzip p7zip xz clang python-pip curl jq wget
+          sudo pacman -Syu --noconfirm docker
+          sudo pacman -S --noconfirm --needed git gyp mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz clang python-pip python-cairo curl jq wget
+          pip3 install -U setuptools rst2pdf mako jsonschema meson
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global pull.rebase true
