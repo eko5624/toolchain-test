@@ -339,6 +339,15 @@ cd winpthreads-build
 curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-winpthreads-git/0001-Define-__-de-register_frame_info-in-fake-libgcc_s.patch
 cd $M_SOURCE/mingw-w64
 git apply $M_BUILD/winpthreads-build/0001-Define-__-de-register_frame_info-in-fake-libgcc_s.patch
+
+# fix mingw-w64-libraries/winpthreads/src/thread.c (version >= 9.0.0)
+patch -ulf mingw-w64-libraries/winpthreads/src/thread.c << EOF
+@@ -27,2 +27,3 @@
+ #include <malloc.h>
++#include <string.h>
+ #include <signal.h>
+EOF
+
 cd $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads
 autoreconf -vfi
 cd $M_BUILD/winpthreads-build
