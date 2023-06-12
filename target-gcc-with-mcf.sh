@@ -375,111 +375,69 @@ rm -rf $M_SOURCE/mingw-w64
 #ninja -j$MJOBS -C $M_BUILD/libdl-build
 #ninja install -C $M_BUILD/libdl-build
 
-#echo "building zlib"
-#echo "======================="
-#cd $M_BUILD
-#mkdir zlib-build
-#cd zlib-build
-#curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
-#patch -d $M_SOURCE/zlib-1.2.13 -p1 < $M_BUILD/zlib-build/zlib-1-win32-static.patch
-#CHOST=$MINGW_TRIPLE $M_SOURCE/zlib-1.2.13/configure \
-#  --prefix=$TOP_DIR/opt \
-#  --static
-#make -j$MJOBS
-#make install
+echo "building zlib"
+echo "======================="
+cd $M_BUILD
+mkdir zlib-build
+cd zlib-build
+curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
+patch -d $M_SOURCE/zlib-1.2.13 -p1 < $M_BUILD/zlib-build/zlib-1-win32-static.patch
+CHOST=$MINGW_TRIPLE $M_SOURCE/zlib-1.2.13/configure \
+  --prefix=$TOP_DIR/opt \
+  --static
+make -j$MJOBS
+make install
 
-#echo "building libiconv"
-#echo "======================="
-#cd $M_BUILD
-#mkdir libiconv-build
-#cd libiconv-build
-#curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/0002-fix-cr-for-awk-in-configure.all.patch
-#curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/0003-add-cp65001-as-utf8-alias.patch
-#curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/0004-fix-makefile-devel-assuming-gcc.patch
-#curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/fix-pointer-buf.patch
-#cd $M_SOURCE/libiconv-1.17
-#patch -Nbp1 -i $M_BUILD/libiconv-build/0002-fix-cr-for-awk-in-configure.all.patch
-#patch -Nbp1 -i $M_BUILD/libiconv-build/fix-pointer-buf.patch
-#patch -Nbp1 -i $M_BUILD/libiconv-build/0003-add-cp65001-as-utf8-alias.patch
-#patch -Nbp1 -i $M_BUILD/libiconv-build/0004-fix-makefile-devel-assuming-gcc.patch
-#make -f Makefile.devel all
-#cd $M_BUILD/libiconv-build
-#$M_SOURCE/libiconv-1.17/configure \
-#  --build=x86_64-pc-linux-gnu \
-#  --host=$MINGW_TRIPLE \
-#  --target=$MINGW_TRIPLE \
-#  --prefix=$TOP_DIR/opt \
-#  --enable-static \
-#  --enable-shared \
-#  --enable-extra-encodings \
-#  --enable-relocatable \
-#  --disable-rpath \
-#  --enable-silent-rules \
-#  --enable-nls
-#make -j$MJOBS
-#make install
+echo "building libiconv"
+echo "======================="
+cd $M_BUILD
+mkdir libiconv-build
+cd libiconv-build
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/0002-fix-cr-for-awk-in-configure.all.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/0003-add-cp65001-as-utf8-alias.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/0004-fix-makefile-devel-assuming-gcc.patch
+curl -OL https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-libiconv/fix-pointer-buf.patch
+cd $M_SOURCE/libiconv-1.17
+patch -Nbp1 -i $M_BUILD/libiconv-build/0002-fix-cr-for-awk-in-configure.all.patch
+patch -Nbp1 -i $M_BUILD/libiconv-build/fix-pointer-buf.patch
+patch -Nbp1 -i $M_BUILD/libiconv-build/0003-add-cp65001-as-utf8-alias.patch
+patch -Nbp1 -i $M_BUILD/libiconv-build/0004-fix-makefile-devel-assuming-gcc.patch
+make -f Makefile.devel all
+cd $M_BUILD/libiconv-build
+$M_SOURCE/libiconv-1.17/configure \
+  --build=x86_64-pc-linux-gnu \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$TOP_DIR/opt \
+  --enable-static \
+  --enable-shared \
+  --enable-extra-encodings \
+  --enable-relocatable \
+  --disable-rpath \
+  --enable-silent-rules \
+  --enable-nls
+make -j$MJOBS
+make install
 
-#cat <<EOF >$TOP_DIR/opt/lib/pkgconfig/iconv.pc
-#prefix=$TOP_DIR/opt
-#exec_prefix=${prefix}
-#libdir=${exec_prefix}/lib
-#includedir=${prefix}/include
+cat <<EOF >$TOP_DIR/opt/lib/pkgconfig/iconv.pc
+prefix=$TOP_DIR/opt
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
 
-#Name: iconv
-#Description: libiconv
-#URL: https://www.gnu.org/software/libiconv/
-#Version: 1.17
-#Libs: -L${libdir} -liconv
-#Cflags: -I${includedir}
-#EOF
+Name: iconv
+Description: libiconv
+URL: https://www.gnu.org/software/libiconv/
+Version: 1.17
+Libs: -L${libdir} -liconv
+Cflags: -I${includedir}
+EOF
 
 echo "building gcc"
 echo "======================="
 cd $M_BUILD
 mkdir gcc-build
 cd gcc-build
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0001-Cygwin-avoid-installing-libffi-V2.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0002-Cygwin-use-SysV-ABI-on-x86_64.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0003-Cygwin-MinGW-Do-not-version-lto-plugins.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0004-Cygwin-add-dummy-pthread-tsaware-and-large-address-a.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0005-Cygwin-handle-dllimport-properly-in-medium-model-V2.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0006-Cygwin-MinGW-skip-test.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0007-Cygwin-define-RTS_CONTROL_ENABLE-and-DTR_CONTROL_ENA.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0008-Cygwin-fix-some-implicit-declaration-warnings.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0009-Cygwin-__cxa-atexit.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0010-Cygwin-prevent-modules-from-being-unloaded-before-th.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0011-Cygwin-libgomp-soname.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0012-Cygwin-g-time.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0013-Cygwin-newlib-ftm.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0014-Cygwin-define-STD_UNIX.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0015-libstdc-use-lt_host_flags-for-libstdc-.la.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0016-libstdc-regenerate-src-Makefile.in-for-lt_host_flags.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0017-libstdc-use-a-link-test-to-test-for-Wl-z-relro.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0018-libstdc-regenerate-configure.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0130-libstdc++-in-out.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0140-gcc-8.2.0-diagnostic-color.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0150-Handle-spaces-in-path-for-default-manifest.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0151-makedeps-properly-handle-win-paths.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0152-gcc-9-branch-clone_function_name_1-Retain-any-stdcall-suffix.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0153-libgomp-Don-t-hard-code-MS-printf-attributes.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0154-Windows-New-feature-to-allow-overriding.patch
-curl -OL https://raw.githubusercontent.com/msys2/MSYS2-packages/master/mingw-w64-cross-gcc/0155-gcc-config-i386-mingw32.h-Ensure-lmsvcrt-precede-lke.patch
-
-cd $M_SOURCE/gcc-13.1.0
-
-#do not install libiberty
-sed -i 's/install_to_$(INSTALL_DEST) //' libiberty/Makefile.in
-# hack! - some configure tests for header files using "$CPP $CPPFLAGS"
-#sed -i "/ac_cpp=/s/\$CPPFLAGS/\$CPPFLAGS -O2/" {libiberty,gcc}/configure
-
-# Cygwin patches
-patch -Nbp1 -i $M_BUILD/gcc-build/0004-Cygwin-add-dummy-pthread-tsaware-and-large-address-a.patch
-
-# use built-in SSP with Cygwin 2.10
-# FIXME: --disable-libssp should suffice in GCC 8
-export gcc_cv_libc_provides_ssp=yes
-
-cd $M_BUILD/gcc-build
 $M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
@@ -509,7 +467,9 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-win32-registry \
   --disable-werror \
   --disable-symvers \
-  --with-libiconv \
+  --with-libiconv-prefix=$TOP_DIR/opt \
+  --with-zlib-include=$TOP_DIR/opt/include \
+  --with-zlib-lib=$TOP_DIR/opt/lib \
   --with-gnu-as \
   --with-gnu-ld \
   --with-pkgversion="GCC with MCF thread model" \
