@@ -481,6 +481,7 @@ cd gcc-build
   --with-gnu-as \
   --with-gnu-ld \
   --with-pkgversion="GCC with MCF thread model" \
+  --with-build-sysroot=$M_SOURCE/gcc-13.1.0/gcc-build/mingw-w64 \
   CFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
   CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
   LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
