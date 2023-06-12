@@ -33,10 +33,10 @@ git clone https://github.com/pkgconf/pkgconf --branch pkgconf-1.9.5
 cd $M_BUILD
 mkdir pkgconf-build
 cd pkgconf-build
-meson $M_SOURCE/pkgconf \
+meson setup . $M_SOURCE/pkgconf \
   --prefix=$TOP_DIR/opt \
   --cross-file=$TOP_DIR/cross.meson \
   --buildtype=plain \
-  -Dtests=false
+  -Dtests=disabled
 ninja -j$MJOBS -C $M_BUILD/pkgconf-build
 ninja install -C $M_BUILD/pkgconf-build
