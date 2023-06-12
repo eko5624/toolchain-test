@@ -529,7 +529,7 @@ echo "======================="
 cd $M_BUILD
 mkdir pkgconf-build
 cd pkgconf-build
-meson setup . $M_SOURCE/pkgconf-1.9.5 \
+meson setup $M_SOURCE/pkgconf-1.9.5 \
   --prefix=$M_TARGET \
   --cross-file=$TOP_DIR/cross.meson \
   --buildtype=plain \
