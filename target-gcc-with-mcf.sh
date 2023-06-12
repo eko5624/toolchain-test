@@ -103,7 +103,7 @@ tar xzf pkgconf-1.9.5.tar.gz
 
 #m4
 #wget -c -O m4-1.4.19.tar.xz https://ftp.gnu.org/gnu/m4/m4-1.4.19.tar.xz
-$xz -c -d m4-1.4.19.tar.xz | tar xf -
+#xz -c -d m4-1.4.19.tar.xz | tar xf -
 
 #libtool
 wget -c -O libtool-2.4.7.tar.xz https://ftp.gnu.org/gnu/libtool/libtool-2.4.7.tar.xz
