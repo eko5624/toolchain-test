@@ -33,7 +33,7 @@ git clone https://github.com/pkgconf/pkgconf --branch pkgconf-1.9.5
 cd $M_BUILD
 mkdir pkgconf-build
 cd pkgconf-build
-meson setup . $M_SOURCE/pkgconf \
+meson setup $M_SOURCE/pkgconf \
   --prefix=$TOP_DIR/opt \
   --cross-file=$TOP_DIR/cross.meson \
   --buildtype=plain \
