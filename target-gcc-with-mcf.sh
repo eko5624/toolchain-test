@@ -7,10 +7,10 @@ TOP_DIR=$(pwd)
 # Env Var NUMJOBS overrides automatic detection
 MJOBS=$(grep -c processor /proc/cpuinfo)
 
-CFLAGS="-pipe -O2"
+#CFLAGS="-pipe -O2"
+#export CFLAGS
+#export CXXFLAGS=$CFLAGS
 MINGW_TRIPLE="x86_64-w64-mingw32"
-export CFLAGS
-export CXXFLAGS=$CFLAGS
 export MINGW_TRIPLE
 
 export M_ROOT=$(pwd)
@@ -53,8 +53,8 @@ wget -c -O libiconv-1.17.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.17.t
 tar xzf libiconv-1.17.tar.gz
 
 #gdb
-wget -c -O gdb-13.1.tar.xz https://ftp.gnu.org/gnu/gdb/gdb-13.1.tar.xz
-xz -c -d gdb-13.1.tar.xz | tar xf -
+#wget -c -O gdb-13.1.tar.xz https://ftp.gnu.org/gnu/gdb/gdb-13.1.tar.xz
+#xz -c -d gdb-13.1.tar.xz | tar xf -
 
 #gmp
 wget -c -O gmp-6.2.1.tar.bz2 https://ftp.gnu.org/gnu/gmp/gmp-6.2.1.tar.bz2
@@ -97,17 +97,21 @@ tar xzf gperf-3.1.tar.gz
 wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
 tar xzf make-4.4.1.tar.gz
 
+#pkgconf
+wget -c -O pkgconf-1.9.5.tar.gz https://github.com/pkgconf/pkgconf/archive/refs/tags/pkgconf-1.9.5.tar.gz
+tar xzf pkgconf-1.9.5.tar.gz
+
 #m4
-wget -c -O m4-1.4.19.tar.xz https://ftp.gnu.org/gnu/m4/m4-1.4.19.tar.xz
-xz -c -d m4-1.4.19.tar.xz | tar xf -
+#wget -c -O m4-1.4.19.tar.xz https://ftp.gnu.org/gnu/m4/m4-1.4.19.tar.xz
+$xz -c -d m4-1.4.19.tar.xz | tar xf -
 
 #libtool
 wget -c -O libtool-2.4.7.tar.xz https://ftp.gnu.org/gnu/libtool/libtool-2.4.7.tar.xz
 xz -c -d libtool-2.4.7.tar.xz | tar xf -
 
 #cmake
-wget -c -O cmake-3.26.4.tar.gz https://github.com/Kitware/CMake/archive/refs/tags/v3.26.4.tar.gz
-tar xzf cmake-3.26.4.tar.gz
+#wget -c -O cmake-3.26.4.tar.gz https://github.com/Kitware/CMake/archive/refs/tags/v3.26.4.tar.gz
+#tar xzf cmake-3.26.4.tar.gz
 
 echo "building binutils"
 echo "======================="
@@ -435,10 +439,12 @@ EOF
 
 echo "building gcc"
 echo "======================="
-cd $M_BUILD
-mkdir gcc-build
+cd $M_SOURCE/gcc-13.1.0
+mkdir -p gcc-build/mingw-w64/mingw/lib
+cp -rf $M_TARGET/include gcc-build/mingw-w64/mingw
+cp -rf $M_TARGET/$MINGW_TRIPLE/lib/* gcc-build/mingw-w64/mingw/lib/ || cp -rf $M_TARGET/lib gcc-build/mingw-w64/mingw/
 cd gcc-build
-$M_SOURCE/gcc-13.1.0/configure \
+../configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
@@ -459,6 +465,8 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-libstdcxx-pch \
   --disable-libstdcxx-debug \
   --enable-version-specific-runtime-libs \
+  --enable-mingw-wildcard \
+  --enable-__cxa_atexit \
   --enable-lto \
   --enable-libgomp \
   --disable-multilib \
@@ -473,12 +481,14 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-gnu-as \
   --with-gnu-ld \
   --with-pkgversion="GCC with MCF thread model" \
-  LDFLAGS=-pthread
-make -j$MJOBS all
+  CFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
+  CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
+  LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
+make -j$MJOBS
+touch gcc/cc1.exe.a gcc/cc1plus.exe.a
 make install
-mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/lib/libgcc_s.a $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/
-mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/libgcc*.dll $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/
-#cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/*plugin*.dll $M_TARGET/lib/bfd-plugins/
+#mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/lib/libgcc_s.a $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/
+#mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/libgcc*.dll $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
 
@@ -512,3 +522,19 @@ $M_SOURCE/make-4.4.1/configure \
 make -j$MJOBS
 make install
 cp $M_TARGET/bin/make.exe $M_TARGET/bin/mingw32-make.exe
+
+echo "building pkgconf"
+echo "======================="
+cd $M_BUILD
+mkdir pkgconf-build
+cd pkgconf-build
+meson setup . $M_SOURCE/pkgconf-1.9.5 \
+  --prefix=$M_TARGET \
+  --cross-file=$TOP_DIR/cross.meson \
+  --buildtype=plain \
+  -Dtests=disabled
+ninja -j$MJOBS -C $M_BUILD/pkgconf-build
+ninja install -C $M_BUILD/pkgconf-build
+cp $M_TARGET/bin/pkgconf.exe $M_TARGET/bin/pkg-config.exe
+cp $M_TARGET/bin/pkgconf.exe $M_TARGET/bin/x86_64-w64-mingw32-pkg-config.exe
+cd $M_TARGET
