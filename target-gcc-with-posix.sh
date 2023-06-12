@@ -266,6 +266,7 @@ make install
 #cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
+rm -f mingw
 
 echo "building make"
 echo "======================="
@@ -279,20 +280,19 @@ $M_SOURCE/make-4.4.1/configure \
 make -j$MJOBS
 make install
 cp $M_TARGET/bin/make.exe $M_TARGET/bin/mingw32-make.exe
-cd $M_TARGET
-rm -f mingw
 
 echo "building pkgconf"
 echo "======================="
 cd $M_BUILD
 mkdir pkgconf-build
 cd pkgconf-build
-$M_SOURCE/pkgconf-1.9.5/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_TARGET
-make -j$MJOBS
-make install
-cp $M_TARGET/bin/make.exe $M_TARGET/bin/mingw32-make.exe
+meson setup . $M_SOURCE/pkgconf-1.9.5 \
+  --prefix=$M_TARGET \
+  --cross-file=$TOP_DIR/cross.meson \
+  --buildtype=plain \
+  -Dtests=disabled
+ninja -j$MJOBS -C $M_BUILD/pkgconf-build
+ninja install -C $M_BUILD/pkgconf-build
+cp $M_TARGET/bin/pkgconf.exe $M_TARGET/bin/pkg-config.exe
+cp $M_TARGET/bin/pkgconf.exe $M_TARGET/bin/x86_64-w64-mingw32-pkg-config.exe
 cd $M_TARGET
-rm -f mingw
