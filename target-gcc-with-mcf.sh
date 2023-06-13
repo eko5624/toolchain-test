@@ -698,7 +698,6 @@ patch -ulbf Makefile.tpl << EOF
 
 EOF
 # fix unsupported go language for GCC 12 and up in configure
-if echo $VERSION|grep -q "^1[2-9][.\-]"; then
 patch -ulbf configure << EOF
 @@ -3577,3 +3577,3 @@
  case "\${target}" in
@@ -711,7 +710,6 @@ patch -ulbf configure << EOF
 +    *-*-cygwin*)
         noconfigdirs="\$noconfigdirs target-libgo"
 EOF
-fi
 ## fix linker error: export ordinal too large (version >= 13)
 sed -i.bak "s/--export-all-symbols/--gc-keep-exported/" $(grep -l "\--export-all-symbols" $(find -name configure))
 # fix missing mmap/munmap and linker error: export ordinal too large
