@@ -244,8 +244,8 @@ $M_SOURCE/binutils-2.40/configure \
   --enable-host-shared \
   --enable-serial-configure \
   --disable-bootstrap \
-  CFLAGS="-I$TOP_DIR/mman/include/mman-win32 -march=nocona -msahf -mtune=generic -O2" \
-  CXXFLAGS="-I$TOP_DIR/mman/include/mman-win32 -march=nocona -msahf -mtune=generic -O2" \
+  CFLAGS="-I$TOP_DIR/mman/include -march=nocona -msahf -mtune=generic -O2" \
+  CXXFLAGS="-I$TOP_DIR/mman/include -march=nocona -msahf -mtune=generic -O2" \
   LDFLAGS="-Wl,--no-insert-timestamp -Wl,-no-undefined -Wl,--allow-multiple-definition -Wl,--as-needed -lmman"  
 make -j$MJOBS
 make install
