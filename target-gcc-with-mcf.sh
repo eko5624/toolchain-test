@@ -439,6 +439,7 @@ EOF
 echo "building gcc"
 echo "======================="
 cd $M_SOURCE/gcc-13.1.0
+VER=$(cat gcc/BASE-VER)
 mkdir -p gcc-build/mingw-w64/mingw/lib
 cp -rf $M_TARGET/include gcc-build/mingw-w64/mingw
 cp -rf $M_TARGET/$MINGW_TRIPLE/lib/* gcc-build/mingw-w64/mingw/lib/ || cp -rf $M_TARGET/lib gcc-build/mingw-w64/mingw/
@@ -487,8 +488,8 @@ cd gcc-build
 make -j$MJOBS
 touch gcc/cc1.exe.a gcc/cc1plus.exe.a
 make install
-mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/lib/libgcc_s.a $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/
-mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/libgcc*.dll $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/
+mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/lib/libgcc_s.a $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/
+mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/libgcc*.dll $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
 
