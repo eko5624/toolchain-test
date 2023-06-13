@@ -115,89 +115,6 @@ git clone https://github.com/pkgconf/pkgconf --branch pkgconf-1.9.5
 #wget -c -O cmake-3.26.4.tar.gz https://github.com/Kitware/CMake/archive/refs/tags/v3.26.4.tar.gz
 #tar xzf cmake-3.26.4.tar.gz
 
-echo "building mman-win32"
-echo "======================="
-cd $M_BUILD
-mkdir mman-build
-cmake -G Ninja -H$M_SOURCE/mman-win32 -B$M_BUILD/mman-build \
-  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/mman \
-  -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
-  -DBUILD_SHARED_LIBS=OFF \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DBUILD_TESTS=OFF
-ninja -j$MJOBS -C $M_BUILD/mman-build
-ninja install -C $M_BUILD/mman-build
-
-echo "building binutils"
-echo "======================="
-cd $M_BUILD
-mkdir binutils-build
-cd $M_SOURCE/binutils-2.40
-# fix ld/ldlang.c (version >= 2.40)
-#### See bug reported here: https://sourceware.org/bugzilla/show_bug.cgi?id=30079
-patch -ulbf ld/ldlang.c << EOF
-@@ -651,3 +651,4 @@
-       /* Find the correct node to append this section.  */
--      if (compare_section (sec->spec.sorted, section, (*tree)->section) < 0)
-+      if (sec && sec->spec.sorted != none && sec->spec.sorted != by_none
-+         && compare_section (sec->spec.sorted, section, (*tree)->section) < 0)
-        tree = &((*tree)->left);
-EOF
-# avoid linking with -lc which doesn't exist with MinGW-w64 (version >= 2.39)
-sed -i.bak -e "s/-Wl,-lc,--as-needed/-Wl,--as-needed/" bfd/configure opcodes/configure
-cd $M_BUILD/binutils-build
-$M_SOURCE/binutils-2.40/configure \
-  --host=$MINGW_TRIPLE \
-  --target=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
-  --with-sysroot=$M_TARGET \
-  --enable-install-libiberty \
-  --enable-plugins \
-  --enable-lto \
-  --enable-nls \
-  --disable-rpath \
-  --disable-multilib \
-  --disable-werror \
-  --disable-shared
-make -j$MJOBS
-make install
-# remove .la files
-rm -f $(find $M_TARGET -name '*.la')
-# remove .dll.a file from plugin folder (version >= 2.36)
-rm $M_TARGET/lib/bfd-plugins/*.dll.a
-
-echo "building mingw-w64-headers"
-echo "======================="
-cd $M_SOURCE
-git clone https://github.com/mingw-w64/mingw-w64.git
-cd $M_BUILD
-mkdir headers-build
-cd headers-build
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-headers-git/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
-cd $M_SOURCE/mingw-w64
-git reset --hard
-git clean -fdx
-git apply $M_BUILD/headers-build/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
-cd $M_SOURCE/mingw-w64/mingw-w64-headers
-touch include/windows.*.h include/wincrypt.h include/prsht.h
-cd $M_BUILD/headers-build
-$M_SOURCE/mingw-w64/mingw-w64-headers/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
-  --enable-sdk=all \
-  --with-default-win32-winnt=0x601 \
-  --with-default-msvcrt=ucrt \
-  --enable-idl \
-  --without-widl
-make -j$MJOBS
-make install
-rm $M_TARGET/include/pthread_signal.h
-rm $M_TARGET/include/pthread_time.h
-rm $M_TARGET/include/pthread_unistd.h
-rm -rf $M_SOURCE/mingw-w64
-#cd $M_TARGET
-#ln -s $MINGW_TRIPLE mingw
-
 echo "building gmp"
 echo "======================="
 cd $M_BUILD
@@ -278,6 +195,96 @@ $M_SOURCE/isl-0.24/configure \
   --disable-shared
 make -j$MJOBS
 make install
+
+echo "building mman-win32"
+echo "======================="
+cd $M_BUILD
+mkdir mman-build
+cmake -G Ninja -H$M_SOURCE/mman-win32 -B$M_BUILD/mman-build \
+  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/mman \
+  -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
+  -DBUILD_SHARED_LIBS=OFF \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DBUILD_TESTS=OFF
+ninja -j$MJOBS -C $M_BUILD/mman-build
+ninja install -C $M_BUILD/mman-build
+
+echo "building binutils"
+echo "======================="
+cd $M_BUILD
+mkdir binutils-build
+cd $M_SOURCE/binutils-2.40
+# fix ld/ldlang.c (version >= 2.40)
+#### See bug reported here: https://sourceware.org/bugzilla/show_bug.cgi?id=30079
+patch -ulbf ld/ldlang.c << EOF
+@@ -651,3 +651,4 @@
+       /* Find the correct node to append this section.  */
+-      if (compare_section (sec->spec.sorted, section, (*tree)->section) < 0)
++      if (sec && sec->spec.sorted != none && sec->spec.sorted != by_none
++         && compare_section (sec->spec.sorted, section, (*tree)->section) < 0)
+        tree = &((*tree)->left);
+EOF
+# avoid linking with -lc which doesn't exist with MinGW-w64 (version >= 2.39)
+sed -i.bak -e "s/-Wl,-lc,--as-needed/-Wl,--as-needed/" bfd/configure opcodes/configure
+cd $M_BUILD/binutils-build
+$M_SOURCE/binutils-2.40/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_TARGET \
+  --with-sysroot=$M_TARGET \
+  --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
+  --enable-install-libiberty \
+  --enable-plugins \
+  --enable-lto \
+  --enable-nls \
+  --disable-rpath \
+  --disable-multilib \
+  --disable-werror \
+  --enable-shared \
+  --enable-host-shared \
+  --enable-serial-configure \
+  --disable-bootstrap \
+  CFLAGS="-I$TOP_DIR/mman/include/mman-win32 -march=nocona -msahf -mtune=generic -O2" \
+  CXXFLAGS="-I$TOP_DIR/mman/include/mman-win32 -march=nocona -msahf -mtune=generic -O2" \
+  LDFLAGS="-Wl,--no-insert-timestamp -Wl,-no-undefined -Wl,--allow-multiple-definition -Wl,--as-needed -lmman"  
+make -j$MJOBS
+make install
+# remove .la files
+rm -f $(find $M_TARGET -name '*.la')
+# remove .dll.a file from plugin folder (version >= 2.36)
+rm $M_TARGET/lib/bfd-plugins/*.dll.a
+
+echo "building mingw-w64-headers"
+echo "======================="
+cd $M_SOURCE
+git clone https://github.com/mingw-w64/mingw-w64.git
+cd $M_BUILD
+mkdir headers-build
+cd headers-build
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-headers-git/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
+cd $M_SOURCE/mingw-w64
+git reset --hard
+git clean -fdx
+git apply $M_BUILD/headers-build/0001-Allow-to-use-bessel-and-complex-functions-without-un.patch
+cd $M_SOURCE/mingw-w64/mingw-w64-headers
+touch include/windows.*.h include/wincrypt.h include/prsht.h
+cd $M_BUILD/headers-build
+$M_SOURCE/mingw-w64/mingw-w64-headers/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_TARGET \
+  --enable-sdk=all \
+  --with-default-win32-winnt=0x601 \
+  --with-default-msvcrt=ucrt \
+  --enable-idl \
+  --without-widl
+make -j$MJOBS
+make install
+rm $M_TARGET/include/pthread_signal.h
+rm $M_TARGET/include/pthread_time.h
+rm $M_TARGET/include/pthread_unistd.h
+rm -rf $M_SOURCE/mingw-w64
+#cd $M_TARGET
+#ln -s $MINGW_TRIPLE mingw
 
 echo "building mingw-w64-crt"
 echo "======================="
