@@ -150,12 +150,15 @@ $M_SOURCE/binutils-2.40/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
-  --enable-targets=x86_64 \
-  --enable-shared \
-  --enable-host-shared \
-  --enable-serial-configure \
-  --disable-bootstrap \
+  --with-sysroot=$M_TARGET \
+  --enable-install-libiberty \
+  --enable-plugins \
+  --enable-lto \
+  --enable-nls \
   --disable-rpath \
+  --disable-multilib \
+  --disable-werror \
+  --disable-shared \
   CFLAGS="-I$TOP_DIR/mman/include/mman-win32  -march=nocona -msahf -mtune=generic -O2" \
   CXXFLAGS="-I$TOP_DIR/mman/include/mman-win32 -march=nocona -msahf -mtune=generic -O2" \
   LDFLAGS="-Wl,--no-insert-timestamp -Wl,-no-undefined -Wl,--allow-multiple-definition -Wl,--as-needed -lmman"
