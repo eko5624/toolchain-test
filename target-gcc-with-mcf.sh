@@ -20,6 +20,7 @@ export M_CROSS=$M_ROOT/cross
 export M_TARGET=$M_ROOT/target
 
 export CC=$M_CROSS/bin/$MINGW_TRIPLE-gcc
+export CPP=$M_CROSS/bin/$MINGW_TRIPLE-g++
 export CXX=$M_CROSS/bin/$MINGW_TRIPLE-g++
 export AR=$M_CROSS/bin/$MINGW_TRIPLE-ar
 export RANLIB=$M_CROSS/bin/$MINGW_TRIPLE-ranlib
