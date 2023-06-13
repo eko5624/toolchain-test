@@ -158,10 +158,7 @@ $M_SOURCE/binutils-2.40/configure \
   --disable-rpath \
   --disable-multilib \
   --disable-werror \
-  --disable-shared \
-  CFLAGS="-I$TOP_DIR/mman/include/mman-win32 -march=nocona -msahf -mtune=generic -O2" \
-  CXXFLAGS="-I$TOP_DIR/mman/include/mman-win32 -march=nocona -msahf -mtune=generic -O2" \
-  LDFLAGS="-Wl,--no-insert-timestamp -Wl,-no-undefined -Wl,--allow-multiple-definition -Wl,--as-needed -lmman"
+  --disable-shared
 make -j$MJOBS
 make install
 # remove .la files
