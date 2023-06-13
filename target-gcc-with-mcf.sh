@@ -86,12 +86,12 @@ wget -c -O zlib-1.2.13.tar.gz https://github.com/madler/zlib/archive/refs/tags/v
 tar xzf zlib-1.2.13.tar.gz
 
 #zstd
-wget -c -O zstd-1.5.5.tar.gz https://github.com/facebook/zstd/archive/refs/tags/v1.5.5.tar.gz
-tar xzf zstd-1.5.5.tar.gz
+#wget -c -O zstd-1.5.5.tar.gz https://github.com/facebook/zstd/archive/refs/tags/v1.5.5.tar.gz
+#tar xzf zstd-1.5.5.tar.gz
 
 #gperf
-wget -c -O gperf-3.1.tar.gz https://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz
-tar xzf gperf-3.1.tar.gz
+#wget -c -O gperf-3.1.tar.gz https://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz
+#tar xzf gperf-3.1.tar.gz
 
 #make
 wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
@@ -105,8 +105,8 @@ git clone https://github.com/pkgconf/pkgconf --branch pkgconf-1.9.5
 #xz -c -d m4-1.4.19.tar.xz | tar xf -
 
 #libtool
-wget -c -O libtool-2.4.7.tar.xz https://ftp.gnu.org/gnu/libtool/libtool-2.4.7.tar.xz
-xz -c -d libtool-2.4.7.tar.xz | tar xf -
+#wget -c -O libtool-2.4.7.tar.xz https://ftp.gnu.org/gnu/libtool/libtool-2.4.7.tar.xz
+#xz -c -d libtool-2.4.7.tar.xz | tar xf -
 
 #cmake
 #wget -c -O cmake-3.26.4.tar.gz https://github.com/Kitware/CMake/archive/refs/tags/v3.26.4.tar.gz
@@ -365,18 +365,18 @@ make install
 rm -rf $M_SOURCE/mingw-w64
 #cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin
 
-#echo "building dlfcn-win32"
-#echo "======================="
-#cd $M_BUILD
-#mkdir libdl-build
-#cmake -G Ninja -H$M_SOURCE/dlfcn-win32 -B$M_BUILD/libdl-build \
-#  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/opt \
-#  -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
-#  -DBUILD_SHARED_LIBS=OFF \
-#  -DCMAKE_BUILD_TYPE=Release \
-##  -DBUILD_TESTS=OFF
-#ninja -j$MJOBS -C $M_BUILD/libdl-build
-#ninja install -C $M_BUILD/libdl-build
+echo "building dlfcn-win32"
+echo "======================="
+cd $M_BUILD
+mkdir libdl-build
+cmake -G Ninja -H$M_SOURCE/dlfcn-win32 -B$M_BUILD/libdl-build \
+  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/dlfcn-win32 \
+  -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
+  -DBUILD_SHARED_LIBS=OFF \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DBUILD_TESTS=OFF
+ninja -j$MJOBS -C $M_BUILD/libdl-build
+ninja install -C $M_BUILD/libdl-build
 
 echo "building zlib"
 echo "======================="
@@ -439,7 +439,316 @@ EOF
 echo "building gcc"
 echo "======================="
 cd $M_SOURCE/gcc-13.1.0
-VER=$(cat gcc/BASE-VER)
+
+# fix missing syslog in libssp/ssp.c
+sed -i.bak -e "s?#ifdef HAVE_SYSLOG_H?#if 0 //&?" libssp/ssp.c
+# fix plugin install location in gcc/c/Make-lang.in and gcc/cp/Make-lang.in (version >= 9.2.0)
+sed -i.bak -e "s?\(\$(DESTDIR)\)/\(\$(plugin_resourcesdir)\)?\1\2?" gcc/c/Make-lang.in gcc/cp/Make-lang.in
+# fix missing sys/wait.h fixincludes/fixincl.c (version >= 9.3.0)
+patch -ulbf fixincludes/fixincl.c << EOF
+@@ -28,4 +28,12 @@
+ #ifndef SEPARATE_FIX_PROC
++#ifdef _WIN32
++#include <Windows.h>
++#define wait(p) Sleep(0)
++#include <fcntl.h>
++#define pipe(fds) _pipe(fds, 4096, _O_BINARY)
++#define fork() -1
++#else
+ #include <sys/wait.h>
+ #endif
++#endif
+
+EOF
+# fix missing pipe in fixincludes/procopen.c (version >= 9.3.0)
+patch -ulbf fixincludes/procopen.c << EOF
+@@ -50,2 +50,7 @@
+ #include "server.h"
++#ifdef _WIN32
++#include <fcntl.h>
++#define pipe(fds) _pipe(fds, 4096, _O_BINARY)
++#define fork() -1
++#endif
+
+EOF
+# fix missing kill/alarm in fixincludes/server.c (version >= 9.3.0)
+patch -ulbf fixincludes/server.c << EOF
+@@ -50,2 +50,6 @@
+ #include "server.h"
++#ifdef _WIN32
++#define kill(pid,sig) -1
++#define alarm(n) 0
++#endif
+
+EOF
+# fix printf format issues with MinGW-w64 >= 8.0.0 (version >= 10.2.0)
+####See also: https://sourceforge.net/p/mingw-w64/bugs/853/
+####See also: https://github.com/msys2/MINGW-packages-dev/blob/master/mingw-w64-gcc-git/0020-libgomp-Don-t-hard-code-MS-printf-attributes.patch
+sed -i.bak -e "s/^\(\s*#\s*\)include <inttypes\.h>.*$/&\n\1ifdef __MINGW32__\n\1undef HAVE_INTTYPES_H\n\1endif/" libgomp/target.c libgomp/oacc-parallel.c
+# avoid looking for libiberty.a in a pic subdirectory
+sed -i.bak -e "s?pic/\(libiberty\.a\)?\1?g" $(grep -l "pic/libiberty\.a" */Makefile.in)
+# fix missing .exe extension of mkoffload in in gcc/lto-wrapper.c (version >= 10.2.0)
+#### bug reported: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=98145
+patch -ulbf gcc/lto-wrapper.c << EOF
+@@ -548,4 +548,10 @@
+ /* Parse STR, saving found tokens into PVALUES and return their number.
+-   Tokens are assumed to be delimited by ':'.  If APPEND is non-null,
+-   append it to every token we find.  */
++   Tokens are assumed to be delimited by ':' (or ';' on Windows).
++   If APPEND is non-null, append it to every token we find.  */
++
++#ifdef _WIN32
++#define PATH_LIST_SEPARATOR ';'
++#else
++#define PATH_LIST_SEPARATOR ':'
++#endif
+
+@@ -558,3 +564,3 @@
+
+-  curval = strchr (str, ':');
++  curval = strchr (str, PATH_LIST_SEPARATOR);
+   while (curval)
+@@ -562,3 +568,3 @@
+       num++;
+-      curval = strchr (curval + 1, ':');
++      curval = strchr (curval + 1, PATH_LIST_SEPARATOR);
+     }
+@@ -567,3 +573,3 @@
+   curval = str;
+-  nextval = strchr (curval, ':');
++  nextval = strchr (curval, PATH_LIST_SEPARATOR);
+   if (nextval == NULL)
+@@ -581,3 +587,3 @@
+       curval = nextval + 1;
+-      nextval = strchr (curval, ':');
++      nextval = strchr (curval, PATH_LIST_SEPARATOR);
+       if (nextval == NULL)
+@@ -816,2 +822,8 @@
+
++#ifdef _WIN32
++#define BIN_EXT ".exe"
++#else
++#define BIN_EXT ""
++#endif
++
+ static char *
+@@ -827,6 +839,6 @@
+   char *suffix
+-    = XALLOCAVEC (char, sizeof ("/accel//mkoffload") + strlen (target));
++    = XALLOCAVEC (char, sizeof ("/accel//mkoffload" BIN_EXT) + strlen (target));
+   strcpy (suffix, "/accel/");
+   strcat (suffix, target);
+-  strcat (suffix, "/mkoffload");
++  strcat (suffix, "/mkoffload" BIN_EXT);
+
+EOF
+# fix missing getpagesize() in libbacktrace/mmapio.c (version >= 11.1.0)
+mv libbacktrace/mmapio.c libbacktrace/mmapio.c.bak
+cat > libbacktrace/mmapio.c << EOF
+#ifdef _WIN32
+#include <windows.h>
+int getpagesize (void);
+int getpagesize (void)
+{
+  SYSTEM_INFO sysinfo;
+  GetSystemInfo(&sysinfo);
+  return sysinfo.dwPageSize;
+}
+#endif
+EOF
+cat libbacktrace/mmapio.c.bak >> libbacktrace/mmapio.c
+# fix precompiled header mapping issues in gcc/config/i386/host-mingw32.cc (version >= 12.2.0)
+#### see also: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105858
+#### see also: https://github.com/msys2/MINGW-packages/blob/master/mingw-w64-gcc/0010-Fix-using-large-PCH.patch
+#### see also: https://github.com/msys2/MINGW-packages/blob/master/mingw-w64-gcc/0021-PR14940-Allow-a-PCH-to-be-mapped-to-a-different-addr.patch
+patch -ulbf gcc/config/i386/host-mingw32.cc << EOF
+@@ -46,5 +46,2 @@
+
+-/* FIXME: Is this big enough?  */
+-static const size_t pch_VA_max_size  = 128 * 1024 * 1024;
+-
+ /* Granularity for reserving address space.  */
+@@ -90,5 +87,2 @@
+   void* res;
+-  size = (size + va_granularity - 1) & ~(va_granularity - 1);
+-  if (size > pch_VA_max_size)
+-    return NULL;
+
+@@ -102,3 +96,3 @@
+
+-  res = VirtualAlloc (NULL, pch_VA_max_size,
++  res = VirtualAlloc (NULL, size,
+                      MEM_RESERVE | MEM_TOP_DOWN,
+@@ -143,3 +137,2 @@
+   OSVERSIONINFO version_info;
+-  int r;
+
+@@ -152,3 +145,3 @@
+      this to work.  We can't change the offset. */
+-  if ((offset & (va_granularity - 1)) != 0 || size > pch_VA_max_size)
++  if ((offset & (va_granularity - 1)) != 0)
+     return -1;
+@@ -177,21 +170,20 @@
+
+-  /* Retry five times, as here might occure a race with multiple gcc's
+-     instances at same time.  */
+-  for (r = 0; r < 5; r++)
+-   {
+-      mmap_addr = MapViewOfFileEx (mmap_handle, FILE_MAP_COPY, 0, offset,
+-                                  size, addr);
+-      if (mmap_addr == addr)
+-       break;
+-      if (r != 4)
+-        Sleep (500);
+-   }
+-
+-  if (mmap_addr != addr)
++  /* Try mapping the file at \`addr\`.  */
++  mmap_addr = MapViewOfFileEx (mmap_handle, FILE_MAP_COPY, 0, offset,
++                              size, addr);
++  if (mmap_addr == NULL)
+     {
+-      w32_error (__FUNCTION__, __FILE__, __LINE__, "MapViewOfFileEx");
+-      CloseHandle(mmap_handle);
+-      return  -1;
++      /* We could not map the file at its original address, so let the
++        system choose a different one. The PCH can be relocated later.  */
++      mmap_addr = MapViewOfFileEx (mmap_handle, FILE_MAP_COPY, 0, offset,
++                                  size, NULL);
++      if (mmap_addr == NULL)
++       {
++         w32_error (__FUNCTION__, __FILE__, __LINE__, "MapViewOfFileEx");
++         CloseHandle(mmap_handle);
++         return  -1;
++       }
+     }
+
++  addr = mmap_addr;
+   return 1;
+EOF
+# fix libgo/sysinfo.c (version >= 11-20220409)
+patch -ulbf libgo/sysinfo.c << EOF
+@@ -19,3 +19,7 @@
+ #include <ucontext.h>
++#ifdef _WIN32
++#include <winsock2.h>
++#else
+ #include <netinet/in.h>
++#endif
+ /* <netinet/tcp.h> needs u_char/u_short, but <sys/bsd_types> is only
+@@ -29,3 +33,5 @@
+ #endif
++#ifndef _WIN32
+ #include <netinet/tcp.h>
++#endif
+ #if defined(HAVE_NETINET_IN_SYSTM_H)
+@@ -43,4 +49,6 @@
+ #include <signal.h>
++#ifndef _WIN32
+ #include <sys/ioctl.h>
+ #include <termios.h>
++#endif
+ #if defined(HAVE_SYSCALL_H)
+@@ -72,2 +80,3 @@
+ #endif
++#ifndef _WIN32
+ #include <sys/resource.h>
+@@ -75,4 +84,6 @@
+ #include <sys/socket.h>
++#endif
+ #include <sys/stat.h>
+ #include <sys/time.h>
++#ifndef _WIN32
+ #include <sys/times.h>
+@@ -80,2 +91,3 @@
+ #include <sys/un.h>
++#endif
+ #if defined(HAVE_SYS_USER_H)
+@@ -91,2 +103,3 @@
+ #include <unistd.h>
++#ifndef _WIN32
+ #include <netdb.h>
+@@ -94,2 +107,3 @@
+ #include <grp.h>
++#endif
+ #if defined(HAVE_LINUX_FILTER_H)
+EOF
+# fix libgomp/env.c (version >= 13-20221030)
+patch -ulbf libgomp/env.c << EOF
+@@ -285,3 +285,3 @@
+ {
+-  unsigned upper = (unsigned long) params[2];
++  unsigned upper = (uintptr_t) params[2];
+   unsigned long pvalue = 0;
+EOF
+# fix undefined index() in gcc/m2/gm2spec.cc and gcc/m2/mc-boot-ch/Glibc.c(version >= 13.1.0)
+sed -i.bak -e "s/\bindex/strchr/" gcc/m2/gm2spec.cc gcc/m2/mc-boot-ch/Glibc.c gcc/m2/mc-boot-ch/Gdtoa.cc
+# fix gcc/m2/mc-boot-ch/GSelective.c (version >= 13.1.0)
+patch -ulbf gcc/m2/mc-boot-ch/GSelective.c << EOF
+@@ -28,2 +28,6 @@
+ #include "gm2-libs-host.h"
++#ifdef _WIN32
++#undef HAVE_SELECT
++typedef void fd_set;
++#endif
+
+EOF
+# fix gcc/m2/mc-boot-ch/GSysExceptions.c (version >= 13.1.0)
+patch -ulbf gcc/m2/mc-boot-ch/GSysExceptions.c << EOF
+@@ -25,2 +25,5 @@
+ #include "gm2-libs-host.h"
++#ifdef _WIN32
++#undef HAVE_SIGNAL_H
++#endif
+
+EOF
+# put LDFLAGS at the end of the linker arguments to make sure -lmman works
+sed -i.bak -e "s/\(\s\$(LDFLAGS)\)\([^\\\\\"]*\)$/\2\1/" $(grep -l "\$(LDFLAGS)" $(find -name Makefile.in))
+# fix build issue (version >= 12.1.0)
+#### bug reported: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105506
+patch -ulbf Makefile.in << EOF
+@@ -449,2 +449,3 @@
+
++@if pgo-build
+ # Pass additional PGO and LTO compiler options to the PGO build.
+@@ -491,2 +492,3 @@
+ PGO_BUILD_TRAINING = \$(addprefix maybe-check-,\$(PGO-TRAINING-TARGETS))
++@endif pgo-build
+
+EOF
+# fix Makefile.tpl (version >= 12.2.0)
+patch -ulbf Makefile.tpl << EOF
+@@ -452,2 +452,3 @@
+
++@if pgo-build
+ # Pass additional PGO and LTO compiler options to the PGO build.
+@@ -494,2 +495,3 @@
+ PGO_BUILD_TRAINING = \$(addprefix maybe-check-,\$(PGO-TRAINING-TARGETS))
++@endif pgo-build
+
+EOF
+# fix unsupported go language for GCC 12 and up in configure
+if echo $VERSION|grep -q "^1[2-9][.\-]"; then
+patch -ulbf configure << EOF
+@@ -3577,3 +3577,3 @@
+ case "\${target}" in
+-*-*-darwin* | *-*-cygwin* | *-*-mingw* | bpf-* )
++*-*-darwin* | *-*-cygwin* | bpf-* )
+     unsupported_languages="\$unsupported_languages go"
+@@ -3609,3 +3609,3 @@
+        ;;
+-    *-*-cygwin* | *-*-mingw*)
++    *-*-cygwin*)
+        noconfigdirs="\$noconfigdirs target-libgo"
+EOF
+fi
+## fix linker error: export ordinal too large (version >= 13)
+sed -i.bak "s/--export-all-symbols/--gc-keep-exported/" $(grep -l "\--export-all-symbols" $(find -name configure))
+# fix missing mmap/munmap and linker error: export ordinal too large
+sed -i.bak "s/\(\${wl}\)--export-all-symbols/\1--gc-keep-exported \1-lmman/" $(grep -l "\${wl}--export-all-symbols" $(find -name configure))
+# fix detection of GMP/MPFR/MPC
+sed -i.bak -e  "s/#include [<\"]\(gmp\|mpc\|mpfr\|isl\)\.h[>\"]/#include <stdio.h>\n&/" configure
+# copy MinGW-w64 files
 mkdir -p gcc-build/mingw-w64/mingw/lib
 cp -rf $M_TARGET/include gcc-build/mingw-w64/mingw
 cp -rf $M_TARGET/$MINGW_TRIPLE/lib/* gcc-build/mingw-w64/mingw/lib/ || cp -rf $M_TARGET/lib gcc-build/mingw-w64/mingw/
@@ -482,14 +791,14 @@ cd gcc-build
   --with-gnu-ld \
   --with-pkgversion="GCC with MCF thread model" \
   --with-build-sysroot=$M_SOURCE/gcc-13.1.0/gcc-build/mingw-w64 \
-  CFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
+  CFLAGS='-I$TOP_DIR/dlfcn-win32/include -Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
   CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
   LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
 make -j$MJOBS
 touch gcc/cc1.exe.a gcc/cc1plus.exe.a
 make install
-mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/lib/libgcc_s.a $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/
-mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/libgcc*.dll $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/
+mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/lib/libgcc_s.a $M_TARGET/lib/gcc/x86_64-w64-mingw32/`cat gcc/BASE-VER`/
+mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/libgcc*.dll $M_TARGET/lib/gcc/x86_64-w64-mingw32/`cat gcc/BASE-VER`/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
 
