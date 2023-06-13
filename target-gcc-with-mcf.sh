@@ -711,9 +711,7 @@ patch -ulbf configure << EOF
         noconfigdirs="\$noconfigdirs target-libgo"
 EOF
 ## fix linker error: export ordinal too large (version >= 13)
-sed -i.bak "s/--export-all-symbols/--gc-keep-exported/" $(grep -l "\--export-all-symbols" $(find -name configure))
-# fix missing mmap/munmap and linker error: export ordinal too large
-sed -i.bak "s/\(\${wl}\)--export-all-symbols/\1--gc-keep-exported \1-lmman/" $(grep -l "\${wl}--export-all-symbols" $(find -name configure))
+sed -i.bak "s/--export-all-symbols/--gc-keep-exported/" $(grep -l "\--export-all-symbols" $(find . -name configure))
 # fix detection of GMP/MPFR/MPC
 sed -i.bak -e  "s/#include [<\"]\(gmp\|mpc\|mpfr\|isl\)\.h[>\"]/#include <stdio.h>\n&/" configure
 # copy MinGW-w64 files
