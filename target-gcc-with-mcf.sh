@@ -81,6 +81,9 @@ git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
 #libdl (dlfcn-win32)
 git clone https://github.com/dlfcn-win32/dlfcn-win32 --branch master --depth 1
 
+#mman-win32
+git clone https://github.com/alitrack/mman-win32 --branch master --depth 1
+
 #zlib
 wget -c -O zlib-1.2.13.tar.gz https://github.com/madler/zlib/archive/refs/tags/v1.2.13.tar.gz
 tar xzf zlib-1.2.13.tar.gz
@@ -112,59 +115,56 @@ git clone https://github.com/pkgconf/pkgconf --branch pkgconf-1.9.5
 #wget -c -O cmake-3.26.4.tar.gz https://github.com/Kitware/CMake/archive/refs/tags/v3.26.4.tar.gz
 #tar xzf cmake-3.26.4.tar.gz
 
+echo "building mman-win32"
+echo "======================="
+cd $M_BUILD
+mkdir mman-build
+cmake -G Ninja -H$M_SOURCE/mman-win32 -B$M_BUILD/mman-build \
+  -DCMAKE_INSTALL_PREFIX=$TOP_DIR/mman \
+  -DCMAKE_TOOLCHAIN_FILE=$TOP_DIR/toolchain.cmake \
+  -DBUILD_SHARED_LIBS=OFF \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DBUILD_TESTS=OFF
+ninja -j$MJOBS -C $M_BUILD/mman-build
+ninja install -C $M_BUILD/mman-build
+
 echo "building binutils"
 echo "======================="
 cd $M_BUILD
 mkdir binutils-build
-cd binutils-build
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0002-check-for-unusual-file-harder.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0003-opcodes-i386-dis-Use-Intel-syntax-by-default.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0010-bfd-Increase-_bfd_coff_max_nscns-to-65279.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0110-binutils-mingw-gnu-print.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0410-windres-handle-spaces.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/0500-fix-weak-undef-symbols-after-image-base-change.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/2001-ld-option-to-move-default-bases-under-4GB.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/2003-Restore-old-behaviour-of-windres-so-that-options-con.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/3001-try-fix-compare_section-abort.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/bfd-real-fopen-handle-windows-nul.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/decorated-symbols-in-import-libs.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/libiberty-unlink-handle-windows-nul.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/reproducible-import-libraries.patch
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-binutils/specify-timestamp.patch
-
 cd $M_SOURCE/binutils-2.40
-patch -p1 -i $M_BUILD/binutils-build/0002-check-for-unusual-file-harder.patch
-patch -p1 -i $M_BUILD/binutils-build/0010-bfd-Increase-_bfd_coff_max_nscns-to-65279.patch
-patch -p1 -i $M_BUILD/binutils-build/0110-binutils-mingw-gnu-print.patch
-patch -p1 -i $M_BUILD/binutils-build/0003-opcodes-i386-dis-Use-Intel-syntax-by-default.patch
-patch -p1 -i $M_BUILD/binutils-build/2001-ld-option-to-move-default-bases-under-4GB.patch
-patch -R -p1 -i $M_BUILD/binutils-build/2003-Restore-old-behaviour-of-windres-so-that-options-con.patch
-patch -p2 -i $M_BUILD/binutils-build/reproducible-import-libraries.patch
-patch -p2 -i $M_BUILD/binutils-build/specify-timestamp.patch
-patch -p1 -i $M_BUILD/binutils-build/libiberty-unlink-handle-windows-nul.patch
-patch -p1 -i $M_BUILD/binutils-build/bfd-real-fopen-handle-windows-nul.patch
-patch -p1 -i $M_BUILD/binutils-build/3001-try-fix-compare_section-abort.patch
-
+# fix ld/ldlang.c (version >= 2.40)
+#### See bug reported here: https://sourceware.org/bugzilla/show_bug.cgi?id=30079
+patch -ulbf ld/ldlang.c << EOF
+@@ -651,3 +651,4 @@
+       /* Find the correct node to append this section.  */
+-      if (compare_section (sec->spec.sorted, section, (*tree)->section) < 0)
++      if (sec && sec->spec.sorted != none && sec->spec.sorted != by_none
++         && compare_section (sec->spec.sorted, section, (*tree)->section) < 0)
+        tree = &((*tree)->left);
+EOF
+# avoid linking with -lc which doesn't exist with MinGW-w64 (version >= 2.39)
+sed -i.bak -e "s/-Wl,-lc,--as-needed/-Wl,--as-needed/" bfd/configure opcodes/configure
 cd $M_BUILD/binutils-build
 $M_SOURCE/binutils-2.40/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
-  --with-sysroot=$M_TARGET \
-  --enable-64-bit-bfd \
-  --enable-install-libiberty \
-  --enable-plugins \
-  --enable-lto \
-  --enable-nls \
+  --enable-targets=x86_64 \
+  --enable-shared \
+  --enable-host-shared \
+  --enable-serial-configure \
+  --disable-bootstrap \
   --disable-rpath \
-  --disable-multilib \
-  --disable-werror \
-  --disable-shared \
-  --enable-deterministic-archives \
-  --disable-{gdb,gdbserver}
+  CFLAGS="-I$TOP_DIR/mman/include/mman-win32  -march=nocona -msahf -mtune=generic -O2" \
+  CXXFLAGS="-I$TOP_DIR/mman/include/mman-win32 -march=nocona -msahf -mtune=generic -O2" \
+  LDFLAGS="-Wl,--no-insert-timestamp -Wl,-no-undefined -Wl,--allow-multiple-definition -Wl,--as-needed -lmman"
 make -j$MJOBS
 make install
-rm $M_TARGET/lib/bfd-plugins/libdep.a
+# remove .la files
+rm -f $(find $M_TARGET -name '*.la')
+# remove .dll.a file from plugin folder (version >= 2.36)
+rm $M_TARGET/lib/bfd-plugins/*.dll.a
 
 echo "building mingw-w64-headers"
 echo "======================="
@@ -715,6 +715,10 @@ EOF
 sed -i.bak "s/--export-all-symbols/--gc-keep-exported/" $(grep -l "\--export-all-symbols" $(find . -name configure))
 # fix detection of GMP/MPFR/MPC
 sed -i.bak -e  "s/#include [<\"]\(gmp\|mpc\|mpfr\|isl\)\.h[>\"]/#include <stdio.h>\n&/" configure
+# fix missing mmap/munmap and linker error: export ordinal too large
+sed -i.bak "s/\(\${wl}\)--export-all-symbols/\1--gc-keep-exported \1-lmman/" $(grep -l "\${wl}--export-all-symbols" $(find . -name configure))
+# fix detection of GMP/MPFR/MPC
+sed -i.bak -e  "s/#include [<\"]\(gmp\|mpc\|mpfr\|isl\)\.h[>\"]/#include <stdio.h>\n&/" configure
 # copy MinGW-w64 files
 mkdir -p gcc-build/mingw-w64/mingw/lib
 cp -rf $M_TARGET/include gcc-build/mingw-w64/mingw
@@ -763,7 +767,7 @@ cd gcc-build
   LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
 make -j$MJOBS
 touch gcc/cc1.exe.a gcc/cc1plus.exe.a
-make install
+make install LIBS="-lmman"
 mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/lib/libgcc_s.a $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/
 mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/libgcc*.dll $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
