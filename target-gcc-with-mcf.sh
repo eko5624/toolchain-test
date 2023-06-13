@@ -562,32 +562,10 @@ cat libbacktrace/mmapio.c.bak >> libbacktrace/mmapio.c
 #### see also: https://github.com/msys2/MINGW-packages/blob/master/mingw-w64-gcc/0010-Fix-using-large-PCH.patch
 #### see also: https://github.com/msys2/MINGW-packages/blob/master/mingw-w64-gcc/0021-PR14940-Allow-a-PCH-to-be-mapped-to-a-different-addr.patch
 patch -ulbf gcc/config/i386/host-mingw32.cc << EOF
-@@ -46,5 +46,2 @@
-
--/* FIXME: Is this big enough?  */
--static const size_t pch_VA_max_size  = 128 * 1024 * 1024;
--
- /* Granularity for reserving address space.  */
-@@ -90,5 +87,2 @@
-   void* res;
--  size = (size + va_granularity - 1) & ~(va_granularity - 1);
--  if (size > pch_VA_max_size)
--    return NULL;
-
-@@ -102,3 +96,3 @@
-
--  res = VirtualAlloc (NULL, pch_VA_max_size,
-+  res = VirtualAlloc (NULL, size,
-                      MEM_RESERVE | MEM_TOP_DOWN,
 @@ -143,3 +137,2 @@
    OSVERSIONINFO version_info;
 -  int r;
 
-@@ -152,3 +145,3 @@
-      this to work.  We can't change the offset. */
--  if ((offset & (va_granularity - 1)) != 0 || size > pch_VA_max_size)
-+  if ((offset & (va_granularity - 1)) != 0)
-     return -1;
 @@ -177,21 +170,20 @@
 
 -  /* Retry five times, as here might occure a race with multiple gcc's
@@ -672,14 +650,6 @@ patch -ulbf libgo/sysinfo.c << EOF
  #include <grp.h>
 +#endif
  #if defined(HAVE_LINUX_FILTER_H)
-EOF
-# fix libgomp/env.c (version >= 13-20221030)
-patch -ulbf libgomp/env.c << EOF
-@@ -285,3 +285,3 @@
- {
--  unsigned upper = (unsigned long) params[2];
-+  unsigned upper = (uintptr_t) params[2];
-   unsigned long pvalue = 0;
 EOF
 # fix undefined index() in gcc/m2/gm2spec.cc and gcc/m2/mc-boot-ch/Glibc.c(version >= 13.1.0)
 sed -i.bak -e "s/\bindex/strchr/" gcc/m2/gm2spec.cc gcc/m2/mc-boot-ch/Glibc.c gcc/m2/mc-boot-ch/Gdtoa.cc
