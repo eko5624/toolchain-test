@@ -489,7 +489,7 @@ sed -i.bak -e "s/^\(\s*#\s*\)include <inttypes\.h>.*$/&\n\1ifdef __MINGW32__\n\1
 sed -i.bak -e "s?pic/\(libiberty\.a\)?\1?g" $(grep -l "pic/libiberty\.a" */Makefile.in)
 # fix missing .exe extension of mkoffload in in gcc/lto-wrapper.c (version >= 10.2.0)
 #### bug reported: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=98145
-patch -ulbf gcc/lto-wrapper.c << EOF
+patch -ulbf gcc/lto-wrapper.cc << EOF
 @@ -548,4 +548,10 @@
  /* Parse STR, saving found tokens into PVALUES and return their number.
 -   Tokens are assumed to be delimited by ':'.  If APPEND is non-null,
