@@ -20,7 +20,6 @@ export M_CROSS=$M_ROOT/cross
 export M_TARGET=$M_ROOT/target
 
 export CC=$M_CROSS/bin/$MINGW_TRIPLE-gcc
-export CPP=$M_CROSS/bin/$MINGW_TRIPLE-g++
 export CXX=$M_CROSS/bin/$MINGW_TRIPLE-g++
 export AR=$M_CROSS/bin/$MINGW_TRIPLE-ar
 export RANLIB=$M_CROSS/bin/$MINGW_TRIPLE-ranlib
@@ -247,7 +246,8 @@ $M_SOURCE/binutils-2.40/configure \
   --disable-bootstrap \
   CFLAGS="-I$TOP_DIR/mman/include -march=nocona -msahf -mtune=generic -O2" \
   CXXFLAGS="-I$TOP_DIR/mman/include -march=nocona -msahf -mtune=generic -O2" \
-  LDFLAGS="-Wl,--no-insert-timestamp -Wl,-no-undefined -Wl,--allow-multiple-definition -Wl,--as-needed -lmman"  
+  LDFLAGS="-Wl,--no-insert-timestamp -Wl,-no-undefined -Wl,--allow-multiple-definition -Wl,--as-needed -lmman" \
+  AR=$M_CROSS/bin/$MINGW_TRIPLE-ar
 make -j$MJOBS
 make install
 # remove .la files
