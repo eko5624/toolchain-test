@@ -19,6 +19,7 @@ export M_BUILD=$M_ROOT/build
 export M_CROSS=$M_ROOT/cross
 export M_TARGET=$M_ROOT/target
 
+export C=$M_CROSS/bin/$MINGW_TRIPLE-gcc
 export CC=$M_CROSS/bin/$MINGW_TRIPLE-gcc
 export CXX=$M_CROSS/bin/$MINGW_TRIPLE-g++
 export AR=$M_CROSS/bin/$MINGW_TRIPLE-ar
