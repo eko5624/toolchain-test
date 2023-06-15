@@ -244,14 +244,15 @@ $M_SOURCE/binutils-2.40/configure \
   --enable-host-shared \
   --enable-serial-configure \
   --disable-bootstrap \
-  CFLAGS='-I$TOP_DIR/mman/include' \
-  CXXFLAGS='-I$TOP_DIR/mman/include'
+  CFLAGS="-I$TOP_DIR/mman/include -march=nocona -msahf -mtune=generic -O2" \
+  CXXFLAGS="-I$TOP_DIR/mman/include -march=nocona -msahf -mtune=generic -O2" \
+  LDFLAGS="-lmman"
 make -j$MJOBS
 make install
 # remove .la files
-rm -f $(find $M_TARGET -name '*.la')
+#rm -f $(find $M_TARGET -name '*.la')
 # remove .dll.a file from plugin folder (version >= 2.36)
-rm $M_TARGET/lib/bfd-plugins/*.dll.a
+#rm $M_TARGET/lib/bfd-plugins/*.dll.a
 
 echo "building mingw-w64-headers"
 echo "======================="
