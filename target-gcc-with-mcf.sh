@@ -245,8 +245,7 @@ $M_SOURCE/binutils-2.40/configure \
   --enable-serial-configure \
   --disable-bootstrap \
   CFLAGS="-I$TOP_DIR/mman/include -march=nocona -msahf -mtune=generic -O2" \
-  CXXFLAGS="-I$TOP_DIR/mman/include -march=nocona -msahf -mtune=generic -O2" \
-  LDFLAGS="-lmman"
+  CXXFLAGS="-I$TOP_DIR/mman/include -march=nocona -msahf -mtune=generic -O2"
 make -j$MJOBS
 make install
 # remove .la files
