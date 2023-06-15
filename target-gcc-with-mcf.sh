@@ -245,9 +245,7 @@ $M_SOURCE/binutils-2.40/configure \
   --enable-serial-configure \
   --disable-bootstrap \
   CFLAGS='-I$TOP_DIR/mman/include' \
-  CXXFLAGS='-I$TOP_DIR/mman/include' \
-  LDFLAGS='-Wl,--no-insert-timestamp -Wl,-no-undefined -Wl,--allow-multiple-definition -Wl,--as-needed -lmman' \
-  AR=$M_CROSS/bin/$MINGW_TRIPLE-ar
+  CXXFLAGS='-I$TOP_DIR/mman/include'
 make -j$MJOBS
 make install
 # remove .la files
