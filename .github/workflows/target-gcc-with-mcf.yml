@@ -51,7 +51,7 @@ jobs:
 
       - name: Packaging toolchain
         run: |
-          7z a gcc-with-mcf-ucrt-test.7z target/*
+          7z a target-gcc-with-mcf-test.7z target/*
 
       - name: Release
         continue-on-error: true
@@ -59,7 +59,7 @@ jobs:
           GH_TOKEN: ${{ github.token }} 
         run: |
           chmod +x ./release-package.sh
-          ./release-package.sh gcc-with-mcf-ucrt-test.7z
+          ./release-package.sh target-gcc-with-mcf-test.7z
           
 
       - name: Saving target gcc cache
