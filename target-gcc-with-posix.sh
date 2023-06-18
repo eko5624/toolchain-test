@@ -90,8 +90,7 @@ wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
 tar xzf make-4.4.1.tar.gz
 
 #pkgconf
-wget -c -O pkgconf-1.9.5.tar.gz https://github.com/pkgconf/pkgconf/archive/refs/tags/pkgconf-1.9.5.tar.gz
-tar xzf pkgconf-1.9.5.tar.gz
+git clone https://github.com/pkgconf/pkgconf --branch pkgconf-1.9.5
 
 echo "building binutils"
 echo "======================="
@@ -286,7 +285,7 @@ echo "======================="
 cd $M_BUILD
 mkdir pkgconf-build
 cd pkgconf-build
-meson setup . $M_SOURCE/pkgconf-1.9.5 \
+meson setup . $M_SOURCE/pkgconf \
   --prefix=$M_TARGET \
   --cross-file=$TOP_DIR/cross.meson \
   --buildtype=plain \
