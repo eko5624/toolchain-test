@@ -51,7 +51,7 @@ jobs:
 
       - name: Packaging toolchain
         run: |
-          7z a target-gcc-with-posix-ucrt.7z target/*
+          7z a target-gcc-with-posix.7z target/*
 
       - name: Release
         continue-on-error: true
