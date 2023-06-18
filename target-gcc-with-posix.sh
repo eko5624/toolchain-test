@@ -236,6 +236,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
   --with-tune=generic \
+  --enable-mingw-wildcard \
   --enable-threads=posix \
   --enable-lto \
   --enable-checking=release \
