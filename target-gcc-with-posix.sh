@@ -63,27 +63,13 @@ tar xjf isl-0.24.tar.bz2
 #mingw-w64
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
-#mcfgthread
-git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
-
-#libdl (dlfcn-win32)
-#git clone https://github.com/dlfcn-win32/dlfcn-win32 --branch master --depth 1
-
 #zlib
 wget -c -O zlib-1.2.13.tar.gz https://github.com/madler/zlib/archive/refs/tags/v1.2.13.tar.gz
 tar xzf zlib-1.2.13.tar.gz
 
-#zstd
-#wget -c -O zstd-1.5.5.tar.gz https://github.com/facebook/zstd/archive/refs/tags/v1.5.5.tar.gz
-#tar xzf zstd-1.5.5.tar.gz
-
-#gperf
-#wget -c -O gperf-3.1.tar.gz https://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz
-#tar xzf gperf-3.1.tar.gz
-
 #libiconv
-wget -c -O libiconv-1.17.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.17.tar.gz
-tar xzf libiconv-1.17.tar.gz
+#wget -c -O libiconv-1.17.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.17.tar.gz
+#tar xzf libiconv-1.17.tar.gz
 
 #make
 wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
@@ -243,10 +229,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-multilib \
   --disable-bootstrap \
   --enable-languages=c,c++ \
-  --with-gmp=$M_BUILD/for_target \
-  --with-mpfr=$M_BUILD/for_target \
-  --with-mpc=$M_BUILD/for_target \
-  --with-isl=$M_BUILD/for_target \
+  --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
   --disable-nls \
   --disable-werror \
   --disable-shared \
@@ -265,7 +248,8 @@ make install
 #cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
-rm -f mingw
+rm -f $M_TARGET/mingw
+rm -f $M_TARGET/share
 
 echo "building make"
 echo "======================="
