@@ -249,7 +249,7 @@ make install
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
 rm -f $M_TARGET/mingw
-rm -f $M_TARGET/share
+rm -rf $M_TARGET/share
 
 echo "building make"
 echo "======================="
