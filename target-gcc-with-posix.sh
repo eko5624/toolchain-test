@@ -232,7 +232,8 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
   --disable-nls \
   --disable-werror \
-  --disable-shared \
+  --enable-shared \
+  --enable-static \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
   --with-tune=generic \
@@ -246,7 +247,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
 make -j$MJOBS
 make install
-#cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
+cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
 rm -f $M_TARGET/mingw
