@@ -51,7 +51,7 @@ jobs:
       - name: Packaging toolchain
         run: |
           #rm -f target/mingw
-          7z a target-gcc-with-mcf-ucrt.7z target/*
+          7z a target-gcc-with-mcf.7z target/*
 
       - name: Release gcc
         continue-on-error: true
