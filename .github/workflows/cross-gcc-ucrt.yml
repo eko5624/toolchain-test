@@ -50,7 +50,8 @@ jobs:
 
       - name: Packaging toolchain
         run: |
-          zip -r -y cross-gcc-ucrt-13.1.0.zip cross/*
+          rm -f cross/mingw 
+          7z a cross-gcc-ucrt-13.1.0.7z cross/*
 
       - name: Release
         continue-on-error: true
@@ -58,7 +59,7 @@ jobs:
           GH_TOKEN: ${{ github.token }} 
         run: |
           chmod +x ./release-package.sh
-          ./release-package.sh cross-gcc-ucrt-13.1.0.zip
+          ./release-package.sh cross-gcc-ucrt-13.1.0.7z
 
       - name: Saving gcc cache
         uses: actions/cache/save@main
