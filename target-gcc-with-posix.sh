@@ -282,5 +282,7 @@ ninja install -C $M_BUILD/pkgconf-build
 cp $M_TARGET/bin/pkgconf.exe $M_TARGET/bin/pkg-config.exe
 cp $M_TARGET/bin/pkgconf.exe $M_TARGET/bin/x86_64-w64-mingw32-pkg-config.exe
 cd $M_TARGET
+rm -rf lib/pkgconfig
+rm -rf include/pkgconf
 rm -f mingw
 rm -rf share
