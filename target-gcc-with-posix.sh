@@ -226,32 +226,33 @@ $M_SOURCE/gcc-13.1.0/configure \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
   --with-sysroot=$M_TARGET \
-  --disable-multilib \
-  --disable-bootstrap \
-  --enable-languages=c,c++ \
   --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
+  --disable-multilib \
+  --disable-dependency-tracking \
+  --disable-bootstrap \
   --disable-nls \
   --disable-werror \
-  --enable-shared \
-  --enable-static \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
-  --with-tune=generic \
+  --enable-languages=c,c++ \
+  --enable-libgomp \
+  --enable-version-specific-runtime-libs \
   --enable-mingw-wildcard \
   --enable-threads=posix \
   --enable-lto \
   --enable-checking=release \
+  --enable-static \
+  --disable-shared \
+  --with-tune=generic \
   --with-pkgversion="GCC with posix thread model" \
   CFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
   CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
   LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
 make -j$MJOBS
 make install
-cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
+#cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
-rm -f $M_TARGET/mingw
-rm -rf $M_TARGET/share
 
 echo "building make"
 echo "======================="
@@ -281,3 +282,5 @@ ninja install -C $M_BUILD/pkgconf-build
 cp $M_TARGET/bin/pkgconf.exe $M_TARGET/bin/pkg-config.exe
 cp $M_TARGET/bin/pkgconf.exe $M_TARGET/bin/x86_64-w64-mingw32-pkg-config.exe
 cd $M_TARGET
+rm -f mingw
+rm -rf share
