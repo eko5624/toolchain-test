@@ -229,6 +229,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --libexecdir=$M_TARGET/lib \
   --with-sysroot=$M_TARGET \
   --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
+  --disable-rpath \
   --disable-multilib \
   --disable-dependency-tracking \
   --disable-bootstrap \
@@ -252,9 +253,18 @@ $M_SOURCE/gcc-13.1.0/configure \
   LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
 make -j$MJOBS
 make install
-#mv $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
+VER=$(cat $M_SOURCE/gcc-13.1.0/gcc/BASE-VER)
+mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/lib/libgcc_s.a $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/
+mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/libgcc*.dll $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
+for f in $M_TARGET/bin/*.exe; do
+  strip -s $f
+done
+for f in $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/*.exe; do
+  strip -s $f
+done
+rm -rf $M_TARGET/share
 
 echo "building make"
 echo "======================="
@@ -287,4 +297,3 @@ cd $M_TARGET
 rm -rf lib/pkgconfig
 rm -rf include/pkgconf
 rm -f mingw
-rm -rf share
