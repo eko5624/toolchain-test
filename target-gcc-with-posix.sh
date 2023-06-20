@@ -259,6 +259,7 @@ make install
 VER=$(cat $M_SOURCE/gcc-13.1.0/gcc/BASE-VER)
 mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/lib/libgcc_s.a $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/
 mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/libgcc*.dll $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/
+rm -rf $M_TARGET/lib/gcc/x86_64-w64-mingw32/lib
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
 for f in $M_TARGET/bin/*.exe; do
