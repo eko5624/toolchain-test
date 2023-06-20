@@ -445,7 +445,6 @@ EOF
 echo "building gcc"
 echo "======================="
 cd $M_SOURCE/gcc-13.1.0
-VER=$(cat gcc/BASE-VER)
 
 # fix missing syslog in libssp/ssp.c
 sed -i.bak -e "s?#ifdef HAVE_SYSLOG_H?#if 0 //&?" libssp/ssp.c
@@ -772,10 +771,17 @@ cd gcc-build
 make -j$MJOBS
 touch gcc/cc1.exe.a gcc/cc1plus.exe.a
 make install LIBS="-lmman"
+VER=$(cat $M_SOURCE/gcc-13.1.0/gcc/BASE-VER)
 mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/lib/libgcc_s.a $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/
 mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/libgcc*.dll $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
+for f in $M_TARGET/bin/*.exe; do
+  strip -s $f
+done
+for f in $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/*.exe; do
+  strip -s $f
+done
 
 echo "building mcfgthread"
 echo "======================="
@@ -823,3 +829,6 @@ ninja install -C $M_BUILD/pkgconf-build
 cp $M_TARGET/bin/pkgconf.exe $M_TARGET/bin/pkg-config.exe
 cp $M_TARGET/bin/pkgconf.exe $M_TARGET/bin/x86_64-w64-mingw32-pkg-config.exe
 cd $M_TARGET
+rm -rf lib/pkgconfig
+rm -rf include/pkgconf
+rm -rf $M_TARGET/share
