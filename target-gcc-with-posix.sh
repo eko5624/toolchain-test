@@ -210,11 +210,11 @@ cd winpthreads-build
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/$MINGW_TRIPLE \
-  --enable-shared \
-  --enable-static
+  --enable-static \
+  --disable-shared
 make -j$MJOBS
 make install
-mv $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
+#mv $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
 
 echo "building gcc"
 echo "======================="
@@ -235,18 +235,21 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-bootstrap \
   --disable-nls \
   --disable-werror \
+  --disable-symvers \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
   --enable-languages=c,c++ \
   --enable-libgomp \
   --enable-version-specific-runtime-libs \
   --enable-mingw-wildcard \
+  --enable-__cxa_atexit \
   --enable-threads=posix \
   --enable-lto \
   --enable-checking=release \
   --enable-static \
   --enable-shared \
   --with-tune=generic \
+  --without-included-gettext \
   --with-pkgversion="GCC with posix thread model" \
   CFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
   CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
