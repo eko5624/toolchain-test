@@ -267,7 +267,6 @@ done
 for f in $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/*.exe; do
   strip -s $f
 done
-rm -rf $M_TARGET/share
 
 echo "building make"
 echo "======================="
@@ -300,3 +299,4 @@ cd $M_TARGET
 rm -rf lib/pkgconfig
 rm -rf include/pkgconf
 rm -f mingw
+rm -rf $M_TARGET/share
