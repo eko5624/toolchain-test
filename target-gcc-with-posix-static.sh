@@ -295,3 +295,4 @@ cd $M_TARGET
 rm -rf lib/pkgconfig
 rm -rf include/pkgconf
 rm -f mingw
+rm -rf $M_TARGET/share
