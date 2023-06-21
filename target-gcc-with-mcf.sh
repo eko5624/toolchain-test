@@ -737,7 +737,7 @@ cd gcc-build
   --disable-bootstrap \
   --with-arch=x86-64 \
   --with-tune=generic \
-  --enable-languages=c,c++ \
+  --enable-languages=c,c++,lto,objc,obj-c++ \
   --enable-shared \
   --enable-static \
   --enable-threads=mcf \
