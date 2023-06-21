@@ -241,6 +241,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-languages=c,c++ \
   --enable-libgomp \
   --enable-version-specific-runtime-libs \
+  --enable-fully-dynamic-string \
   --enable-mingw-wildcard \
   --enable-__cxa_atexit \
   --enable-threads=posix \
