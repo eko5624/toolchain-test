@@ -99,7 +99,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --libdir=$M_CROSS/lib \
   --with-sysroot=$M_CROSS \
   --disable-multilib \
-  --enable-languages=c,c++ \
+  --enable-languages=c,lto,c++,fortran \
   --disable-nls \
   --disable-shared \
   --disable-win32-registry \
