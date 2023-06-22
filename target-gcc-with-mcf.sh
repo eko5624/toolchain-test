@@ -727,7 +727,6 @@ mkdir -p gcc-build/mingw-w64/mingw/lib
 cp -rf $M_TARGET/include gcc-build/mingw-w64/mingw
 cp -rf $M_TARGET/$MINGW_TRIPLE/lib/* gcc-build/mingw-w64/mingw/lib/ || cp -rf $M_TARGET/lib gcc-build/mingw-w64/mingw/
 cd gcc-build
-CFLAGS="-fno-exceptions"
 ../configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
@@ -766,7 +765,7 @@ CFLAGS="-fno-exceptions"
   --with-gnu-ld \
   --with-pkgversion="GCC with MCF thread model" \
   --with-build-sysroot=$M_SOURCE/gcc-13.1.0/gcc-build/mingw-w64 \
-  CFLAGS='-I$TOP_DIR/dlfcn-win32/include -Wno-int-conversion -march=nocona -msahf -mtune=generic -O2' \
+  CFLAGS='-I$TOP_DIR/dlfcn-win32/include -fno-exceptions -Wno-int-conversion -march=nocona -msahf -mtune=generic -O2' \
   CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
   LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
 make -j$MJOBS
