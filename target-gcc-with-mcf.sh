@@ -345,16 +345,20 @@ git clone https://github.com/mingw-w64/mingw-w64.git
 cd $M_BUILD
 mkdir winpthreads-build
 cd winpthreads-build
-curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-winpthreads-git/0001-Define-__-de-register_frame_info-in-fake-libgcc_s.patch
 cd $M_SOURCE/mingw-w64
-git apply $M_BUILD/winpthreads-build/0001-Define-__-de-register_frame_info-in-fake-libgcc_s.patch
-
-# fix mingw-w64-libraries/winpthreads/src/thread.c (version >= 9.0.0)
-patch -ulf mingw-w64-libraries/winpthreads/src/thread.c << EOF
-@@ -27,2 +27,3 @@
- #include <malloc.h>
-+#include <string.h>
- #include <signal.h>
+# fix mingw-w64-libraries/winpthreads/src/thread.c (version >= 10.0.0)
+####mingw-w64-libraries/winpthreads/src/thread.c:1525:5: error: a handler attribute must begin with '@' or '%'
+patch -ulbf mingw-w64-libraries/winpthreads/src/thread.c << EOF
+@@ -1522,3 +1522,3 @@
+       /* Provide to this thread a default exception handler.  */
+-      #ifdef __SEH__
++      #if defined(__SEH__) && !(defined(__ARM_ARCH))
+        asm ("\\t.tl_start:\\n"
+@@ -1534,3 +1534,3 @@
+         trslt = (intptr_t) tv->func(tv->ret_arg);
+-      #ifdef __SEH__
++      #if defined(__SEH__) && !(defined(__ARM_ARCH))
+        asm ("\\tnop\\n\\t.tl_end: nop\\n");
 EOF
 
 cd $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads
@@ -364,8 +368,11 @@ unset CC
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
+  --with-sysroot=$M_TARGET \
   --disable-shared \
-  --enable-static
+  --enable-static \
+  CFLAGS="-I$M_TARGET/include" \
+  LDFLAGS="-L$M_TARGET/lib"
 make -j$MJOBS
 make install
 rm -rf $M_SOURCE/mingw-w64
