@@ -784,7 +784,7 @@ cd gcc-build
   --with-build-sysroot=$M_SOURCE/gcc-13.1.0/gcc-build/mingw-w64 \
   CFLAGS='-I$TOP_DIR/dlfcn-win32/include -Wno-int-conversion -march=nocona -msahf -mtune=generic -O2' \
   CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
-  LDFLAGS='-lmcfgthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
+  LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
 make -j$MJOBS
 touch gcc/cc1.exe.a gcc/cc1plus.exe.a
 make install LIBS="-lmman"
