@@ -371,24 +371,6 @@ make install
 rm -rf $M_SOURCE/mingw-w64
 #cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin
 
-echo "building mcfgthread"
-echo "======================="
-cd $M_SOURCE/mcfgthread
-git reset --hard
-git clean -fdx
-autoreconf -ivf
-cd $M_BUILD
-mkdir mcfgthread-build
-cd mcfgthread-build
-export CFLAGS+=' -fno-exceptions -Os -g'
-$M_SOURCE/mcfgthread/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
-  --disable-pch
-make -j$MJOBS
-make install
-#cp $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
-
 echo "building dlfcn-win32"
 echo "======================="
 cd $M_BUILD
@@ -752,35 +734,45 @@ cd gcc-build
   --prefix=$M_TARGET \
   --libexecdir=$M_TARGET/lib \
   --with-{gmp,mpfr,mpc,isl}=$M_BUILD/for_target \
-  --disable-bootstrap \
-  --with-arch=x86-64 \
   --with-tune=generic \
-  --enable-languages=c,c++,fortran,lto \
-  --enable-shared \
-  --enable-static \
-  --enable-threads=mcf \
-  --enable-graphite \
-  --enable-fully-dynamic-string \
-  --enable-libstdcxx-filesystem-ts=yes \
-  --enable-libstdcxx-time=yes \
-  --disable-libstdcxx-pch \
-  --disable-libstdcxx-debug \
-  --enable-version-specific-runtime-libs \
-  --enable-mingw-wildcard \
-  --enable-__cxa_atexit \
-  --enable-lto \
-  --enable-libgomp \
-  --disable-multilib \
   --enable-checking=release \
+  --enable-threads=mcf \
+  --disable-sjlj-exceptions \
+  --disable-libunwind-exceptions \
+  --disable-serial-configure \
+  --disable-bootstrap \
+  --enable-host-shared \
+  --enable-plugin \
+  --disable-default-ssp \
   --disable-rpath \
-  --disable-win32-registry \
-  --disable-werror \
+  --disable-libstdcxx-debug \
+  --disable-version-specific-runtime-libs \
+  --with-stabs \
   --disable-symvers \
+  --enable-languages=c,c++ \
+  --disable-gold \
+  --disable-nls \
+  --disable-stage1-checking \
+  --disable-win32-registry \
+  --disable-multilib \
+  --enable-ld \
+  --enable-libquadmath \
+  --enable-libssp \
+  --enable-libstdcxx \
+  --enable-lto \
+  --enable-fully-dynamic-string \
+  --enable-libgomp \
+  --enable-graphite \
+  --enable-mingw-wildcard \
+  --enable-libstdcxx-time \
+  --enable-libstdcxx-pch \
+  --disable-libstdcxx-backtrace \
+  --enable-install-libiberty \
+  --enable-__cxa_atexit \
+  --without-included-gettext \
   --with-libiconv-prefix=$TOP_DIR/opt \
   --with-zlib-include=$TOP_DIR/opt/include \
   --with-zlib-lib=$TOP_DIR/opt/lib \
-  --with-gnu-as \
-  --with-gnu-ld \
   --with-pkgversion="GCC with MCF thread model" \
   --with-build-sysroot=$M_SOURCE/gcc-13.1.0/gcc-build/mingw-w64 \
   CFLAGS='-I$TOP_DIR/dlfcn-win32/include -Wno-int-conversion -march=nocona -msahf -mtune=generic -O2' \
@@ -802,6 +794,24 @@ done
 for f in $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/*.exe; do
   strip -s $f
 done
+
+echo "building mcfgthread"
+echo "======================="
+cd $M_SOURCE/mcfgthread
+git reset --hard
+git clean -fdx
+autoreconf -ivf
+cd $M_BUILD
+mkdir mcfgthread-build
+cd mcfgthread-build
+export CFLAGS+=' -fno-exceptions -Os -g'
+$M_SOURCE/mcfgthread/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_TARGET \
+  --disable-pch
+make -j$MJOBS
+make install
+#cp $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
 
 echo "building make"
 echo "======================="
