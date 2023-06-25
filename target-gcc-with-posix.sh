@@ -240,7 +240,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-win32-registry \
   --enable-languages=c,c++ \
   --enable-libgomp \
-  --enable-version-specific-runtime-libs \
+  --disable-version-specific-runtime-libs \
   --enable-fully-dynamic-string \
   --enable-mingw-wildcard \
   --enable-__cxa_atexit \
@@ -258,9 +258,9 @@ $M_SOURCE/gcc-13.1.0/configure \
 make -j$MJOBS
 make install
 VER=$(cat $M_SOURCE/gcc-13.1.0/gcc/BASE-VER)
-mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/lib/libgcc_s.a $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/
-mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/libgcc*.dll $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/
-rm -rf $M_TARGET/lib/gcc/x86_64-w64-mingw32/lib
+#mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/lib/libgcc_s.a $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/
+#mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/libgcc*.dll $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/
+#rm -rf $M_TARGET/lib/gcc/x86_64-w64-mingw32/lib
 find $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER -type f -name "*.dll.a" -print0 | xargs -0 -I {} rm {}
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
