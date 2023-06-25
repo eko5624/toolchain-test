@@ -789,7 +789,7 @@ cd gcc-build
 make -j$MJOBS
 touch gcc/cc1.exe.a gcc/cc1plus.exe.a
 make install LIBS="-lmman"
-#VER=$(cat $M_SOURCE/gcc-13.1.0/gcc/BASE-VER)
+VER=$(cat $M_SOURCE/gcc-13.1.0/gcc/BASE-VER)
 #mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/lib/libgcc_s.a $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/
 #mv $M_TARGET/lib/gcc/x86_64-w64-mingw32/libgcc*.dll $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/
 #rm -rf $M_TARGET/lib/gcc/x86_64-w64-mingw32/lib
