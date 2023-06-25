@@ -338,48 +338,6 @@ make -j$MJOBS
 make install
 rm -rf $M_SOURCE/mingw-w64
 
-echo "building winpthreads"
-echo "======================="
-cd $M_SOURCE
-git clone https://github.com/mingw-w64/mingw-w64.git
-cd $M_BUILD
-mkdir winpthreads-build
-cd winpthreads-build
-cd $M_SOURCE/mingw-w64
-# fix mingw-w64-libraries/winpthreads/src/thread.c (version >= 10.0.0)
-####mingw-w64-libraries/winpthreads/src/thread.c:1525:5: error: a handler attribute must begin with '@' or '%'
-patch -ulbf mingw-w64-libraries/winpthreads/src/thread.c << EOF
-@@ -1522,3 +1522,3 @@
-       /* Provide to this thread a default exception handler.  */
--      #ifdef __SEH__
-+      #if defined(__SEH__) && !(defined(__ARM_ARCH))
-        asm ("\\t.tl_start:\\n"
-@@ -1534,3 +1534,3 @@
-         trslt = (intptr_t) tv->func(tv->ret_arg);
--      #ifdef __SEH__
-+      #if defined(__SEH__) && !(defined(__ARM_ARCH))
-        asm ("\\tnop\\n\\t.tl_end: nop\\n");
-EOF
-
-cd $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads
-autoreconf -vfi
-cd $M_BUILD/winpthreads-build
-unset CC
-$M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
-  --with-sysroot=$M_TARGET \
-  --enable-shared \
-  --enable-static \
-  CFLAGS="-I$M_TARGET/include" \
-  LDFLAGS="-L$M_TARGET/lib"
-make -j$MJOBS
-make install
-mv $M_TARGET/lib/libwinpthread.a $M_TARGET/lib/libwinpthread.a.bak
-ar rcs $M_TARGET/lib/libwinpthread.a
-rm -rf $M_SOURCE/mingw-w64
-#cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin
-
 echo "building dlfcn-win32"
 echo "======================="
 cd $M_BUILD
@@ -735,6 +693,7 @@ sed -i.bak -e  "s/#include [<\"]\(gmp\|mpc\|mpfr\|isl\)\.h[>\"]/#include <stdio.
 mkdir -p gcc-build/mingw-w64/mingw/lib
 cp -rf $M_TARGET/include gcc-build/mingw-w64/mingw
 cp -rf $M_TARGET/$MINGW_TRIPLE/lib/* gcc-build/mingw-w64/mingw/lib/ || cp -rf $M_TARGET/lib gcc-build/mingw-w64/mingw/
+ar rcs $M_TARGET/lib/libwinpthread.a
 cd gcc-build
 ../configure \
   --build=x86_64-pc-linux-gnu \
@@ -786,7 +745,7 @@ cd gcc-build
   --with-build-sysroot=$M_SOURCE/gcc-13.1.0/gcc-build/mingw-w64 \
   CFLAGS='-I$TOP_DIR/dlfcn-win32/include -Wno-int-conversion -march=nocona -msahf -mtune=generic -O2' \
   CXXFLAGS='-Wno-int-conversion -march=nocona -msahf -mtune=generic -O2' \
-  LDFLAGS='-Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
+  LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
 make -j$MJOBS
 touch gcc/cc1.exe.a gcc/cc1plus.exe.a
 make install LIBS="-lmman"
@@ -800,6 +759,46 @@ done
 for f in $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/*.exe; do
   strip -s $f
 done
+
+echo "building winpthreads"
+echo "======================="
+cd $M_SOURCE
+git clone https://github.com/mingw-w64/mingw-w64.git
+cd $M_BUILD
+mkdir winpthreads-build
+cd winpthreads-build
+cd $M_SOURCE/mingw-w64
+# fix mingw-w64-libraries/winpthreads/src/thread.c (version >= 10.0.0)
+####mingw-w64-libraries/winpthreads/src/thread.c:1525:5: error: a handler attribute must begin with '@' or '%'
+patch -ulbf mingw-w64-libraries/winpthreads/src/thread.c << EOF
+@@ -1522,3 +1522,3 @@
+       /* Provide to this thread a default exception handler.  */
+-      #ifdef __SEH__
++      #if defined(__SEH__) && !(defined(__ARM_ARCH))
+        asm ("\\t.tl_start:\\n"
+@@ -1534,3 +1534,3 @@
+         trslt = (intptr_t) tv->func(tv->ret_arg);
+-      #ifdef __SEH__
++      #if defined(__SEH__) && !(defined(__ARM_ARCH))
+        asm ("\\tnop\\n\\t.tl_end: nop\\n");
+EOF
+
+cd $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads
+autoreconf -vfi
+cd $M_BUILD/winpthreads-build
+unset CC
+$M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_TARGET \
+  --with-sysroot=$M_TARGET \
+  --enable-shared \
+  --enable-static \
+  CFLAGS="-I$M_TARGET/include" \
+  LDFLAGS="-L$M_TARGET/lib"
+make -j$MJOBS
+make install
+rm -rf $M_SOURCE/mingw-w64
+#cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin
 
 echo "building mcfgthread"
 echo "======================="
