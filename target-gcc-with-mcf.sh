@@ -369,7 +369,7 @@ $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
   --with-sysroot=$M_TARGET \
-  --disable-shared \
+  --enable-shared \
   --enable-static \
   CFLAGS="-I$M_TARGET/include" \
   LDFLAGS="-L$M_TARGET/lib"
@@ -785,8 +785,8 @@ cd gcc-build
   --with-pkgversion="GCC with MCF thread model" \
   --with-build-sysroot=$M_SOURCE/gcc-13.1.0/gcc-build/mingw-w64 \
   CFLAGS='-I$TOP_DIR/dlfcn-win32/include -Wno-int-conversion -march=nocona -msahf -mtune=generic -O2' \
-  CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
-  LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
+  CXXFLAGS='-Wno-int-conversion -march=nocona -msahf -mtune=generic -O2' \
+  LDFLAGS='-Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
 make -j$MJOBS
 touch gcc/cc1.exe.a gcc/cc1plus.exe.a
 make install LIBS="-lmman"
