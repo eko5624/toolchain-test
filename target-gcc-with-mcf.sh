@@ -810,8 +810,8 @@ mkdir mcfgthread-build
 cd mcfgthread-build
 export CFLAGS+=' -fno-exceptions -Os -g'
 $M_SOURCE/mcfgthread/configure \
-  --host=$M_TARGET/$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
+  --host=$M_TARGET \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
   --disable-pch
 make -j$MJOBS
 make install
