@@ -691,7 +691,7 @@ sed -i.bak "s/--export-all-symbols/--gc-keep-exported/" $(grep -l "\--export-all
 # fix detection of GMP/MPFR/MPC
 sed -i.bak -e  "s/#include [<\"]\(gmp\|mpc\|mpfr\|isl\)\.h[>\"]/#include <stdio.h>\n&/" configure
 
-ar rcs $M_TARGET/lib/libwinpthread.a
+ar rcs $M_TARGET/$MINGW_TRIPLE/lib/libwinpthread.a
 cd $M_BUILD
 mkdir gcc-build
 cd gcc-build
