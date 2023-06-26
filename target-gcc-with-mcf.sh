@@ -282,8 +282,8 @@ rm $M_TARGET/include/pthread_signal.h
 rm $M_TARGET/include/pthread_time.h
 rm $M_TARGET/include/pthread_unistd.h
 rm -rf $M_SOURCE/mingw-w64
-#cd $M_TARGET
-#ln -s $MINGW_TRIPLE mingw
+cd $M_TARGET
+ln -s $MINGW_TRIPLE mingw
 
 echo "building mingw-w64-crt"
 echo "======================="
@@ -309,7 +309,8 @@ git apply $M_BUILD/crt-build/0001-Allow-to-use-bessel-and-complex-functions-with
 cd $M_BUILD/crt-build
 $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --with-sysroot=$M_TARGET \
   --with-default-msvcrt=ucrt \
   --enable-wildcard \
   --disable-dependency-tracking \
@@ -689,13 +690,12 @@ sed -i.bak "s/--export-all-symbols/--gc-keep-exported/" $(grep -l "\--export-all
 #sed -i.bak "s/\(\${wl}\)--export-all-symbols/\1--gc-keep-exported \1-lmman/" $(grep -l "\${wl}--export-all-symbols" $(find . -type f -name "configure"))
 # fix detection of GMP/MPFR/MPC
 sed -i.bak -e  "s/#include [<\"]\(gmp\|mpc\|mpfr\|isl\)\.h[>\"]/#include <stdio.h>\n&/" configure
-# copy MinGW-w64 files
-mkdir -p gcc-build/mingw-w64/mingw/lib
-cp -rf $M_TARGET/include gcc-build/mingw-w64/mingw
-cp -rf $M_TARGET/$MINGW_TRIPLE/lib/* gcc-build/mingw-w64/mingw/lib/ || cp -rf $M_TARGET/lib gcc-build/mingw-w64/mingw/
+
 ar rcs $M_TARGET/lib/libwinpthread.a
+cd $M_BUILD
+mkdir gcc-build
 cd gcc-build
-../configure \
+$M_SOURCE/gcc-13.1.0/configure \
   --build=x86_64-pc-linux-gnu \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
@@ -742,7 +742,6 @@ cd gcc-build
   --with-zlib-include=$TOP_DIR/opt/include \
   --with-zlib-lib=$TOP_DIR/opt/lib \
   --with-pkgversion="GCC with MCF thread model" \
-  --with-build-sysroot=$M_SOURCE/gcc-13.1.0/gcc-build/mingw-w64 \
   CFLAGS='-I$TOP_DIR/dlfcn-win32/include -Wno-int-conversion -march=nocona -msahf -mtune=generic -O2' \
   CXXFLAGS='-Wno-int-conversion -march=nocona -msahf -mtune=generic -O2' \
   LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
@@ -789,7 +788,7 @@ cd $M_BUILD/winpthreads-build
 unset CC
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
   --with-sysroot=$M_TARGET \
   --enable-shared \
   --enable-static \
@@ -798,7 +797,7 @@ $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
 make -j$MJOBS
 make install
 rm -rf $M_SOURCE/mingw-w64
-#cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin
+mv $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin
 
 echo "building mcfgthread"
 echo "======================="
@@ -811,12 +810,12 @@ mkdir mcfgthread-build
 cd mcfgthread-build
 export CFLAGS+=' -fno-exceptions -Os -g'
 $M_SOURCE/mcfgthread/configure \
-  --host=$MINGW_TRIPLE \
+  --host=$M_TARGET/$MINGW_TRIPLE \
   --prefix=$M_TARGET \
   --disable-pch
 make -j$MJOBS
 make install
-#cp $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
+mv $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
 
 echo "building make"
 echo "======================="
