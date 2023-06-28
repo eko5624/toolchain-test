@@ -34,48 +34,11 @@ wget -c -O gcc-13.1.0.tar.xz https://ftp.gnu.org/gnu/gcc/gcc-13.1.0/gcc-13.1.0.t
 xz -c -d gcc-13.1.0.tar.xz | tar xf -
 #git clone https://github.com/gcc-mirror/gcc.git --branch master --depth 1
 
-#libiconv
-wget -c -O libiconv-1.17.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.17.tar.gz
-tar xzf libiconv-1.17.tar.gz
-
-#gmp
-wget -c -O gmp-6.2.1.tar.bz2 https://ftp.gnu.org/gnu/gmp/gmp-6.2.1.tar.bz2
-tar xjf gmp-6.2.1.tar.bz2
-
-#mpfr
-wget -c -O mpfr-4.2.0.tar.bz2 https://ftp.gnu.org/gnu/mpfr/mpfr-4.2.0.tar.bz2
-tar xjf mpfr-4.2.0.tar.bz2
-
-#MPC
-wget -c -O mpc-1.3.1.tar.gz https://ftp.gnu.org/gnu/mpc/mpc-1.3.1.tar.gz
-tar xzf mpc-1.3.1.tar.gz
-
-#isl
-wget -c -O isl-0.24.tar.bz2 https://gcc.gnu.org/pub/gcc/infrastructure/isl-0.24.tar.bz2
-tar xjf isl-0.24.tar.bz2
-
 #mingw-w64
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
 #mcfgthread
 git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
-
-#libdl (dlfcn-win32)
-git clone https://github.com/dlfcn-win32/dlfcn-win32 --branch master --depth 1
-
-#mman-win32
-git clone https://github.com/alitrack/mman-win32 --branch master --depth 1
-
-#zlib
-wget -c -O zlib-1.2.13.tar.gz https://github.com/madler/zlib/archive/refs/tags/v1.2.13.tar.gz
-tar xzf zlib-1.2.13.tar.gz
-
-#make
-wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
-tar xzf make-4.4.1.tar.gz
-
-#pkgconf
-git clone https://github.com/pkgconf/pkgconf --branch pkgconf-1.9.5
 
 # Build cross-compiler
 echo "building binutils"
@@ -220,6 +183,44 @@ export STRIP=$M_CROSS/bin/$MINGW_TRIPLE-strip
 export NM=$M_CROSS/bin/$MINGW_TRIPLE-nm
 export DLLTOOL=$M_CROSS/bin/$MINGW_TRIPLE-dlltool
 export WINDRES=$M_CROSS/bin/$MINGW_TRIPLE-windres
+
+cd $M_SOURCE
+#gmp
+wget -c -O gmp-6.2.1.tar.bz2 https://ftp.gnu.org/gnu/gmp/gmp-6.2.1.tar.bz2
+tar xjf gmp-6.2.1.tar.bz2
+
+#mpfr
+wget -c -O mpfr-4.2.0.tar.bz2 https://ftp.gnu.org/gnu/mpfr/mpfr-4.2.0.tar.bz2
+tar xjf mpfr-4.2.0.tar.bz2
+
+#MPC
+wget -c -O mpc-1.3.1.tar.gz https://ftp.gnu.org/gnu/mpc/mpc-1.3.1.tar.gz
+tar xzf mpc-1.3.1.tar.gz
+
+#isl
+wget -c -O isl-0.24.tar.bz2 https://gcc.gnu.org/pub/gcc/infrastructure/isl-0.24.tar.bz2
+tar xjf isl-0.24.tar.bz2
+
+#libiconv
+wget -c -O libiconv-1.17.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.17.tar.gz
+tar xzf libiconv-1.17.tar.gz
+
+#libdl (dlfcn-win32)
+git clone https://github.com/dlfcn-win32/dlfcn-win32 --branch master --depth 1
+
+#mman-win32
+git clone https://github.com/alitrack/mman-win32 --branch master --depth 1
+
+#zlib
+wget -c -O zlib-1.2.13.tar.gz https://github.com/madler/zlib/archive/refs/tags/v1.2.13.tar.gz
+tar xzf zlib-1.2.13.tar.gz
+
+#make
+wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
+tar xzf make-4.4.1.tar.gz
+
+#pkgconf
+git clone https://github.com/pkgconf/pkgconf --branch pkgconf-1.9.5
 
 mkdir -p $M_BUILD
 echo "building gmp"
