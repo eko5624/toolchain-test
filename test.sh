@@ -18,18 +18,6 @@ export M_TARGET=$M_ROOT/target
 
 export PATH="$M_CROSS/bin:$PATH"
 
-export CC=$M_CROSS/bin/$MINGW_TRIPLE-gcc
-export CXX=$M_CROSS/bin/$MINGW_TRIPLE-g++
-export AR=$M_CROSS/bin/$MINGW_TRIPLE-ar
-export RANLIB=$M_CROSS/bin/$MINGW_TRIPLE-ranlib
-export AS=$M_CROSS/bin/$MINGW_TRIPLE-as
-export LD=$M_CROSS/bin/$MINGW_TRIPLE-ld
-export STRIP=$M_CROSS/bin/$MINGW_TRIPLE-strip
-export NM=$M_CROSS/bin/$MINGW_TRIPLE-nm
-export DLLTOOL=$M_CROSS/bin/$MINGW_TRIPLE-dlltool
-export WINDRES=$M_CROSS/bin/$MINGW_TRIPLE-windres
-
-
 mkdir -p $M_SOURCE
 mkdir -p $M_BUILD
 
@@ -226,6 +214,17 @@ make install
 rm -rf $M_BUILD
 
 # Cross-compile GCC
+export CC=$M_CROSS/bin/$MINGW_TRIPLE-gcc
+export CXX=$M_CROSS/bin/$MINGW_TRIPLE-g++
+export AR=$M_CROSS/bin/$MINGW_TRIPLE-ar
+export RANLIB=$M_CROSS/bin/$MINGW_TRIPLE-ranlib
+export AS=$M_CROSS/bin/$MINGW_TRIPLE-as
+export LD=$M_CROSS/bin/$MINGW_TRIPLE-ld
+export STRIP=$M_CROSS/bin/$MINGW_TRIPLE-strip
+export NM=$M_CROSS/bin/$MINGW_TRIPLE-nm
+export DLLTOOL=$M_CROSS/bin/$MINGW_TRIPLE-dlltool
+export WINDRES=$M_CROSS/bin/$MINGW_TRIPLE-windres
+
 mkdir -p $M_BUILD
 echo "building gmp"
 echo "======================="
