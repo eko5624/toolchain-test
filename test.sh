@@ -341,6 +341,7 @@ make install
 echo "building mingw-w64-headers"
 echo "======================="
 cd $M_SOURCE
+rm -rf mingw-w64
 git clone https://github.com/mingw-w64/mingw-w64.git
 cd $M_BUILD
 mkdir headers-build
