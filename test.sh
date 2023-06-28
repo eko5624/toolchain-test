@@ -105,10 +105,10 @@ mkdir -p $MINGW_TRIPLE/lib
 ln -s $MINGW_TRIPLE mingw
 cd $MINGW_TRIPLE
 ln -s lib lib64
-cd $M_BUILD
 
 echo "building mingw-w64-headers"
 echo "======================="
+cd $M_BUILD
 mkdir headers-build
 cd headers-build
 $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
@@ -119,7 +119,6 @@ $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --with-default-msvcrt=ucrt
 make -j$MJOBS
 make install
-cd $M_BUILD
 
 echo "building mcfgthread"
 echo "======================="
@@ -138,6 +137,7 @@ make install
 
 echo "building gcc-initial"
 echo "======================="
+cd $M_BUILD
 mkdir gcc-build
 cd gcc-build
 $M_SOURCE/gcc-13.1.0/configure \
@@ -162,16 +162,15 @@ $M_SOURCE/gcc-13.1.0/configure \
   CXXFLAGS="-pipe -O2"
 make -j$MJOBS all-gcc
 make install-strip-gcc
-cd $M_BUILD
 
 echo "building gendef"
 echo "======================="
+cd $M_BUILD
 mkdir gendef-build
 cd gendef-build
 $M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure --prefix=$M_CROSS
 make -j$MJOBS
 make install
-cd $M_BUILD
 
 echo "building mingw-w64-crt"
 echo "======================="
@@ -189,10 +188,10 @@ $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
   --disable-lib32
 make -j$MJOBS
 make install
-cd $M_BUILD
 
 echo "building winpthreads"
 echo "======================="
+cd $M_BUILD
 mkdir winpthreads-build
 cd winpthreads-build
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
@@ -202,11 +201,10 @@ $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --enable-static
 make -j$MJOBS
 make install
-cd $M_BUILD
 
 echo "building gcc-final"
 echo "======================="
-cd gcc-build
+cd $M_BUILD/gcc-build
 make -j$MJOBS
 make install
 rm -rf $M_BUILD
