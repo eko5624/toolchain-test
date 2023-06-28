@@ -55,7 +55,7 @@ wget -c -O isl-0.24.tar.bz2 https://gcc.gnu.org/pub/gcc/infrastructure/isl-0.24.
 tar xjf isl-0.24.tar.bz2
 
 #mingw-w64
-#git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
+git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 
 #mcfgthread
 git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
