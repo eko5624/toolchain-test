@@ -370,6 +370,7 @@ cd $M_BUILD
 echo "building mingw-w64-crt"
 echo "======================="
 cd $M_SOURCE
+rm -rf mingw-w64
 git clone https://github.com/mingw-w64/mingw-w64.git
 cd $M_BUILD
 mkdir crt-build
@@ -409,6 +410,7 @@ rm -rf $M_SOURCE/mingw-w64
 echo "building gendef"
 echo "======================="
 cd $M_SOURCE
+rm -rf mingw-w64
 git clone https://github.com/mingw-w64/mingw-w64.git
 cd $M_BUILD
 mkdir gendef-build
