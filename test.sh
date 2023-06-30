@@ -525,6 +525,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-checking=release \
   --enable-lto \
   --enable-libgomp \
+  --with-arch=x86-64 \
   --with-tune=generic \
   --with-gnu-ld \
   --with-gnu-as \
