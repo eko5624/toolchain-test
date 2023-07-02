@@ -202,25 +202,19 @@ $M_SOURCE/mingw-w64/mingw-w64-tools/gendef/configure \
 make -j$MJOBS
 make install
 
-#echo "building winpthreads"
-#echo "======================="
-#cd $M_BUILD
-#mkdir winpthreads-build
-#cd winpthreads-build
-#$M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
-#  --host=$MINGW_TRIPLE \
-#  --prefix=$M_TARGET/$MINGW_TRIPLE \
-#  --enable-static \
-#  --enable-shared
-#make -j$MJOBS
-#make install
-#mv $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
-
-echo "building mingw-std-threads"
+echo "building winpthreads"
 echo "======================="
-cd $M_SOURCE
-git clone https://github.com/meganz/mingw-std-threads.git
-cp mingw-std-threads/mingw*.h $M_TARGET/$MINGW_TRIPLE/include
+cd $M_BUILD
+mkdir winpthreads-build
+cd winpthreads-build
+$M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --enable-static \
+  --enable-shared
+make -j$MJOBS
+make install
+mv $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
 
 echo "building gcc"
 echo "======================="
@@ -260,7 +254,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-pkgversion="GCC with posix thread model" \
   CFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
   CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
-  LDFLAGS='-Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
+  LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
 make -j$MJOBS
 make install
 VER=$(cat $M_SOURCE/gcc-13.1.0/gcc/BASE-VER)
