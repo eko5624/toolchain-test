@@ -29,8 +29,8 @@ jobs:
         uses: actions/cache/restore@main
         with:
           path: |
-            {{ github.workspace }}/cross
-            {{ github.workspace }}/target
+            ${{ github.workspace }}/cross
+            ${{ github.workspace }}/target
           key: gcc-${{ github.run_id }}
           restore-keys: |
             gcc-
@@ -39,6 +39,7 @@ jobs:
         run: |
           chmod +x ./*.sh
           ./update_source.sh
+          PWD=$(pwd)
           if [[ ! "$(ls -A $PWD/cross/bin)" ]]; then
             ./rebuild_cross.sh 64r
           fi
@@ -48,6 +49,7 @@ jobs:
           chmod +x ./*.sh
           ./update_source.sh
           rm -rf taget
+          PWD=$(pwd)
           if [[ ! "$(ls -A $PWD/taget/bin)" ]]; then
             ./rebuild_target.sh 64r
           fi
