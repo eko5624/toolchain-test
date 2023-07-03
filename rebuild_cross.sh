@@ -48,9 +48,7 @@ set -e
 
 # <1> clean
 date
-
 rm -rf $M_CROSS
-
 mkdir -p $M_BUILD
 cd $M_BUILD
 rm -rf bc_bin bc_gcc bc_m64 bc_m64_head bc_winpth
@@ -81,7 +79,7 @@ make $MAKE_OPT || echo "(-) Build Error!"
 make install
 cd ..
 
-echo "building gcc"
+echo "building gcc-initial"
 echo "======================="
 mkdir bc_gcc
 cd bc_gcc
@@ -119,9 +117,11 @@ make $MAKE_OPT || echo "(-) Build Error!"
 make install
 cd ..
 
-date
+echo "installing gcc-final"
+echo "======================="
 cd bc_gcc
 make $MAKE_OPT || echo "(-) Build Error!"
 make install
 patch -d $M_SOURCE/gcc-$VER_GCC/gcc/config/i386 -p1 -R < $M_ROOT/patch/gcc-intrin.patch
+rm -f $M_CROSS/mingw
 cd ..
