@@ -28,7 +28,9 @@ jobs:
       - name: Loading gcc cache
         uses: actions/cache/restore@main
         with:
-          path: ${{ github.workspace }}/cross
+          path: |
+            {{ github.workspace }}/cross
+            {{ github.workspace }}/target
           key: gcc-${{ github.run_id }}
           restore-keys: |
             gcc-
@@ -68,6 +70,8 @@ jobs:
         uses: actions/cache/save@main
         if: always()
         with:
-          path: ${{ github.workspace }}/cross
+          path: |
+            ${{ github.workspace }}/cross
+            {{ github.workspace }}/target
           key: gcc-${{ github.run_id }}
           
