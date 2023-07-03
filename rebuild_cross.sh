@@ -124,4 +124,5 @@ make $MAKE_OPT || echo "(-) Build Error!"
 make install
 patch -d $M_SOURCE/gcc-$VER_GCC/gcc/config/i386 -p1 -R < $M_ROOT/patch/gcc-intrin.patch
 rm -f $M_CROSS/mingw
+rm -rf $M_BUILD
 cd ..
