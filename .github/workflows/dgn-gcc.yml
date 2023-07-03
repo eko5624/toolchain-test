@@ -73,6 +73,6 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/cross
-            {{ github.workspace }}/target
+            ${{ github.workspace }}/target
           key: gcc-${{ github.run_id }}
           
