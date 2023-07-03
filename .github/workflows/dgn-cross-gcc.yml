@@ -14,8 +14,9 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
-          sudo pacman -Syu --noconfirm
-          sudo pacman -S --noconfirm --needed git gyp cvs mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf zip unzip p7zip xz gcc-multilib clang python-pip curl jq lib32-glib2 wget
+          sudo pacman -Syu --noconfirm docker
+          sudo pacman -S --noconfirm --needed git gyp mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip python-cairo curl jq lib32-glib2 wget
+          pip3 install -U --break-system-packages setuptools rst2pdf mako jsonschema meson
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global pull.rebase true
@@ -32,14 +33,6 @@ jobs:
           restore-keys: |
             gcc-
             
-      - name: Loading rust toolchain cache
-        uses: actions/cache/restore@main
-        with:
-          path: ${{ github.workspace }}/rustup_location
-          key: rust_toolchain-${{ github.run_id }}
-          restore-keys: |
-            rust_toolchain-
-            
       - name: Building toolchain
         run: |
           PWD=$(pwd)
@@ -50,18 +43,15 @@ jobs:
 
       - name: Packaging toolchain
         run: |
-          zip -r -y  dgn-gcc-13.1.zip cross/*
+          7z a dgn-cross-gcc.7z cross/*
 
       - name: Release
         continue-on-error: true
-        uses: softprops/action-gh-release@master
-        with:
-          tag_name: toolchain
-          name: toolchain
-          files: |
-            dgn-gcc*.zip
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }} 
+        run: |
+          chmod +x ./release-package.sh
+          ./release-package.sh dgn-cross-gcc.7z
 
       - name: Saving gcc cache
         uses: actions/cache/save@main
@@ -70,9 +60,3 @@ jobs:
           path: ${{ github.workspace }}/cross
           key: gcc-${{ github.run_id }}
           
-      - name: Saving rust toolchain cache
-        uses: actions/cache/save@main
-        if: always()
-        with:
-          path: ${{ github.workspace }}/rustup_location
-          key: rust_toolchain-${{ github.run_id }}
