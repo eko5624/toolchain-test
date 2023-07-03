@@ -37,7 +37,6 @@ jobs:
             
       - name: Building cross gcc
         run: |
-          PWD=$(pwd)
           chmod +x ./*.sh
           ./update_source.sh
           if [[ ! "$(ls -A $PWD/cross/bin)" ]]; then
@@ -46,9 +45,9 @@ jobs:
           
       - name: Building target gcc
         run: |
-          PWD=$(pwd)
           chmod +x ./*.sh
           ./update_source.sh
+          rm -rf taget
           if [[ ! "$(ls -A $PWD/taget/bin)" ]]; then
             ./rebuild_target.sh 64r
           fi
