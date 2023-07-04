@@ -55,8 +55,6 @@ export NM=$M_CROSS/bin/$MINGW_TRIPLE-nm
 export DLLTOOL=$M_CROSS/bin/$MINGW_TRIPLE-dlltool
 export WINDRES=$M_CROSS/bin/$MINGW_TRIPLE-windres
 
-# export CFLAGS=" -g -pipe -fno-leading-underscore "
-
 export CXXFLAGS=$CFLAGS
 export PATH=$M_CROSS/bin:$PATH
 export MAKE_OPT="-j 2"
@@ -80,8 +78,6 @@ cd tg_m64_head
 $M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_TARGET/$MINGW_TRIPLE  
-	# --with-sysroot=$M_TARGET --enable-sdk=directx
-	# --enable-sdk=all   (ddk, directx)
 make $MAKE_OPT || echo "(-) Build Error!"
 make install
 cd $M_TARGET
@@ -92,13 +88,11 @@ echo "building binutils"
 echo "======================="
 mkdir tg_bin
 cd tg_bin
-patch -d $M_SOURCE/binutils-$VER_BINUTILS -p0 < $M_ROOT/patch/binutils-rust.patch
 $M_SOURCE/binutils-$VER_BINUTILS/configure $BHT --disable-nls \
   --disable-werror \
   --prefix=$M_TARGET --with-sysroot=$M_TARGET
 make $MAKE_OPT || echo "(-) Build Error!"
 make install
-patch -d $M_SOURCE/binutils-$VER_BINUTILS -p0 -R < $M_ROOT/patch/binutils-rust.patch
 cd ..
 
 echo "building mingw-w64-crt"
