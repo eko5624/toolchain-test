@@ -88,10 +88,10 @@ jobs:
       - name: Building target gcc
         run: |
           chmod +x ./*.sh
-          ./update_source.sh
           rm -rf taget
           PWD=$(pwd)
           if [[ ! "$(ls -A $PWD/taget/bin)" ]]; then
+            ./update_source.sh
             ./rebuild_target.sh 64r
           fi
 
