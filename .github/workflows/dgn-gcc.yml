@@ -36,9 +36,9 @@ jobs:
       - name: Building cross gcc
         run: |
           chmod +x ./*.sh
-          ./update_source.sh
           PWD=$(pwd)
           if [[ ! "$(ls -A $PWD/cross/bin)" ]]; then
+            ./update_source.sh
             ./rebuild_cross.sh 64r
           fi
           
