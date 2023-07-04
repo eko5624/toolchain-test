@@ -25,13 +25,21 @@ jobs:
           git config --global --add safe.directory $PWD
           
       - uses: actions/checkout@main
-      - name: Loading gcc cache
+      - name: Loading cross gcc cache
         uses: actions/cache/restore@main
         with:
           path: ${{ github.workspace }}/cross
           key: gcc-${{ github.run_id }}
           restore-keys: |
             gcc-
+            
+      - name: Loading target gcc cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/target
+          key: gcc-target-${{ github.run_id }}
+          restore-keys: |
+            gcc-target-
             
       - name: Building cross gcc
         run: |
@@ -65,10 +73,17 @@ jobs:
           chmod +x ./release-package.sh
           ./release-package.sh dgn*.7z
 
-      - name: Saving gcc cache
+      - name: Saving cross gcc cache
         uses: actions/cache/save@main
         if: always()
         with:
           path: ${{ github.workspace }}/cross
           key: gcc-${{ github.run_id }}
+          
+      - name: Saving target gcc cache
+        uses: actions/cache/save@main
+        if: always()
+        with:
+          path: ${{ github.workspace }}/target
+          key: gcc-target-${{ github.run_id }}
           
