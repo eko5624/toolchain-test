@@ -34,3 +34,27 @@ if [ ! -d mingw-w64-v$VER_MINGW64 ] ; then
 	tar xjf mingw-w64-v$VER_MINGW64.tar.bz2
 fi
 
+# <4> gmp
+if [ ! -d gmp-$VER_GMP ] ; then
+	wget -c -O gmp-${VER_GMP}.tar.bz2 http://ftp.gnu.org/gnu/gmp/gmp-${VER_GMP}.tar.bz2
+	tar xjf gmp-${VER_GMP}.tar.bz2
+fi
+
+# <5> mpfr
+if [ ! -d mpfr-$VER_MPFR ] ; then
+	# wget http://www.mpfr.org/mpfr-current/mpfr-2.4.2.tar.bz2
+	wget -c -O mpfr-$VER_MPFR.tar.bz2 http://mpfr.loria.fr/mpfr-$VER_MPFR/mpfr-$VER_MPFR.tar.bz2
+	tar xjf mpfr-$VER_MPFR.tar.bz2
+fi
+
+# <6> MPC
+if [ ! -d mpc-$VER_MPC ] ; then
+	wget -c -O mpc-$VER_MPC.tar.gz ftp://ftp.gnu.org/gnu/mpc/mpc-$VER_MPC.tar.gz
+	tar xzf mpc-$VER_MPC.tar.gz
+fi
+
+# <7> isl
+if [ ! -d isl-$VER_ISL ] ; then
+	wget -c -O isl-$VER_ISL.tar.bz2 ftp://gcc.gnu.org/pub/gcc/infrastructure/isl-$VER_ISL.tar.bz2
+	tar xjf isl-$VER_ISL.tar.bz2
+fi
