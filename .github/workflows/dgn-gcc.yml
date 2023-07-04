@@ -30,7 +30,6 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/cross
-            ${{ github.workspace }}/target
           key: gcc-${{ github.run_id }}
           restore-keys: |
             gcc-
@@ -73,6 +72,5 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/cross
-            ${{ github.workspace }}/target
           key: gcc-${{ github.run_id }}
           
