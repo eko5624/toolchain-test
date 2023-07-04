@@ -13,48 +13,114 @@ jobs:
     steps:    
       - name: Install Dependencies
         run: |
-          apt-get -y update
-          apt-get -y install \
+          apt-fast -y update
+          apt-fast -y install \
             build-essential \
             yasm \
             nasm \
             git \
-            curl \
+            cmake \
+            gyp \
+            checkinstall \
+            bison \
+            flex \
+            gettext \
             mercurial \
             subversion \
-            cvs \
+            ninja-build \
+            automake \
+            pkgconf \
+            libtool \
+            libtool-bin \
             gcc-multilib \
-            bison \
-            diffutils \
-            flex \
+            g++-multilib \
+            libgmp-dev \
+            libmpfr-dev \
+            libmpc-dev \
+            libgcrypt-dev \
             gperf \
             ragel \
             texinfo \
-            patch \
-            sed \
-            cmake \
-            make \
             autopoint \
-            gettext \
-            autoconf \
-            automake \
-            libtool \
-            libtool-bin \
-            pkgconf \
-            meson \
-            ninja-build \
-            python3-distutils \
-            python3-jinja2 \
-            python3-jsonschema \
-            wget \
+            re2c \
+            asciidoc \
+            python3-pip \
+            docbook2x \
+            unzip \
             p7zip-full \
-            unzip
+            curl \
+            jq \
+            wget
+          pip3 install -U --break-system-packages setuptools rst2pdf mako jsonschema meson  
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global pull.rebase true
           git config --global rebase.autoStash true
           git config --global fetch.prune true
           git config --global --add safe.directory $PWD
+          
+      - uses: actions/checkout@main
+      - name: Loading cross gcc cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/cross
+          key: cross-gcc-${{ github.run_id }}
+          restore-keys: |
+            cross-gcc-
+            
+      - name: Loading target gcc cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/target
+          key: target-gcc-${{ github.run_id }}
+          restore-keys: |
+            taget-gcc-
+            
+      - name: Building cross gcc
+        run: |
+          chmod +x ./*.sh
+          PWD=$(pwd)
+          if [[ ! "$(ls -A $PWD/cross/bin)" ]]; then
+            ./update_source.sh
+            ./rebuild_cross.sh 64r
+          fi
+          
+      - name: Building target gcc
+        run: |
+          chmod +x ./*.sh
+          ./update_source.sh
+          rm -rf taget
+          PWD=$(pwd)
+          if [[ ! "$(ls -A $PWD/taget/bin)" ]]; then
+            ./rebuild_target.sh 64r
+          fi
+
+      - name: Packaging toolchain
+        run: |
+          7z a dgn-cross-gcc.7z cross/*
+          7z a dgn-target-gcc.7z target/*
+
+      - name: Release
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }} 
+        run: |
+          chmod +x ./release-package.sh
+          ./release-package.sh dgn*.7z
+
+      - name: Saving cross gcc cache
+        uses: actions/cache/save@main
+        if: always()
+        with:
+          path: ${{ github.workspace }}/cross
+          key: cross-gcc-${{ github.run_id }}
+          
+      - name: Saving target gcc cache
+        uses: actions/cache/save@main
+        if: always()
+        with:
+          path: ${{ github.workspace }}/target
+          key: target-gcc-${{ github.run_id }}
 
 
  
