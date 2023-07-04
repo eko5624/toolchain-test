@@ -13,9 +13,13 @@ jobs:
     steps:    
       - name: Install Dependencies
         run: |
-          apt-get update
-          apt-get install \
+          apt-get -y update
+          apt-get -y install \
+            build-essential \
+            yasm \
+            nasm \
             git \
+            curl \
             mercurial \
             subversion \
             cvs \
@@ -35,9 +39,8 @@ jobs:
             autoconf \
             automake \
             libtool \
+            libtool-bin \
             pkgconf \
-            yasm \
-            nasm \
             meson \
             ninja-build \
             python3-distutils \
