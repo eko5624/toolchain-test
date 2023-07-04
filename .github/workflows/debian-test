@@ -1,0 +1,22 @@
+name: debian-test
+defaults:
+  run:
+    shell: bash
+on:
+  workflow_dispatch:
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: debian:latest
+    steps:    
+      - name: Install Dependencies
+        run: |
+          sudo apt-get install cmake make gcc-c++ bison flex texinfo libtool patch autoconf automake sed diffutils diffstat m4 yasm nasm wget subversion cvs mercurial
+
+
+ 
+
+
+
