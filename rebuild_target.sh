@@ -169,7 +169,7 @@ $M_SOURCE/gcc-$VER_GCC/configure $BHT --disable-nls \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
   --enable-threads=posix --enable-libssp \
-  --prefix=$M_TARGET --with-sysroot=$M_TARGET
+  --prefix=$M_TARGET --libexecdir=$M_TARGET/lib \ --with-sysroot=$M_TARGET
 make $MAKE_OPT || echo "(-) Build Error!"
 make install
 VER=$(cat $M_SOURCE/gcc-$VER_GCC/gcc/BASE-VER)
