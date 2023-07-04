@@ -198,7 +198,7 @@ $M_SOURCE/make-4.4.1/configure \
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET
-make -j$MJOBS
+make $MAKE_OPT
 make install
 cp $M_TARGET/bin/make.exe $M_TARGET/bin/mingw32-make.exe
 
@@ -214,7 +214,7 @@ meson setup . $M_SOURCE/pkgconf \
   --cross-file=$TOP_DIR/cross.meson \
   --buildtype=plain \
   -Dtests=disabled
-ninja -j$MJOBS -C $M_BUILD/pkgconf-build
+ninja $MAKE_OPT -C $M_BUILD/pkgconf-build
 ninja install -C $M_BUILD/pkgconf-build
 cp $M_TARGET/bin/pkgconf.exe $M_TARGET/bin/pkg-config.exe
 cp $M_TARGET/bin/pkgconf.exe $M_TARGET/bin/x86_64-w64-mingw32-pkg-config.exe
