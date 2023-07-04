@@ -13,8 +13,8 @@ jobs:
     steps:    
       - name: Install Dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install cmake make gcc-c++ bison flex texinfo libtool patch autoconf automake sed diffutils diffstat m4 yasm nasm wget subversion cvs mercurial
+          apt-get update
+          apt-get install cmake make gcc-c++ bison flex texinfo libtool patch autoconf automake sed diffutils diffstat m4 yasm nasm wget subversion cvs mercurial
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global pull.rebase true
