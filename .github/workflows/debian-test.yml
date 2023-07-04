@@ -13,8 +13,8 @@ jobs:
     steps:    
       - name: Install Dependencies
         run: |
-          apt-fast -y update
-          apt-fast -y install \
+          apt-get -y update
+          apt-get -y install \
             build-essential \
             yasm \
             nasm \
