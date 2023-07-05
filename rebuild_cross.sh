@@ -88,7 +88,6 @@ $M_SOURCE/gcc-$VER_GCC/configure $BHT --disable-nls \
   --disable-multilib \
   --enable-languages=c,c++ \
   --disable-libstdcxx-pch \
-  --enable-threads=posix \
   --prefix=$M_CROSS \
   --with-sysroot=$M_CROSS
 make $MAKE_OPT all-gcc || echo "(-) Build Error!"
