@@ -137,6 +137,19 @@ $M_SOURCE/mingw-w64/mingw-w64-crt/configure \
 make -j$MJOBS
 make install
 
+echo "building winpthreads"
+echo "======================="
+cd $M_BUILD
+mkdir winpthreads-build
+cd winpthreads-build
+$M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_CROSS/$MINGW_TRIPLE \
+  --disable-shared \
+  --enable-static
+make -j$MJOBS
+make install
+
 echo "building gcc-final"
 echo "======================="
 cd $M_BUILD/gcc-build
