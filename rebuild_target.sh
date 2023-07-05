@@ -106,18 +106,6 @@ make || echo "(-) Build Error!"
 make install
 cd ..
 
-echo "building winpthreads"
-echo "======================="
-mkdir tg_winpth
-cd tg_winpth
-$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-libraries/winpthreads/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE $MINGW_LIB
-make $MAKE_OPT || echo "(-) Build Error!"
-make install
-cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
-cd ..
-
 echo "building gmp"
 echo "======================="
 mkdir tg_gmp
@@ -168,7 +156,7 @@ $M_SOURCE/gcc-$VER_GCC/configure $BHT --disable-nls \
   --enable-twoprocess \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
-  --enable-threads=posix --enable-libssp \
+  --enable-libssp \
   --prefix=$M_TARGET --libexecdir=$M_TARGET/lib --with-sysroot=$M_TARGET
 make $MAKE_OPT || echo "(-) Build Error!"
 make install
