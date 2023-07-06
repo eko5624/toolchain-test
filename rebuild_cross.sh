@@ -59,7 +59,7 @@ echo "======================="
 mkdir bc_m64_head
 cd bc_m64_head
 $M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-headers/configure \
-	--host=$MINGW_TRIPLE --prefix=$M_CROSS/$MINGW_TRIPLE
+	--host=$MINGW_TRIPLE --prefix=$M_CROSS/$MINGW_TRIPLE --with-default-msvcrt=ucrt
    	# --with-sysroot=$M_CROSS --enable-sdk=directx
 	# --enable-sdk=all   (ddk, directx)
 make $MAKE_OPT || echo "(-) Build Error!"
@@ -100,7 +100,7 @@ mkdir bc_m64
 cd bc_m64
 $M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE $MINGW_LIB
+  --prefix=$M_CROSS/$MINGW_TRIPLE $MINGW_LIB --with-default-msvcrt=ucrt
 make || echo "(-) Build Error!"
 make install
 cd ..
