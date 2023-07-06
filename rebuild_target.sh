@@ -77,7 +77,7 @@ mkdir tg_m64_head
 cd tg_m64_head
 $M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-headers/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE  
+  --prefix=$M_TARGET/$MINGW_TRIPLE --with-default-msvcrt=ucrt  
 make $MAKE_OPT || echo "(-) Build Error!"
 make install
 cd $M_TARGET
@@ -101,7 +101,7 @@ mkdir tg_m64
 cd tg_m64
 $M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-crt/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE $MINGW_LIB
+  --prefix=$M_TARGET/$MINGW_TRIPLE $MINGW_LIB --with-default-msvcrt=ucrt
 make || echo "(-) Build Error!"
 make install
 cd ..
