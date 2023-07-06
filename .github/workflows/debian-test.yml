@@ -89,7 +89,7 @@ jobs:
         run: |
           chmod +x ./*.sh
           PWD=$(pwd)
-          if [[ ! "$(ls -A $PWD/taget/bin)" ]]; then
+          if [[ ! "$(ls -A $PWD/target/bin)" ]]; then
             ./update_source.sh
             ./rebuild_target.sh 64r
           fi
