@@ -106,6 +106,18 @@ make || echo "(-) Build Error!"
 make install
 cd ..
 
+echo "building gendef"
+echo "======================="
+mkdir tg_gendef
+cd tg_gendef
+$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-tools/gendef/configure \
+  --host=$MINGW_TRIPLE \
+  --target=$MINGW_TRIPLE \
+  --prefix=$M_TARGET
+make -j$MJOBS
+make install
+cd ..
+
 echo "building gmp"
 echo "======================="
 mkdir tg_gmp
@@ -148,6 +160,7 @@ mkdir tg_gcc
 cd tg_gcc
 patch -d $M_SOURCE/gcc-$VER_GCC/gcc/config/i386 -p1 < $M_ROOT/patch/gcc-intrin.patch
 $M_SOURCE/gcc-$VER_GCC/configure $BHT --disable-nls \
+  --disable-bootstrap \
   --enable-languages=c,c++ \
   --with-gmp=$M_BUILD/for_target \
   --with-mpfr=$M_BUILD/for_target \
