@@ -118,6 +118,18 @@ make -j$MJOBS
 make install
 cd ..
 
+echo "building winpthreads"
+echo "======================="
+mkdir tg_winpth
+cd tg_winpth
+$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-libraries/winpthreads/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_TARGET/$MINGW_TRIPLE $MINGW_LIB
+make $MAKE_OPT || echo "(-) Build Error!"
+make install
+cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
+cd ..
+
 echo "building gmp"
 echo "======================="
 mkdir tg_gmp
@@ -186,18 +198,7 @@ done
 for f in $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/*.exe; do
   strip -s $f
 done
-cd ..
-
-echo "building winpthreads"
-echo "======================="
-mkdir tg_winpth
-cd tg_winpth
-$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-libraries/winpthreads/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE $MINGW_LIB
-make $MAKE_OPT || echo "(-) Build Error!"
-make install
-cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
+cp $M_TARGET/lib/$LIBGCC_NAME $M_TARGET/bin/
 cd ..
 
 echo "building make"
