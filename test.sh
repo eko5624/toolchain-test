@@ -289,19 +289,6 @@ make -j$MJOBS
 make install
 rm -rf $M_SOURCE/mingw-w64
 
-echo "building zlib"
-echo "======================="
-cd $M_BUILD
-mkdir zlib-build
-cd zlib-build
-curl -OL https://raw.githubusercontent.com/shinchiro/mpv-winbuild-cmake/master/packages/zlib-1-win32-static.patch
-patch -d $M_SOURCE/zlib-1.2.13 -p1 < $M_BUILD/zlib-build/zlib-1-win32-static.patch
-CHOST=$MINGW_TRIPLE $M_SOURCE/zlib-1.2.13/configure \
-  --prefix=$TOP_DIR/opt \
-  --static
-make -j$MJOBS
-make install
-
 echo "building gcc"
 echo "======================="
 cd $M_BUILD
@@ -350,7 +337,7 @@ patch -R -Nbp1 -i $M_BUILD/gcc-build/1c118c9970600117700cc12284587e0238de6bbe.pa
 # 0005-Windows-Don-t-ignore-native-system-header-dir.patch .. but isn't!
 sed -i 's/${prefix}\/mingw\//${prefix}\//g' configure
 
-sed -i 's/__LIBGCC_EH_FRAME_SECTION_NAME__/EH_FRAME_SECTION_NAME/' libgcc/config/i386/cygming-crtbegin.c
+#sed -i 's/__LIBGCC_EH_FRAME_SECTION_NAME__/EH_FRAME_SECTION_NAME/' libgcc/config/i386/cygming-crtbegin.c
 
 # change hardcoded /mingw prefix to the real prefix .. isn't this rubbish?
 # it might work at build time and could be important there but beyond that?!
@@ -398,18 +385,14 @@ $M_SOURCE/gcc-13.1.0/configure \
   --with-gnu-as \
   --with-libiconv \
   --with-boot-ldflags="$LDFLAGS -Wl,--disable-dynamicbase -static-libstdc++ -static-libgcc" \
-  --with-zlib-include=$M_TARGET/zlib/include \
-  --with-zlib-lib=$M_TARGET/zlib/lib \
   --without-included-gettext \
   --with-pkgversion="GCC with MCF thread model"
 make -j$MJOBS
 make install
-cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/13.1.0/*plugin*.dll $M_TARGET/lib/bfd-plugins/
+VER=$(cat $M_SOURCE/gcc-13.1.0/gcc/BASE-VER)
+cp $M_TARGET/lib/gcc/x86_64-w64-mingw32/$VER/*plugin*.dll $M_TARGET/lib/bfd-plugins/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
-cd $M_BUILD
-rm -rf $M_TARGET/zlib
-VER=$(cat $M_SOURCE/gcc-13.1.0/gcc/BASE-VER)
 #find $M_TARGET/lib -type f -name "*.dll.a" -print0 | xargs -0 -I {} rm {}
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
@@ -427,38 +410,22 @@ git clone https://github.com/mingw-w64/mingw-w64.git
 cd $M_BUILD
 mkdir winpthreads-build
 cd winpthreads-build
+curl -OL https://raw.githubusercontent.com/lhmouse/MINGW-packages/master/mingw-w64-winpthreads-git/0001-Define-__-de-register_frame_info-in-fake-libgcc_s.patch
 cd $M_SOURCE/mingw-w64
-# fix mingw-w64-libraries/winpthreads/src/thread.c (version >= 10.0.0)
-####mingw-w64-libraries/winpthreads/src/thread.c:1525:5: error: a handler attribute must begin with '@' or '%'
-patch -ulbf mingw-w64-libraries/winpthreads/src/thread.c << EOF
-@@ -1522,3 +1522,3 @@
-       /* Provide to this thread a default exception handler.  */
--      #ifdef __SEH__
-+      #if defined(__SEH__) && !(defined(__ARM_ARCH))
-        asm ("\\t.tl_start:\\n"
-@@ -1534,3 +1534,3 @@
-         trslt = (intptr_t) tv->func(tv->ret_arg);
--      #ifdef __SEH__
-+      #if defined(__SEH__) && !(defined(__ARM_ARCH))
-        asm ("\\tnop\\n\\t.tl_end: nop\\n");
-EOF
-
+git apply $M_BUILD/winpthreads-build/0001-Define-__-de-register_frame_info-in-fake-libgcc_s.patch
 cd $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads
 autoreconf -vfi
 cd $M_BUILD/winpthreads-build
-unset CC
 $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_TARGET/$MINGW_TRIPLE \
+  --prefix=$M_TARGET \
   --with-sysroot=$M_TARGET \
   --enable-shared \
-  --enable-static \
-  CFLAGS="-I$M_TARGET/include" \
-  LDFLAGS="-L$M_TARGET/lib"
+  --enable-static
 make -j$MJOBS
 make install
 rm -rf $M_SOURCE/mingw-w64
-mv $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin
+#mv $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin
 
 echo "building mcfgthread"
 echo "======================="
