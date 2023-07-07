@@ -378,7 +378,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --disable-symvers \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
-  --disable-sjlj-exceptions \
   --enable-languages=c,c++ \
   --enable-shared \
   --enable-static \
