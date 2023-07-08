@@ -65,6 +65,14 @@ jobs:
           curl -OL https://github.com/eko5624/toolchain-test/releases/download/toolchain/dgn-cross-gcc.7z
           7z x dgn-cross-gcc.7z
           rm dgn-cross-gcc.7z
+ 
+      - name: Loading target gcc cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/target
+          key: target-gcc-mcf-${{ github.run_id }}
+          restore-keys: |
+            target-gcc-mcf-
             
       - name: Building gcc with mcf
         run: |
@@ -85,5 +93,12 @@ jobs:
         run: |
           chmod +x ./release-package.sh
           ./release-package.sh test.7z
+          
+      - name: Saving target gcc cache
+        uses: actions/cache/save@main
+        if: always()
+        with:
+          path: ${{ github.workspace }}/target
+          key: target-gcc-mcf-${{ github.run_id }}
 
 
