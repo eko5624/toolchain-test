@@ -69,28 +69,12 @@ git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
 #mcfgthread
 git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
 
-#libdl (dlfcn-win32)
-git clone https://github.com/dlfcn-win32/dlfcn-win32 --branch master --depth 1
-
-#zlib
-wget -c -O zlib-1.2.13.tar.gz https://github.com/madler/zlib/archive/refs/tags/v1.2.13.tar.gz
-tar xzf zlib-1.2.13.tar.gz
-
-#zstd
-wget -c -O zstd-1.5.5.tar.gz https://github.com/facebook/zstd/archive/refs/tags/v1.5.5.tar.gz
-tar xzf zstd-1.5.5.tar.gz
-
-#gperf
-wget -c -O gperf-3.1.tar.gz https://ftp.gnu.org/pub/gnu/gperf/gperf-3.1.tar.gz
-tar xzf gperf-3.1.tar.gz
-
-#libiconv
-wget -c -O libiconv-1.17.tar.gz https://ftp.gnu.org/gnu/libiconv/libiconv-1.17.tar.gz
-tar xzf libiconv-1.17.tar.gz
-
 #make
 wget -c -O make-4.4.1.tar.gz https://ftp.gnu.org/pub/gnu/make/make-4.4.1.tar.gz
 tar xzf make-4.4.1.tar.gz
+
+#pkgconf
+git clone https://github.com/pkgconf/pkgconf --branch pkgconf-1.9.5
 
 echo "building binutils"
 echo "======================="
@@ -182,8 +166,6 @@ $M_SOURCE/mingw-w64/mingw-w64-headers/configure \
   --without-widl
 make -j$MJOBS
 make install
-#cd $M_TARGET
-#ln -s $MINGW_TRIPLE mingw
 
 echo "building mingw-w64-crt"
 echo "======================="
@@ -243,7 +225,6 @@ $M_SOURCE/mcfgthread/configure \
   --disable-pch
 make -j$MJOBS
 make install
-#cp $M_TARGET/$MINGW_TRIPLE/bin/libmcfgthread-1.dll $M_TARGET/bin
 
 echo "building gcc"
 echo "======================="
@@ -299,5 +280,21 @@ $M_SOURCE/make-4.4.1/configure \
 make -j$MJOBS
 make install
 cp $M_TARGET/bin/make.exe $M_TARGET/bin/mingw32-make.exe
+
+echo "building pkgconf"
+echo "======================="
+cd $M_BUILD
+mkdir pkgconf-build
+cd pkgconf-build
+meson setup . $M_SOURCE/pkgconf \
+  --prefix=$M_TARGET \
+  --cross-file=$TOP_DIR/cross.meson \
+  --buildtype=plain \
+  -Dtests=disabled
+ninja -j$MJOBS -C $M_BUILD/pkgconf-build
+ninja install -C $M_BUILD/pkgconf-build
+cp $M_TARGET/bin/pkgconf.exe $M_TARGET/bin/pkg-config.exe
+cp $M_TARGET/bin/pkgconf.exe $M_TARGET/bin/x86_64-w64-mingw32-pkg-config.exe
 cd $M_TARGET
-rm -f mingw
+rm -rf $M_TARGET/share
+
