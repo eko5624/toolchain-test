@@ -128,7 +128,7 @@ mkdir bc_mcfgthread
 cd bc_mcfgthread
 $M_SOURCE/mcfgthread/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE $MINGW_LIB
+  --prefix=$M_CROSS/$MINGW_TRIPLE
 make $MAKE_OPT || echo "(-) Build Error!"
 make install
 cd ..
