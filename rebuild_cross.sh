@@ -79,6 +79,33 @@ make $MAKE_OPT || echo "(-) Build Error!"
 make install
 cd ..
 
+echo "building gcc-initial"
+echo "======================="
+mkdir bc_gcc
+cd bc_gcc
+patch -d $M_SOURCE/gcc-$VER_GCC/gcc/config/i386 -p1 < $M_ROOT/patch/gcc-intrin.patch
+$M_SOURCE/gcc-$VER_GCC/configure $BHT --disable-nls \
+  --disable-multilib \
+  --enable-languages=c,c++ \
+  --disable-libstdcxx-pch \
+  --prefix=$M_CROSS \
+  --with-sysroot=$M_CROSS \
+  --enable-threads=posix
+make $MAKE_OPT all-gcc || echo "(-) Build Error!"
+make install-gcc
+cd ..
+
+echo "building mingw-w64-crt"
+echo "======================="
+mkdir bc_m64
+cd bc_m64
+$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-crt/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_CROSS/$MINGW_TRIPLE $MINGW_LIB --with-default-msvcrt=ucrt
+make || echo "(-) Build Error!"
+make install
+cd ..
+
 echo "building mcfgthread"
 echo "======================="
 cd $M_SOURCE
@@ -92,33 +119,6 @@ $M_SOURCE/mcfgthread/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE
 make $MAKE_OPT || echo "(-) Build Error!"
-make install
-cd ..
-
-echo "building gcc-initial"
-echo "======================="
-mkdir bc_gcc
-cd bc_gcc
-patch -d $M_SOURCE/gcc-$VER_GCC/gcc/config/i386 -p1 < $M_ROOT/patch/gcc-intrin.patch
-$M_SOURCE/gcc-$VER_GCC/configure $BHT --disable-nls \
-  --disable-multilib \
-  --enable-languages=c,c++ \
-  --disable-libstdcxx-pch \
-  --prefix=$M_CROSS \
-  --with-sysroot=$M_CROSS \
-  --enable-threads=mcf
-make $MAKE_OPT all-gcc || echo "(-) Build Error!"
-make install-gcc
-cd ..
-
-echo "building mingw-w64-crt"
-echo "======================="
-mkdir bc_m64
-cd bc_m64
-$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-crt/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE $MINGW_LIB --with-default-msvcrt=ucrt
-make || echo "(-) Build Error!"
 make install
 cd ..
 
