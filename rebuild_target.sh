@@ -127,24 +127,7 @@ $M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-libraries/winpthreads/configure \
   --prefix=$M_TARGET/$MINGW_TRIPLE $MINGW_LIB
 make $MAKE_OPT || echo "(-) Build Error!"
 make install
-cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
-cd ..
-
-echo "building mcfgthread"
-echo "======================="
-cd $M_SOURCE
-git clone https://github.com/lhmouse/mcfgthread.git
-cd mcfgthread
-autoreconf -ivf
-cd $M_BUILD
-mkdir bc_mcfgthread
-cd bc_mcfgthread
-$M_SOURCE/mcfgthread/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE \
-  --disable-pch
-make $MAKE_OPT || echo "(-) Build Error!"
-make install
+mv $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
 cd ..
 
 echo "building gmp"
