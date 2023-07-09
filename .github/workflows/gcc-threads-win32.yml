@@ -1,4 +1,4 @@
-name: debian-test
+name: gcc-threads-win32
 defaults:
   run:
     shell: bash
