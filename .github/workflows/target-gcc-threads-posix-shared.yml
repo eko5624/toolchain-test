@@ -29,17 +29,17 @@ jobs:
         uses: actions/cache/restore@main
         with:
           path: ${{ github.workspace }}/cross
-          key: cross-gcc-${{ github.run_id }}
+          key: cross-gcc-ucrt-${{ github.run_id }}
           restore-keys: |
-            cross-gcc-
+            cross-gcc-ucrt-
             
       - name: Loading target gcc cache
         uses: actions/cache/restore@main
         with:
           path: ${{ github.workspace }}/target
-          key: target-gcc-${{ github.run_id }}
+          key: target-gcc-threads-posix-shared-${{ github.run_id }}
           restore-keys: |
-            target-gcc-
+            target-gcc-threads-posix-shared-
             
       - name: Building gcc with posix
         run: |
@@ -51,7 +51,7 @@ jobs:
 
       - name: Packaging toolchain
         run: |
-          7z a target-gcc-with-posix.7z target/*
+          7z a target-gcc-threads-posix-shared.7z target/*
 
       - name: Release
         continue-on-error: true
@@ -59,11 +59,11 @@ jobs:
           GH_TOKEN: ${{ github.token }} 
         run: |
           chmod +x ./release-package.sh
-          ./release-package.sh target-gcc-with-posix.7z
+          ./release-package.sh target-gcc-threads-posix-shared.7z
 
       - name: Saving target gcc cache
         uses: actions/cache/save@main
         if: always()
         with:
           path: ${{ github.workspace }}/target
-          key: target-gcc-${{ github.run_id }}
+          key: target-gcc-threads-posix-shared-${{ github.run_id }}
