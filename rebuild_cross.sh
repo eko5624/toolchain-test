@@ -106,17 +106,6 @@ make || echo "(-) Build Error!"
 make install
 cd ..
 
-echo "building winpthreads"
-echo "======================="
-mkdir bc_winpth
-cd bc_winpth
-$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-libraries/winpthreads/configure \
-  --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE $MINGW_LIB
-make $MAKE_OPT || echo "(-) Build Error!"
-make install
-cd ..
-
 echo "building mcfgthread"
 echo "======================="
 cd $M_SOURCE
@@ -129,6 +118,17 @@ cd bc_mcfgthread
 $M_SOURCE/mcfgthread/configure \
   --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE
+make $MAKE_OPT || echo "(-) Build Error!"
+make install
+cd ..
+
+echo "building winpthreads"
+echo "======================="
+mkdir bc_winpth
+cd bc_winpth
+$M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-libraries/winpthreads/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_CROSS/$MINGW_TRIPLE $MINGW_LIB
 make $MAKE_OPT || echo "(-) Build Error!"
 make install
 cd ..
