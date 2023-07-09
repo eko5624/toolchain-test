@@ -214,7 +214,7 @@ $M_SOURCE/mingw-w64/mingw-w64-libraries/winpthreads/configure \
   --enable-static
 make -j$MJOBS
 make install
-mv $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
+#mv $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
 
 echo "building gcc"
 echo "======================="
