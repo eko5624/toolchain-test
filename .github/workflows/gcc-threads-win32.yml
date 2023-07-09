@@ -96,8 +96,8 @@ jobs:
 
       - name: Packaging toolchain
         run: |
-          7z a dgn-cross-gcc.7z cross/*
-          7z a dgn-target-gcc.7z target/*
+          7z a cross-gcc-threads-win32.7z cross/*
+          7z a target-gcc-threads-win32.7z target/*
 
       - name: Release
         continue-on-error: true
@@ -105,7 +105,8 @@ jobs:
           GH_TOKEN: ${{ github.token }} 
         run: |
           chmod +x ./release-package.sh
-          ./release-package.sh dgn*.7z
+          ./release-package.sh cross-gcc-threads-win32.7z
+          ./release-package.sh target-gcc-threads-win32.7z
 
       - name: Saving cross gcc cache
         uses: actions/cache/save@main
