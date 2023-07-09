@@ -64,17 +64,17 @@ jobs:
         uses: actions/cache/restore@main
         with:
           path: ${{ github.workspace }}/cross
-          key: cross-gcc-${{ github.run_id }}
+          key: cross-gcc-threads-win32-${{ github.run_id }}
           restore-keys: |
-            cross-gcc-
+            cross-gcc-threads-win32-
             
       - name: Loading target gcc cache
         uses: actions/cache/restore@main
         with:
           path: ${{ github.workspace }}/target
-          key: target-gcc-${{ github.run_id }}
+          key: target-gcc-threads-win32-${{ github.run_id }}
           restore-keys: |
-            target-gcc-
+            target-gcc-threads-win32-
             
       - name: Building cross gcc
         run: |
@@ -112,14 +112,14 @@ jobs:
         if: always()
         with:
           path: ${{ github.workspace }}/cross
-          key: cross-gcc-${{ github.run_id }}
+          key: cross-gcc-threads-win32-${{ github.run_id }}
           
       - name: Saving target gcc cache
         uses: actions/cache/save@main
         if: always()
         with:
           path: ${{ github.workspace }}/target
-          key: target-gcc-${{ github.run_id }}
+          key: target-gcc-threads-win32-${{ github.run_id }}
 
 
  
