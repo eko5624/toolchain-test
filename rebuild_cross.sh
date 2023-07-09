@@ -89,7 +89,8 @@ $M_SOURCE/gcc-$VER_GCC/configure $BHT --disable-nls \
   --enable-languages=c,c++ \
   --disable-libstdcxx-pch \
   --prefix=$M_CROSS \
-  --with-sysroot=$M_CROSS
+  --with-sysroot=$M_CROSS \
+  --enable-threads=mcf
 make $MAKE_OPT all-gcc || echo "(-) Build Error!"
 make install-gcc
 cd ..
@@ -111,7 +112,23 @@ mkdir bc_winpth
 cd bc_winpth
 $M_SOURCE/mingw-w64-v$VER_MINGW64/mingw-w64-libraries/winpthreads/configure \
   --host=$MINGW_TRIPLE \
-  --prefix=$M_CROSS/$MINGW_TRIPLE $MINGW_LIB --disable-shared --enable-static
+  --prefix=$M_CROSS/$MINGW_TRIPLE $MINGW_LIB
+make $MAKE_OPT || echo "(-) Build Error!"
+make install
+cd ..
+
+echo "building mcfgthread"
+echo "======================="
+cd $M_SOURCE
+git clone https://github.com/lhmouse/mcfgthread.git
+cd mcfgthread
+autoreconf -ivf
+cd $M_BUILD
+mkdir bc_mcfgthread
+cd bc_mcfgthread
+$M_SOURCE/mcfgthread/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_CROSS/$MINGW_TRIPLE $MINGW_LIB
 make $MAKE_OPT || echo "(-) Build Error!"
 make install
 cd ..
