@@ -130,6 +130,23 @@ make install
 cp $M_TARGET/$MINGW_TRIPLE/bin/libwinpthread-1.dll $M_TARGET/bin/
 cd ..
 
+echo "building mcfgthread"
+echo "======================="
+cd $M_SOURCE
+git clone https://github.com/lhmouse/mcfgthread.git
+cd mcfgthread
+autoreconf -ivf
+cd $M_BUILD
+mkdir bc_mcfgthread
+cd bc_mcfgthread
+$M_SOURCE/mcfgthread/configure \
+  --host=$MINGW_TRIPLE \
+  --prefix=$M_CROSS/$MINGW_TRIPLE \
+  --disable-pch
+make $MAKE_OPT || echo "(-) Build Error!"
+make install
+cd ..
+
 echo "building gmp"
 echo "======================="
 mkdir tg_gmp
@@ -182,6 +199,7 @@ $M_SOURCE/gcc-$VER_GCC/configure $BHT --disable-nls \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
   --enable-libssp \
+  --enable-threads=mcf \
   --prefix=$M_TARGET --libexecdir=$M_TARGET/lib --with-sysroot=$M_TARGET
 make $MAKE_OPT || echo "(-) Build Error!"
 make install
