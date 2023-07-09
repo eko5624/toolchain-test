@@ -1,0 +1,69 @@
+name: target-gcc-with-posix
+defaults:
+  run:
+    shell: bash
+on:
+  workflow_dispatch:
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux/archlinux:base-devel
+    steps:    
+      - name: Install Dependencies
+        run: |
+          sudo echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+          sudo pacman -Syu --noconfirm docker
+          sudo pacman -S --noconfirm --needed git gyp mercurial subversion ninja cmake ragel yasm nasm asciidoc enca gperf unzip p7zip xz gcc-multilib clang python-pip python-cairo curl jq lib32-glib2 wget
+          pip3 install -U --break-system-packages setuptools rst2pdf mako jsonschema meson
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global pull.rebase true
+          git config --global rebase.autoStash true
+          git config --global fetch.prune true
+          git config --global --add safe.directory $PWD
+          
+      - uses: actions/checkout@main
+      - name: Loading cross gcc cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/cross
+          key: cross-gcc-ucrt-${{ github.run_id }}
+          restore-keys: |
+            cross-gcc-ucrt-
+            
+      - name: Loading target gcc cache
+        uses: actions/cache/restore@main
+        with:
+          path: ${{ github.workspace }}/target
+          key: target-gcc-threads-posix-static-${{ github.run_id }}
+          restore-keys: |
+            target-gcc-threads-posix-static-
+            
+      - name: Building gcc with posix
+        run: |
+          PWD=$(pwd)
+          if [[ ! "$(ls -A $PWD/target/bin)" ]]; then
+            chmod +x ./target-gcc-with-posix-static.sh
+            ./target-gcc-with-posix-static.sh
+          fi  
+
+      - name: Packaging toolchain
+        run: |
+          7z a target-gcc-threads-posix-static.7z target/*
+
+      - name: Release
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }} 
+        run: |
+          chmod +x ./release-package.sh
+          ./release-package.sh target-gcc-threads-posix-static.7z
+
+      - name: Saving target gcc cache
+        uses: actions/cache/save@main
+        if: always()
+        with:
+          path: ${{ github.workspace }}/target
+          key: target-gcc-threads-posix-static-${{ github.run_id }}
