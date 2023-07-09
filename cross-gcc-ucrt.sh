@@ -17,13 +17,8 @@ export M_ROOT=$(pwd)
 export M_SOURCE=$M_ROOT/source
 export M_BUILD=$M_ROOT/build
 export M_CROSS=$M_ROOT/cross
-export RUSTUP_LOCATION=$M_ROOT/rustup_location
 
-export PATH="$M_CROSS/bin:$RUSTUP_LOCATION/.cargo/bin:$PATH"
-export PKG_CONFIG="pkgconf --static"
-export PKG_CONFIG_LIBDIR="$M_CROSS/lib/pkgconfig"
-export RUSTUP_HOME="$RUSTUP_LOCATION/.rustup"
-export CARGO_HOME="$RUSTUP_LOCATION/.cargo"
+export PATH="$M_CROSS/bin:$PATH"
 
 mkdir -p $M_SOURCE
 mkdir -p $M_BUILD
@@ -42,9 +37,6 @@ xz -c -d gcc-13.1.0.tar.xz | tar xf -
 
 #mingw-w64
 git clone https://github.com/mingw-w64/mingw-w64.git --branch master --depth 1
-
-#mcfgthread
-git clone https://github.com/lhmouse/mcfgthread.git --branch master --depth 1
 
 echo "building binutils"
 echo "======================="
