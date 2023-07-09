@@ -1,4 +1,4 @@
-name: target-gcc-with-posix
+name: target-gcc-threads-posix-static
 defaults:
   run:
     shell: bash
