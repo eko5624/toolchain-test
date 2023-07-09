@@ -182,7 +182,6 @@ $M_SOURCE/gcc-$VER_GCC/configure $BHT --disable-nls \
   --disable-libstdcxx-pch \
   --disable-win32-registry \
   --enable-libssp \
-  --enable-threads=mcf \
   --prefix=$M_TARGET --libexecdir=$M_TARGET/lib --with-sysroot=$M_TARGET
 make $MAKE_OPT || echo "(-) Build Error!"
 make install
