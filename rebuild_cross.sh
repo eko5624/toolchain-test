@@ -115,8 +115,8 @@ autoreconf -ivf
 cd $M_BUILD
 mkdir bc_mcfgthread
 cd bc_mcfgthread
+CFLAGS="-fno-exceptions"
 $M_SOURCE/mcfgthread/configure \
-  --host=$MINGW_TRIPLE \
   --prefix=$M_CROSS/$MINGW_TRIPLE
 make $MAKE_OPT || echo "(-) Build Error!"
 make install
