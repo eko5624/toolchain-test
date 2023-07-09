@@ -28,17 +28,9 @@ jobs:
         uses: actions/cache/restore@main
         with:
           path: ${{ github.workspace }}/cross
-          key: cross-gcc-${{ github.run_id }}
+          key: cross-gcc-ucrt-${{ github.run_id }}
           restore-keys: |
-            cross-gcc-
-            
-      - name: Loading rust toolchain cache
-        uses: actions/cache/restore@main
-        with:
-          path: ${{ github.workspace }}/rustup_location
-          key: rust_toolchain-${{ github.run_id }}
-          restore-keys: |
-            rust_toolchain-
+            cross-gcc-ucrt-
             
       - name: Building toolchain
         run: |
@@ -66,5 +58,5 @@ jobs:
         if: always()
         with:
           path: ${{ github.workspace }}/cross
-          key: cross-gcc-${{ github.run_id }}
+          key: cross-gcc-ucrt-${{ github.run_id }}
           
