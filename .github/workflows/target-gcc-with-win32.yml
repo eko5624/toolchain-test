@@ -31,7 +31,7 @@ jobs:
           path: ${{ github.workspace }}/cross
           key: cross-gcc-ucrt-${{ github.run_id }}
           restore-keys: |
-            cross-gcc-ucrt-
+            cross-gcc-win32-
             
       - name: Loading target gcc cache
         uses: actions/cache/restore@main
