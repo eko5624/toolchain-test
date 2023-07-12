@@ -261,7 +261,7 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-shared \
   --with-tune=generic \
   --without-included-gettext \
-  --with-pkgversion="GCC with posix win32 thread model"
+  --with-pkgversion="GCC with win32 thread model"
 make -j$MJOBS
 make install
 VER=$(cat $M_SOURCE/gcc-13.1.0/gcc/BASE-VER)
