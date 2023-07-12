@@ -29,9 +29,9 @@ jobs:
         uses: actions/cache/restore@main
         with:
           path: ${{ github.workspace }}/cross
-          key: cross-gcc-ucrt-${{ github.run_id }}
+          key: cross-gcc-posix-${{ github.run_id }}
           restore-keys: |
-            cross-gcc-ucrt-
+            cross-gcc-posix-
             
       - name: Loading target gcc cache
         uses: actions/cache/restore@main
