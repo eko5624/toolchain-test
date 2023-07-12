@@ -41,7 +41,7 @@ jobs:
           restore-keys: |
             target-gcc-win32-
             
-      - name: Building gcc with posix
+      - name: Building gcc with thread win32
         run: |
           PWD=$(pwd)
           if [[ ! "$(ls -A $PWD/target/bin)" ]]; then
