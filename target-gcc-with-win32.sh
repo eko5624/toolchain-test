@@ -254,7 +254,6 @@ $M_SOURCE/gcc-13.1.0/configure \
   --enable-libstdcxx-filesystem-ts=yes \
   --enable-threads=win32 \
   --enable-libstdcxx-threads=yes \
-  --enable-fully-dynamic-string \
   --enable-lto \
   --enable-checking=release \
   --enable-static \
