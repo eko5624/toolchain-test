@@ -7,11 +7,11 @@ TOP_DIR=$(pwd)
 # Env Var NUMJOBS overrides automatic detection
 MJOBS=$(grep -c processor /proc/cpuinfo)
 
-#CFLAGS="-pipe -O2"
+CFLAGS="-pipe -O2"
 MINGW_TRIPLE="x86_64-w64-mingw32"
 export MINGW_TRIPLE
-#export CFLAGS
-#export CXXFLAGS=$CFLAGS
+export CFLAGS
+export CXXFLAGS=$CFLAGS
 
 export M_ROOT=$(pwd)
 export M_SOURCE=$M_ROOT/source
@@ -238,32 +238,44 @@ cd gcc-build
   --host=$MINGW_TRIPLE \
   --target=$MINGW_TRIPLE \
   --prefix=$M_TARGET \
-  --disable-multilib \
-  --disable-bootstrap \
-  --enable-languages=c,c++ \
+  --libexecdir=$M_TARGET/lib \
   --with-gmp=$M_BUILD/for_target \
   --with-mpfr=$M_BUILD/for_target \
   --with-mpc=$M_BUILD/for_target \
   --with-isl=$M_BUILD/for_target \
+  --disable-rpath \
+  --disable-multilib \
+  --disable-dependency-tracking \
+  --disable-bootstrap \
+  --disable-libssp \
   --disable-nls \
   --disable-werror \
-  --disable-shared \
+  --disable-symvers \
   --disable-libstdcxx-pch \
+  --disable-libstdcxx-debug \
   --disable-win32-registry \
-  --with-tune=generic \
+  --disable-version-specific-runtime-libs \
+  --enable-languages=c,c++ \
+  --enable-libgomp \
+  --enable-fully-dynamic-string \
   --enable-mingw-wildcard \
   --enable-__cxa_atexit \
+  --enable-libstdcxx-time=yes \
+  --enable-libstdcxx-filesystem-ts=yes \
   --enable-threads=mcf \
+  --enable-libstdcxx-threads=yes \
   --enable-lto \
   --enable-checking=release \
+  --enable-static \
+  --enable-shared \
+  --with-arch=nocona \
+  --with-tune=generic \
+  --without-included-gettext \
   --with-pkgversion="GCC with MCF thread model" \
-  --with-build-sysroot=$M_SOURCE/gcc-13.1.0/gcc-build/mingw-w64 \
-  CFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
-  CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' \
-  LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware'
+  --with-build-sysroot=$M_SOURCE/gcc-13.1.0/gcc-build/mingw-w64
 make -j$MJOBS
 make install
-touch gcc/cc1.exe.a gcc/cc1plus.exe.a
+#touch gcc/cc1.exe.a gcc/cc1plus.exe.a
 #cp $M_TARGET/lib/libgcc_s_seh-1.dll $M_TARGET/bin/
 cp $M_TARGET/bin/gcc.exe $M_TARGET/bin/cc.exe
 cp $M_TARGET/bin/$MINGW_TRIPLE-gcc.exe $M_TARGET/bin/$MINGW_TRIPLE-cc.exe
