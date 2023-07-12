@@ -1,4 +1,4 @@
-name: cross-gcc-ucrt
+name: cross-gcc-posix
 defaults:
   run:
     shell: bash
@@ -30,20 +30,20 @@ jobs:
           path: ${{ github.workspace }}/cross
           key: cross-gcc-ucrt-${{ github.run_id }}
           restore-keys: |
-            cross-gcc-ucrt-
+            cross-gcc-posix-
             
       - name: Building toolchain
         run: |
           PWD=$(pwd)
           if [[ ! "$(ls -A $PWD/cross/bin)" ]]; then
-            chmod +x ./cross-gcc-ucrt.sh
-            ./cross-gcc-ucrt.sh
+            chmod +x ./cross-gcc-posix.sh
+            ./cross-gcc-posix.sh
           fi  
 
       - name: Packaging toolchain
         run: |
           rm -f cross/mingw 
-          7z a cross-gcc-ucrt-13.1.0.7z cross/*
+          7z a cross-gcc-posix.7z cross/*
 
       - name: Release
         continue-on-error: true
@@ -51,12 +51,12 @@ jobs:
           GH_TOKEN: ${{ github.token }} 
         run: |
           chmod +x ./release-package.sh
-          ./release-package.sh cross-gcc-ucrt-13.1.0.7z
+          ./release-package.sh cross-gcc-posix.7z
 
       - name: Saving gcc cache
         uses: actions/cache/save@main
         if: always()
         with:
           path: ${{ github.workspace }}/cross
-          key: cross-gcc-ucrt-${{ github.run_id }}
+          key: cross-gcc-posix-${{ github.run_id }}
           
